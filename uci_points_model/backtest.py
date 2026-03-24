@@ -180,8 +180,9 @@ def _evaluate_candidate(weights: Mapping[str, float], folds: Sequence[FoldDefini
 
         fold_size = len(merged)
         top_k = max(3, math.ceil(fold_size * 0.20))
-        spearman = merged["predicted_score"].corr(merged["actual_points_efficiency"], method="spearman")
-        spearman = float(0.0 if pd.isna(spearman) else spearman)
+        spearman = _spearman_rank_correlation(
+            merged["predicted_score"], merged["actual_points_efficiency"]
+        )
 
         predicted_top = merged.nlargest(top_k, "predicted_score")
         actual_top = merged.nlargest(top_k, "actual_points_efficiency")
@@ -260,6 +261,21 @@ def _apply_weights(frame: pd.DataFrame, weights: Mapping[str, float]) -> pd.Seri
     for weight_name, column_name in COMPONENT_COLUMNS.items():
         score = score + frame[column_name] * weights[weight_name]
     return score
+
+
+def _spearman_rank_correlation(left: pd.Series, right: pd.Series) -> float:
+    aligned = pd.concat([left, right], axis=1).dropna()
+    if len(aligned) < 2:
+        return 0.0
+
+    left_ranks = aligned.iloc[:, 0].rank(method="average")
+    right_ranks = aligned.iloc[:, 1].rank(method="average")
+
+    if left_ranks.nunique() <= 1 or right_ranks.nunique() <= 1:
+        return 0.0
+
+    correlation = left_ranks.corr(right_ranks, method="pearson")
+    return float(0.0 if pd.isna(correlation) else correlation)
 
 
 def _weighted_mean(series: pd.Series, weights: pd.Series) -> float:

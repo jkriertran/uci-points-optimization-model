@@ -1,6 +1,6 @@
 import pandas as pd
 
-from uci_points_model.backtest import calibrate_weights
+from uci_points_model.backtest import _spearman_rank_correlation, calibrate_weights
 from uci_points_model.model import overlay_planning_calendar, score_race_editions, summarize_historical_targets
 
 
@@ -357,6 +357,17 @@ def test_calibrate_weights_uses_same_category_history_only() -> None:
     assert result["eligible"] is True
     assert set(fold_detail["race_name"]) == {"Stable Race"}
     assert set(fold_detail["category"]) == {"1.1"}
+
+
+def test_spearman_rank_correlation_avoids_scipy_dependency() -> None:
+    increasing = pd.Series([10.0, 20.0, 30.0, 40.0])
+    aligned = pd.Series([1.0, 2.0, 3.0, 4.0])
+    reversed_order = pd.Series([4.0, 3.0, 2.0, 1.0])
+    constant = pd.Series([5.0, 5.0, 5.0, 5.0])
+
+    assert _spearman_rank_correlation(increasing, aligned) == 1.0
+    assert _spearman_rank_correlation(increasing, reversed_order) == -1.0
+    assert _spearman_rank_correlation(increasing, constant) == 0.0
 
 
 def test_overlay_planning_calendar_marks_current_scope_and_category_changes() -> None:
