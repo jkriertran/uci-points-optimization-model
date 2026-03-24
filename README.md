@@ -25,6 +25,9 @@ The recommendation layer is **category-aware**. If a race changes class across y
 - aggregates repeated editions into a shortlist of races worth targeting next season
 - includes a walk-forward backtest that calibrates weights on prior years and checks them against future race editions
 
+If you want a presentation-ready explanation of the model, see `MODEL_STUDY_GUIDE.md`.
+Planned future work is tracked in `ROADMAP.md`.
+
 ## Project structure
 
 ```text
