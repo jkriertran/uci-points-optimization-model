@@ -1,0 +1,9 @@
+.pytest_cache/
+.streamlit/secrets.toml
+.venv/
+__pycache__/
+*.pyc
+data/*.csv
+*_export.csv
+!data/.gitkeep
+!data/race_editions_snapshot.csv
