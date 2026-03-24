@@ -6,6 +6,8 @@ import pandas as pd
 
 from .data import OPTIONAL_STAGE_COLUMNS
 
+TARGET_HISTORY_KEY = "target_history_id"
+
 DEFAULT_WEIGHTS: dict[str, float] = {
     "top10_points": 0.270428382182834,
     "winner_points": 0.11386531630100413,
@@ -21,6 +23,34 @@ COMPONENT_COLUMNS: dict[str, str] = {
     "depth_softness": "depth_softness_pct",
     "finish_rate": "finish_rate_pct",
 }
+
+
+def annotate_target_history(dataset: pd.DataFrame) -> pd.DataFrame:
+    if dataset.empty:
+        annotated = dataset.copy()
+        annotated[TARGET_HISTORY_KEY] = pd.Series(dtype=str)
+        annotated["category_history"] = pd.Series(dtype=str)
+        annotated["category_change_count"] = pd.Series(dtype=int)
+        annotated["latest_known_category"] = pd.Series(dtype=str)
+        return annotated
+
+    annotated = dataset.copy()
+    if "month" not in annotated.columns:
+        annotated["month"] = 0
+    if "category" not in annotated.columns:
+        annotated["category"] = "Unknown"
+    annotated = annotated.sort_values(["race_id", "year", "month", "category"]).reset_index(drop=True)
+    annotated[TARGET_HISTORY_KEY] = (
+        annotated["race_id"].astype(str) + "::" + annotated["category"].astype(str)
+    )
+
+    category_groups = annotated.groupby("race_id", sort=False)["category"]
+    annotated["category_history"] = category_groups.transform(_category_history_string)
+    annotated["category_change_count"] = (
+        category_groups.transform(_category_change_count).fillna(0).astype(int)
+    )
+    annotated["latest_known_category"] = category_groups.transform("last")
+    return annotated
 
 
 def add_score_component_percentiles(dataset: pd.DataFrame) -> pd.DataFrame:
@@ -68,7 +98,8 @@ def score_race_editions(
     if dataset.empty:
         return dataset.copy()
 
-    edition_scores = add_score_component_percentiles(dataset)
+    edition_scores = annotate_target_history(dataset)
+    edition_scores = add_score_component_percentiles(edition_scores)
     edition_scores["arbitrage_score"] = calculate_arbitrage_score(edition_scores, weights)
 
     field_form_for_efficiency = (
@@ -85,22 +116,28 @@ def score_race_editions(
     ).reset_index(drop=True)
 
 
-def summarize_historical_targets(scored_editions: pd.DataFrame) -> pd.DataFrame:
+def summarize_historical_targets(
+    scored_editions: pd.DataFrame, latest_only: bool = True
+) -> pd.DataFrame:
     if scored_editions.empty:
         return scored_editions.copy()
 
-    edition_summary = scored_editions.copy()
+    edition_summary = annotate_target_history(scored_editions)
     for column_name, default_value in OPTIONAL_STAGE_COLUMNS.items():
         if column_name not in edition_summary.columns:
             edition_summary[column_name] = default_value
 
     grouped = (
         edition_summary.sort_values(["year", "month"])
-        .groupby("race_id", as_index=False)
+        .groupby(TARGET_HISTORY_KEY, as_index=False)
         .agg(
+            race_id=("race_id", "last"),
             race_name=("race_name", "last"),
             race_country=("race_country", "last"),
             category=("category", "last"),
+            latest_known_category=("latest_known_category", "last"),
+            category_history=("category_history", "last"),
+            category_change_count=("category_change_count", "max"),
             race_type=("race_type", "last"),
             years_analyzed=("year", "nunique"),
             years=("year", lambda values: ", ".join(str(value) for value in sorted(set(values)))),
@@ -122,6 +159,9 @@ def summarize_historical_targets(scored_editions: pd.DataFrame) -> pd.DataFrame:
         )
     )
 
+    if latest_only:
+        grouped = grouped[grouped["category"] == grouped["latest_known_category"]].copy()
+
     return grouped.sort_values(
         ["avg_arbitrage_score", "avg_top10_points"], ascending=False
     ).reset_index(drop=True)
@@ -135,3 +175,25 @@ def _percentile_score(series: pd.Series, reverse: bool = False) -> pd.Series:
 
     ranked = series.rank(method="average", pct=True) * 100
     return 100 - ranked if reverse else ranked
+
+
+def _category_history_string(values: pd.Series) -> str:
+    ordered_categories = _ordered_unique_strings(values)
+    return " -> ".join(ordered_categories)
+
+
+def _category_change_count(values: pd.Series) -> int:
+    ordered_categories = _ordered_unique_strings(values)
+    return max(len(ordered_categories) - 1, 0)
+
+
+def _ordered_unique_strings(values: pd.Series) -> list[str]:
+    ordered: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        text = str(value).strip()
+        if not text or text in seen or text == "nan":
+            continue
+        ordered.append(text)
+        seen.add(text)
+    return ordered

@@ -5,5 +5,6 @@ __pycache__/
 *.pyc
 data/*.csv
 *_export.csv
+Breaking into Professional Cycling Analytics_ A Guide for Outsiders.md
 !data/.gitkeep
 !data/race_editions_snapshot.csv

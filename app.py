@@ -90,6 +90,9 @@ def render_model_explainer(weights: dict[str, float], dataset: pd.DataFrame) -> 
     source_count = len(dataset)
     stage_race_count = int((dataset.get("race_type", pd.Series(dtype=str)) == "Stage race").sum())
     missing_stage_pages = int(dataset.get("stage_pages_missing", pd.Series(0)).sum())
+    category_change_races = (
+        int(dataset.groupby("race_id")["category"].nunique().gt(1).sum()) if not dataset.empty else 0
+    )
 
     with st.expander("How the model works: idea, methods, and math", expanded=True):
         st.markdown("**What this app is actually for**")
@@ -142,6 +145,15 @@ def render_model_explainer(weights: dict[str, float], dataset: pd.DataFrame) -> 
                 """
             )
 
+            st.markdown("**How category changes are handled**")
+            st.markdown(
+                """
+                - If a race changes class, the model no longer blends those editions into one uninterrupted history.
+                - A `1.1` version and a later `1.Pro` version are treated as different historical targets.
+                - For planning, the app keeps the **latest known category** as the live recommendation and shows the full category path for context.
+                """
+            )
+
         with method_col:
             st.markdown("**Trust checklist**")
             st.markdown(
@@ -150,6 +162,7 @@ def render_model_explainer(weights: dict[str, float], dataset: pd.DataFrame) -> 
                 - Any score is built from observable fields in the scraped dataset shown in the `Raw Data` tab.
                 - The opportunity score is explainable because every component is exposed below.
                 - Stage races in this run: **{stage_race_count}**. Missing stage pages inside parsed stage races: **{missing_stage_pages}**.
+                - Races with at least one category change inside this run: **{category_change_races}**.
                 - Skipped races in this run: **{error_count}**.
                 """
             )
@@ -159,6 +172,7 @@ def render_model_explainer(weights: dict[str, float], dataset: pd.DataFrame) -> 
                 """
                 - Startlist strength is a proxy, not a perfect measure of rider level.
                 - Stage races now include GC plus stage-result points, but the model still does not understand stage type, route fit, or team-specific rider roles.
+                - Latest-category planning is based on the latest category visible in the selected data window, so a later drop to `.2` is only visible if that category is included in the dataset.
                 - The model does not yet include travel cost, route fit, internal team goals, or roster conflicts.
                 """
             )
@@ -323,6 +337,9 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
         "Did the model rank the best points opportunities near the top?"
         """
     )
+    st.caption(
+        "Calibration is now category-aware: a race's `1.1` history and `1.Pro` history are treated as separate target histories."
+    )
 
     with st.form("calibration_form"):
         calibration_dataset_source = st.radio(
@@ -475,6 +492,7 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
             columns={
                 "race_name": "Race",
                 "category": "Category",
+                "category_history": "Category History",
                 "race_country": "Country",
                 "train_editions": "Train Editions",
                 "train_years": "Train Years",
@@ -488,7 +506,22 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
         )
         st.markdown("**Calibrated ranking versus actual next-year outcome**")
         st.dataframe(
-            year_detail.round(
+            year_detail[
+                [
+                    "Race",
+                    "Category",
+                    "Category History",
+                    "Country",
+                    "Train Editions",
+                    "Train Years",
+                    "Predicted Score",
+                    "Actual Efficiency",
+                    "Actual Top-10 Points",
+                    "Actual Top-10 Field Form",
+                    "Predicted Rank",
+                    "Actual Rank",
+                ]
+            ].round(
                 {
                     "Predicted Score": 3,
                     "Actual Efficiency": 3,
@@ -644,7 +677,7 @@ def main() -> None:
 
     left, middle, right, far_right = st.columns(4)
     left.metric("Race editions analyzed", f"{len(scored_editions):,}")
-    middle.metric("Distinct targets", f"{target_summary['race_id'].nunique():,}")
+    middle.metric("Category-aware targets", f"{len(target_summary):,}")
     right.metric("Average top-10 payout", f"{scored_editions['top10_points'].mean():.1f}")
     far_right.metric("Average startlist size", f"{scored_editions['startlist_size'].mean():.0f}")
 
@@ -661,7 +694,8 @@ def main() -> None:
             "race_country": "Country",
             "category": "Category",
             "race_type": "Race Type",
-            "years_analyzed": "Editions",
+            "category_history": "Category History",
+            "years_analyzed": "Same-Category Editions",
             "years": "Years",
             "avg_arbitrage_score": "Arbitrage Score",
             "avg_top10_points": "Avg Top-10 Points",
@@ -684,8 +718,9 @@ def main() -> None:
                     "Race",
                     "Country",
                     "Category",
+                    "Category History",
                     "Race Type",
-                    "Editions",
+                    "Same-Category Editions",
                     "Years",
                     "Arbitrage Score",
                     "Avg Top-10 Points",
@@ -702,7 +737,8 @@ def main() -> None:
         st.markdown(
             "The model lifts races that consistently offer strong top-10 points while historically "
             "drawing softer startlists. Stage races are still ranked as one target each, but their "
-            "points totals now include both GC and stage-result payouts."
+            "points totals now include both GC and stage-result payouts. If a race changed category, "
+            "the recommendation uses the latest known category and shows the full category history alongside it."
         )
 
     with tab_diagnostics:

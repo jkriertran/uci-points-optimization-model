@@ -13,6 +13,8 @@ It scrapes historical `.1` and `.Pro` races from FirstCycling, estimates how sof
 It is a **race-opportunity model**, not a rider-prediction model. The core question is:
 "Which races usually offer the best points-scoring opportunities relative to how hard the field looks?"
 
+The recommendation layer is **category-aware**. If a race changes class across years, the app treats each `race + category` history separately and keeps the **latest known category** as the live planning target.
+
 ## What the app does
 
 - pulls race calendars month by month from FirstCycling
@@ -95,5 +97,6 @@ The backtest is intentionally done at the **race level**. It does not forecast e
 
 - One-day races are the cleanest use case.
 - Stage races are modeled as one calendar target with `GC + stage-result` points rolled into the event-level payout.
+- Race-category changes are handled explicitly, so a historical `1.1` version and a later `1.Pro` version are not blended into one uninterrupted target history.
 - The model still does not understand route type, rider specialty, or team-specific roster fit.
 - The startlist-strength proxy comes from FirstCycling's extended startlist stats (`Starts`, `Wins`, `Podium`, `Top 10`), not from private team power files or internal rankings.

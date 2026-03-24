@@ -125,6 +125,58 @@ def test_summarize_historical_targets_backfills_missing_stage_columns() -> None:
     assert summary.iloc[0]["avg_stage_count"] == 0.0
 
 
+def test_summarize_historical_targets_separates_category_changes_and_keeps_latest() -> None:
+    scored = pd.DataFrame(
+        [
+            {
+                "race_id": 14,
+                "race_name": "Moving Race",
+                "race_country": "Portugal",
+                "category": "1.1",
+                "race_type": "One-day",
+                "year": 2023,
+                "month": 2,
+                "arbitrage_score": 68.0,
+                "top10_points": 180,
+                "winner_points": 80,
+                "total_points": 180,
+                "avg_top10_field_form": 6,
+                "total_field_form": 60,
+                "finish_rate": 0.82,
+                "points_efficiency_index": 3.0,
+                "startlist_size": 120,
+            },
+            {
+                "race_id": 14,
+                "race_name": "Moving Race",
+                "race_country": "Portugal",
+                "category": "1.Pro",
+                "race_type": "One-day",
+                "year": 2024,
+                "month": 2,
+                "arbitrage_score": 74.0,
+                "top10_points": 320,
+                "winner_points": 200,
+                "total_points": 320,
+                "avg_top10_field_form": 12,
+                "total_field_form": 120,
+                "finish_rate": 0.84,
+                "points_efficiency_index": 2.7,
+                "startlist_size": 130,
+            },
+        ]
+    )
+
+    latest_summary = summarize_historical_targets(scored)
+    full_summary = summarize_historical_targets(scored, latest_only=False)
+
+    assert len(latest_summary) == 1
+    assert latest_summary.iloc[0]["category"] == "1.Pro"
+    assert latest_summary.iloc[0]["category_history"] == "1.1 -> 1.Pro"
+    assert latest_summary.iloc[0]["years_analyzed"] == 1
+    assert set(full_summary["category"]) == {"1.1", "1.Pro"}
+
+
 def test_calibrate_weights_prefers_field_aware_candidate() -> None:
     dataset = pd.DataFrame(
         [
@@ -212,3 +264,96 @@ def test_calibrate_weights_prefers_field_aware_candidate() -> None:
     assert result["eligible"] is True
     assert result["best"]["objective"] >= result["default"]["objective"]
     assert result["best"]["weights"]["field_softness"] == field_aware["field_softness"]
+
+
+def test_calibrate_weights_uses_same_category_history_only() -> None:
+    dataset = pd.DataFrame(
+        [
+            {
+                "race_id": 1,
+                "race_name": "Moving Race",
+                "year": 2021,
+                "month": 3,
+                "category": "1.1",
+                "race_type": "One-day",
+                "race_country": "France",
+                "top10_points": 180,
+                "winner_points": 80,
+                "avg_top10_field_form": 6,
+                "total_field_form": 60,
+                "finish_rate": 0.80,
+                "points_per_top10_form": 3.0,
+                "points_per_total_form": 0.8,
+            },
+            {
+                "race_id": 1,
+                "race_name": "Moving Race",
+                "year": 2022,
+                "month": 3,
+                "category": "1.Pro",
+                "race_type": "One-day",
+                "race_country": "France",
+                "top10_points": 320,
+                "winner_points": 200,
+                "avg_top10_field_form": 14,
+                "total_field_form": 130,
+                "finish_rate": 0.82,
+                "points_per_top10_form": 2.3,
+                "points_per_total_form": 0.7,
+            },
+            {
+                "race_id": 2,
+                "race_name": "Stable Race",
+                "year": 2021,
+                "month": 4,
+                "category": "1.1",
+                "race_type": "One-day",
+                "race_country": "Belgium",
+                "top10_points": 210,
+                "winner_points": 125,
+                "avg_top10_field_form": 5,
+                "total_field_form": 50,
+                "finish_rate": 0.81,
+                "points_per_top10_form": 4.2,
+                "points_per_total_form": 1.1,
+            },
+            {
+                "race_id": 2,
+                "race_name": "Stable Race",
+                "year": 2022,
+                "month": 4,
+                "category": "1.1",
+                "race_type": "One-day",
+                "race_country": "Belgium",
+                "top10_points": 215,
+                "winner_points": 125,
+                "avg_top10_field_form": 5,
+                "total_field_form": 52,
+                "finish_rate": 0.83,
+                "points_per_top10_form": 4.1,
+                "points_per_total_form": 1.0,
+            },
+        ]
+    )
+
+    result = calibrate_weights(
+        dataset,
+        race_type="One-day",
+        candidate_weights=[
+            {
+                "top10_points": 0.4,
+                "winner_points": 0.2,
+                "field_softness": 0.2,
+                "depth_softness": 0.1,
+                "finish_rate": 0.1,
+            }
+        ],
+        min_train_years=1,
+        min_fold_size=1,
+    )
+
+    fold_detail = result["best"]["fold_details"]
+
+    assert result["eligible"] is True
+    assert set(fold_detail["race_name"]) == {"Stable Race"}
+    assert set(fold_detail["category"]) == {"1.1"}

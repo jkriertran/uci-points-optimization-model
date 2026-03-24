@@ -11,7 +11,9 @@ from .model import (
     COMPONENT_COLUMNS,
     DEFAULT_WEIGHTS,
     add_score_component_percentiles,
+    annotate_target_history,
     normalize_weights,
+    TARGET_HISTORY_KEY,
 )
 
 OBJECTIVE_WEIGHTS = {
@@ -88,13 +90,13 @@ def calibrate_weights(
 
 
 def _prepare_calibration_dataset(dataset: pd.DataFrame, race_type: str) -> pd.DataFrame:
-    filtered = dataset.copy()
+    filtered = annotate_target_history(dataset)
     if race_type != "All":
         filtered = filtered[filtered["race_type"] == race_type]
     repeated_ids = (
-        filtered.groupby("race_id")["year"].nunique().loc[lambda counts: counts >= 2].index
+        filtered.groupby(TARGET_HISTORY_KEY)["year"].nunique().loc[lambda counts: counts >= 2].index
     )
-    filtered = filtered[filtered["race_id"].isin(repeated_ids)].copy()
+    filtered = filtered[filtered[TARGET_HISTORY_KEY].isin(repeated_ids)].copy()
     filtered = filtered.sort_values(["year", "month", "race_name"]).reset_index(drop=True)
     return filtered
 
@@ -116,10 +118,14 @@ def _build_walk_forward_folds(
 
         train_components = add_score_component_percentiles(train)
         prediction_frame = (
-            train_components.groupby("race_id", as_index=False)
+            train_components.groupby(TARGET_HISTORY_KEY, as_index=False)
             .agg(
+                race_id=("race_id", "last"),
                 race_name=("race_name", "last"),
                 category=("category", "last"),
+                category_history=("category_history", "last"),
+                category_change_count=("category_change_count", "max"),
+                latest_known_category=("latest_known_category", "last"),
                 race_type=("race_type", "last"),
                 race_country=("race_country", "last"),
                 train_editions=("year", "count"),
@@ -133,11 +139,8 @@ def _build_walk_forward_folds(
         )
 
         outcome_frame = (
-            test.groupby("race_id", as_index=False)
+            test.groupby(TARGET_HISTORY_KEY, as_index=False)
             .agg(
-                race_name=("race_name", "last"),
-                category=("category", "last"),
-                race_country=("race_country", "last"),
                 actual_points_efficiency=("points_per_top10_form", "mean"),
                 actual_total_efficiency=("points_per_total_form", "mean"),
                 actual_top10_points=("top10_points", "mean"),
@@ -148,7 +151,7 @@ def _build_walk_forward_folds(
             )
         )
 
-        merged = prediction_frame.merge(outcome_frame, on="race_id", how="inner")
+        merged = prediction_frame.merge(outcome_frame, on=TARGET_HISTORY_KEY, how="inner")
         if len(merged) < min_fold_size:
             continue
 
@@ -182,7 +185,9 @@ def _evaluate_candidate(weights: Mapping[str, float], folds: Sequence[FoldDefini
 
         predicted_top = merged.nlargest(top_k, "predicted_score")
         actual_top = merged.nlargest(top_k, "actual_points_efficiency")
-        precision = float(len(set(predicted_top["race_id"]) & set(actual_top["race_id"])) / top_k)
+        precision = float(
+            len(set(predicted_top[TARGET_HISTORY_KEY]) & set(actual_top[TARGET_HISTORY_KEY])) / top_k
+        )
 
         actual_top_efficiency = actual_top["actual_points_efficiency"].sum()
         value_capture = float(
@@ -209,10 +214,14 @@ def _evaluate_candidate(weights: Mapping[str, float], folds: Sequence[FoldDefini
 
         fold_detail = merged[
             [
+                TARGET_HISTORY_KEY,
                 "race_id",
-                "race_name_x",
-                "category_x",
-                "race_country_x",
+                "race_name",
+                "category",
+                "category_history",
+                "latest_known_category",
+                "category_change_count",
+                "race_country",
                 "train_editions",
                 "train_years",
                 "predicted_score",
@@ -223,13 +232,6 @@ def _evaluate_candidate(weights: Mapping[str, float], folds: Sequence[FoldDefini
                 "actual_rank",
             ]
         ].copy()
-        fold_detail = fold_detail.rename(
-            columns={
-                "race_name_x": "race_name",
-                "category_x": "category",
-                "race_country_x": "race_country",
-            }
-        )
         fold_detail.insert(0, "test_year", fold.test_year)
         fold_detail_frames.append(fold_detail)
 
