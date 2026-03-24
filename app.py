@@ -16,6 +16,7 @@ DEFAULT_YEARS = [2021, 2022, 2023, 2024, 2025]
 WEIGHT_STATE_KEYS = {name: f"weight_{name}" for name in DEFAULT_WEIGHTS}
 WEIGHT_DEFAULT_VERSION = "calibrated-one-day-v1"
 DATASET_SCHEMA_VERSION = "stage-breakdown-v1"
+PENDING_WEIGHT_STATE_KEY = "pending_weight_state"
 
 
 @st.cache_data(show_spinner=False, ttl=60 * 60 * 24)
@@ -47,6 +48,13 @@ def initialize_weight_state() -> None:
     st.session_state["weight_default_version"] = WEIGHT_DEFAULT_VERSION
 
 
+def apply_pending_weight_state() -> None:
+    pending_weights = st.session_state.pop(PENDING_WEIGHT_STATE_KEY, None)
+    if pending_weights is None:
+        return
+    apply_weight_state(pending_weights)
+
+
 def initialize_dataset_state() -> None:
     if "dataset" in st.session_state:
         st.session_state["dataset"] = ensure_dataset_schema(st.session_state["dataset"])
@@ -63,6 +71,10 @@ def apply_weight_state(weights: dict[str, float]) -> None:
     normalized = normalize_weights(weights)
     for weight_name, value in normalized.items():
         st.session_state[WEIGHT_STATE_KEYS[weight_name]] = float(value)
+
+
+def queue_weight_state(weights: dict[str, float]) -> None:
+    st.session_state[PENDING_WEIGHT_STATE_KEY] = normalize_weights(weights)
 
 
 def dataset_signature(dataset: pd.DataFrame) -> tuple[int, tuple[int, ...], tuple[str, ...]]:
@@ -439,7 +451,7 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
     )
 
     if st.button("Use calibrated weights in this session", key="apply_calibrated_weights"):
-        apply_weight_state(best_eval["weights"])
+        queue_weight_state(best_eval["weights"])
         st.rerun()
 
     fold_options = [int(year) for year in result["fold_years"]]
@@ -524,6 +536,7 @@ def main() -> None:
         "but route type and team-specific rider fit are still outside the model."
     )
     initialize_weight_state()
+    apply_pending_weight_state()
     initialize_dataset_state()
 
     with st.sidebar.form("controls"):
