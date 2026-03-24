@@ -17,6 +17,7 @@ WEIGHT_STATE_KEYS = {name: f"weight_{name}" for name in DEFAULT_WEIGHTS}
 WEIGHT_DEFAULT_VERSION = "calibrated-one-day-v1"
 DATASET_SCHEMA_VERSION = "stage-breakdown-v1"
 PENDING_WEIGHT_STATE_KEY = "pending_weight_state"
+CALIBRATION_RESULT_VERSION = "category-aware-v1"
 
 
 @st.cache_data(show_spinner=False, ttl=60 * 60 * 24)
@@ -83,6 +84,73 @@ def dataset_signature(dataset: pd.DataFrame) -> tuple[int, tuple[int, ...], tupl
     years = tuple(sorted(dataset["year"].unique().tolist()))
     categories = tuple(sorted(dataset["category"].unique().tolist()))
     return (len(dataset), years, categories)
+
+
+def calibration_signature(
+    calibration_dataset_source: str,
+    calibration_dataset: pd.DataFrame,
+    years: list[int],
+    categories: list[str],
+    calibration_race_type: str,
+    search_iterations: int,
+    random_seed: int,
+) -> tuple[object, ...]:
+    return (
+        CALIBRATION_RESULT_VERSION,
+        calibration_dataset_source,
+        dataset_signature(calibration_dataset),
+        tuple(sorted(years)),
+        tuple(sorted(categories)),
+        calibration_race_type,
+        search_iterations,
+        random_seed,
+    )
+
+
+def prepare_backtest_fold_detail(fold_detail: pd.DataFrame, selected_fold: int) -> pd.DataFrame:
+    year_detail = fold_detail[fold_detail["test_year"] == selected_fold].copy()
+    year_detail = year_detail.rename(
+        columns={
+            "race_name": "Race",
+            "category": "Category",
+            "category_history": "Category History",
+            "race_country": "Country",
+            "train_editions": "Train Editions",
+            "train_years": "Train Years",
+            "predicted_score": "Predicted Score",
+            "actual_points_efficiency": "Actual Efficiency",
+            "actual_top10_points": "Actual Top-10 Points",
+            "actual_top10_field_form": "Actual Top-10 Field Form",
+            "predicted_rank": "Predicted Rank",
+            "actual_rank": "Actual Rank",
+        }
+    )
+
+    if "Category History" not in year_detail.columns:
+        if "Category" in year_detail.columns:
+            year_detail["Category History"] = year_detail["Category"]
+        else:
+            year_detail["Category History"] = "Unknown"
+
+    required_columns = [
+        "Race",
+        "Category",
+        "Category History",
+        "Country",
+        "Train Editions",
+        "Train Years",
+        "Predicted Score",
+        "Actual Efficiency",
+        "Actual Top-10 Points",
+        "Actual Top-10 Field Form",
+        "Predicted Rank",
+        "Actual Rank",
+    ]
+    for column_name in required_columns:
+        if column_name not in year_detail.columns:
+            year_detail[column_name] = "Unknown"
+
+    return year_detail[required_columns]
 
 
 def render_model_explainer(weights: dict[str, float], dataset: pd.DataFrame) -> None:
@@ -375,11 +443,14 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
     else:
         calibration_dataset = dataset
 
-    current_signature = (
-        calibration_dataset_source,
-        dataset_signature(calibration_dataset),
-        tuple(sorted(years)),
-        tuple(sorted(categories)),
+    current_signature = calibration_signature(
+        calibration_dataset_source=calibration_dataset_source,
+        calibration_dataset=calibration_dataset,
+        years=years,
+        categories=categories,
+        calibration_race_type=calibration_race_type,
+        search_iterations=search_iterations,
+        random_seed=random_seed,
     )
     if run_backtest:
         result = get_calibration_result(
@@ -397,7 +468,7 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
 
     if result_signature != current_signature:
         st.warning(
-            "The dataset has changed since the last calibration. Run the backtest again to refresh the results."
+            "The calibration setup has changed since the last run. Run the backtest again to refresh the results."
         )
         return
 
@@ -487,41 +558,10 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
 
     fold_detail = best_eval["fold_details"]
     if not fold_detail.empty:
-        year_detail = fold_detail[fold_detail["test_year"] == selected_fold].copy()
-        year_detail = year_detail.rename(
-            columns={
-                "race_name": "Race",
-                "category": "Category",
-                "category_history": "Category History",
-                "race_country": "Country",
-                "train_editions": "Train Editions",
-                "train_years": "Train Years",
-                "predicted_score": "Predicted Score",
-                "actual_points_efficiency": "Actual Efficiency",
-                "actual_top10_points": "Actual Top-10 Points",
-                "actual_top10_field_form": "Actual Top-10 Field Form",
-                "predicted_rank": "Predicted Rank",
-                "actual_rank": "Actual Rank",
-            }
-        )
+        year_detail = prepare_backtest_fold_detail(fold_detail, selected_fold)
         st.markdown("**Calibrated ranking versus actual next-year outcome**")
         st.dataframe(
-            year_detail[
-                [
-                    "Race",
-                    "Category",
-                    "Category History",
-                    "Country",
-                    "Train Editions",
-                    "Train Years",
-                    "Predicted Score",
-                    "Actual Efficiency",
-                    "Actual Top-10 Points",
-                    "Actual Top-10 Field Form",
-                    "Predicted Rank",
-                    "Actual Rank",
-                ]
-            ].round(
+            year_detail.round(
                 {
                     "Predicted Score": 3,
                     "Actual Efficiency": 3,
