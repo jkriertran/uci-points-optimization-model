@@ -5,6 +5,7 @@ from typing import Mapping
 import pandas as pd
 
 from .data import OPTIONAL_STAGE_COLUMNS
+from .fc_client import TARGET_CATEGORIES
 
 TARGET_HISTORY_KEY = "target_history_id"
 
@@ -167,6 +168,46 @@ def summarize_historical_targets(
     ).reset_index(drop=True)
 
 
+def overlay_planning_calendar(
+    target_summary: pd.DataFrame,
+    planning_calendar: pd.DataFrame,
+    planning_year: int,
+    in_scope_categories: tuple[str, ...] = TARGET_CATEGORIES,
+) -> pd.DataFrame:
+    if target_summary.empty:
+        return _add_empty_planning_columns(target_summary.copy(), planning_year)
+
+    scoped_categories = set(in_scope_categories)
+    summary = target_summary.copy()
+    planning_columns = [
+        "race_id",
+        "race_name",
+        "category",
+        "date_label",
+        "month",
+        "year",
+    ]
+
+    if planning_calendar.empty:
+        return _add_empty_planning_columns(summary, planning_year)
+
+    planning = (
+        planning_calendar[planning_columns]
+        .sort_values(["year", "month", "race_name"])
+        .drop_duplicates(subset=["race_id"], keep="last")
+        .rename(
+            columns={
+                "race_name": "planning_race_name",
+                "category": "planning_category",
+                "date_label": "planning_date_label",
+                "month": "planning_month",
+                "year": "planning_year",
+            }
+        )
+    )
+    return _finalize_planning_columns(summary, planning, planning_year, scoped_categories)
+
+
 def _percentile_score(series: pd.Series, reverse: bool = False) -> pd.Series:
     if series.empty:
         return series.copy()
@@ -197,3 +238,49 @@ def _ordered_unique_strings(values: pd.Series) -> list[str]:
         ordered.append(text)
         seen.add(text)
     return ordered
+
+
+def _finalize_planning_columns(
+    summary: pd.DataFrame,
+    planning: pd.DataFrame,
+    planning_year: int,
+    scoped_categories: set[str],
+) -> pd.DataFrame:
+    merged = summary.merge(planning, on="race_id", how="left")
+    merged["on_planning_calendar"] = merged["planning_category"].isin(scoped_categories)
+    merged["planning_scope_match"] = merged["category"] == merged["planning_category"]
+    merged["planning_calendar_status"] = merged.apply(
+        lambda row: _planning_calendar_status(row, planning_year, scoped_categories),
+        axis=1,
+    )
+    return merged
+
+
+def _add_empty_planning_columns(target_summary: pd.DataFrame, planning_year: int) -> pd.DataFrame:
+    summary = target_summary.copy()
+    summary["planning_race_name"] = pd.Series(dtype=str)
+    summary["planning_category"] = pd.Series(dtype=str)
+    summary["planning_date_label"] = pd.Series(dtype=str)
+    summary["planning_month"] = pd.Series(dtype="Int64")
+    summary["planning_year"] = planning_year
+    summary["on_planning_calendar"] = False
+    summary["planning_scope_match"] = False
+    summary["planning_calendar_status"] = f"Not found on {planning_year} calendar"
+    return summary
+
+
+def _planning_calendar_status(
+    row: pd.Series,
+    planning_year: int,
+    scoped_categories: set[str],
+) -> str:
+    planning_category = row.get("planning_category")
+    if pd.isna(planning_category):
+        return f"Not found on {planning_year} calendar"
+    planning_category = str(planning_category)
+
+    if planning_category in scoped_categories and row.get("category") == planning_category:
+        return f"On {planning_year} .1/.Pro calendar"
+    if planning_category in scoped_categories:
+        return f"On {planning_year} .1/.Pro calendar (category changed to {planning_category})"
+    return f"On {planning_year} calendar but out of scope ({planning_category})"

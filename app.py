@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
@@ -7,12 +8,19 @@ import plotly.express as px
 import streamlit as st
 
 from uci_points_model.backtest import calibrate_weights
-from uci_points_model.data import build_dataset, ensure_dataset_schema, load_snapshot
-from uci_points_model.fc_client import TARGET_CATEGORIES
-from uci_points_model.model import DEFAULT_WEIGHTS, normalize_weights, score_race_editions, summarize_historical_targets
+from uci_points_model.data import build_dataset, ensure_dataset_schema, load_calendar, load_snapshot
+from uci_points_model.fc_client import PLANNING_CALENDAR_CATEGORIES, TARGET_CATEGORIES
+from uci_points_model.model import (
+    DEFAULT_WEIGHTS,
+    normalize_weights,
+    overlay_planning_calendar,
+    score_race_editions,
+    summarize_historical_targets,
+)
 
 SNAPSHOT_PATH = Path("data/race_editions_snapshot.csv")
 DEFAULT_YEARS = [2021, 2022, 2023, 2024, 2025]
+DEFAULT_PLANNING_YEAR = date.today().year
 WEIGHT_STATE_KEYS = {name: f"weight_{name}" for name in DEFAULT_WEIGHTS}
 WEIGHT_DEFAULT_VERSION = "calibrated-one-day-v1"
 DATASET_SCHEMA_VERSION = "stage-breakdown-v1"
@@ -37,6 +45,11 @@ def get_calibration_result(
         search_iterations=search_iterations,
         random_seed=random_seed,
     )
+
+
+@st.cache_data(show_spinner=False, ttl=60 * 60 * 12)
+def get_planning_calendar(year: int, categories: tuple[str, ...]) -> pd.DataFrame:
+    return load_calendar(year=year, categories=categories)
 
 
 def initialize_weight_state() -> None:
@@ -606,7 +619,8 @@ def main() -> None:
     st.info(
         "This version uses FirstCycling results plus the extended startlist page. "
         "Stage races now roll up GC points and individual stage-result points into one event-level opportunity score, "
-        "but route type and team-specific rider fit are still outside the model."
+        "but route type and team-specific rider fit are still outside the model. "
+        "Recommendations can also be checked against a live planning-season calendar."
     )
     initialize_weight_state()
     apply_pending_weight_state()
@@ -624,6 +638,16 @@ def main() -> None:
             "Race categories",
             options=list(TARGET_CATEGORIES),
             default=list(TARGET_CATEGORIES),
+        )
+        planning_year = int(
+            st.number_input(
+                "Planning season",
+                min_value=2020,
+                max_value=2035,
+                value=DEFAULT_PLANNING_YEAR,
+                step=1,
+                help="Cross-check recommendations against this season's live calendar.",
+            )
         )
         data_source = st.radio(
             "Dataset source",
@@ -712,22 +736,36 @@ def main() -> None:
 
     scored_editions = score_race_editions(dataset, weights)
     target_summary = summarize_historical_targets(scored_editions)
+    planning_calendar = get_planning_calendar(planning_year, tuple(PLANNING_CALENDAR_CATEGORIES))
+    target_summary = overlay_planning_calendar(target_summary, planning_calendar, planning_year)
+    target_summary = target_summary.sort_values(
+        ["on_planning_calendar", "avg_arbitrage_score", "avg_top10_points"],
+        ascending=[False, False, False],
+    ).reset_index(drop=True)
 
     render_model_explainer(weights, dataset)
 
-    left, middle, right, far_right = st.columns(4)
+    left, middle, right, far_right, farthest = st.columns(5)
     left.metric("Race editions analyzed", f"{len(scored_editions):,}")
     middle.metric("Category-aware targets", f"{len(target_summary):,}")
-    right.metric("Average top-10 payout", f"{scored_editions['top10_points'].mean():.1f}")
-    far_right.metric("Average startlist size", f"{scored_editions['startlist_size'].mean():.0f}")
+    right.metric(
+        f"On {planning_year} .1/.Pro calendar",
+        f"{int(target_summary['on_planning_calendar'].sum()):,}",
+    )
+    far_right.metric("Average top-10 payout", f"{scored_editions['top10_points'].mean():.1f}")
+    farthest.metric("Average startlist size", f"{scored_editions['startlist_size'].mean():.0f}")
 
-    top_targets = target_summary.head(15).copy()
+    top_targets = target_summary.copy()
     top_targets["avg_arbitrage_score"] = top_targets["avg_arbitrage_score"].round(1)
     top_targets["avg_top10_points"] = top_targets["avg_top10_points"].round(1)
     top_targets["avg_stage_top10_points"] = top_targets["avg_stage_top10_points"].round(1)
     top_targets["avg_stage_count"] = top_targets["avg_stage_count"].round(1)
     top_targets["avg_top10_field_form"] = top_targets["avg_top10_field_form"].round(1)
     top_targets["avg_points_efficiency"] = top_targets["avg_points_efficiency"].round(2)
+    top_targets["planning_scope_match"] = top_targets["planning_scope_match"].map(
+        {True: "Same category", False: "Category changed"}
+    )
+    top_targets.loc[~top_targets["on_planning_calendar"], "planning_scope_match"] = "No in-scope match"
     top_targets = top_targets.rename(
         columns={
             "race_name": "Race",
@@ -743,6 +781,10 @@ def main() -> None:
             "avg_stage_count": "Avg Stage Days",
             "avg_top10_field_form": "Avg Top-10 Field Form",
             "avg_points_efficiency": "Points per Field-Form",
+            "planning_category": f"{planning_year} Category",
+            "planning_date_label": f"{planning_year} Date",
+            "planning_calendar_status": f"{planning_year} Calendar Status",
+            "planning_scope_match": f"{planning_year} Match",
         }
     )
 
@@ -752,12 +794,36 @@ def main() -> None:
 
     with tab_targets:
         st.subheader("Best Races to Target Next Season")
+        show_active_only = st.checkbox(
+            f"Only show races on the {planning_year} .1/.Pro calendar",
+            value=True,
+            help="Hide recommendations that are not on this season's in-scope calendar.",
+        )
+        display_targets = top_targets.copy()
+        if show_active_only:
+            display_targets = display_targets[
+                display_targets[f"{planning_year} Calendar Status"].str.contains(
+                    rf"On {planning_year} \.1/\.Pro calendar", regex=True
+                )
+            ].copy()
+        display_targets = display_targets.head(15)
+
+        if display_targets.empty:
+            st.info(
+                f"No recommended targets matched the {planning_year} .1/.Pro calendar under the current filters. "
+                "Turn off the checkbox to inspect out-of-scope or missing races."
+            )
+
         st.dataframe(
-            top_targets[
+            display_targets[
                 [
                     "Race",
                     "Country",
                     "Category",
+                    f"{planning_year} Category",
+                    f"{planning_year} Date",
+                    f"{planning_year} Match",
+                    f"{planning_year} Calendar Status",
                     "Category History",
                     "Race Type",
                     "Same-Category Editions",
@@ -778,7 +844,8 @@ def main() -> None:
             "The model lifts races that consistently offer strong top-10 points while historically "
             "drawing softer startlists. Stage races are still ranked as one target each, but their "
             "points totals now include both GC and stage-result payouts. If a race changed category, "
-            "the recommendation uses the latest known category and shows the full category history alongside it."
+            "the recommendation uses the latest known category and shows the full category history alongside it. "
+            f"The extra {planning_year} columns tell you whether that race is actually on this season's calendar."
         )
 
     with tab_diagnostics:

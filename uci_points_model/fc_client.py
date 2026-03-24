@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 
 BASE_URL = "https://firstcycling.com/"
 TARGET_CATEGORIES = ("1.Pro", "2.Pro", "1.1", "2.1")
+PLANNING_CALENDAR_CATEGORIES = ("1.UWT", "2.UWT", "1.Pro", "2.Pro", "1.1", "2.1", "1.2", "2.2")
 
 
 @dataclass(frozen=True, slots=True)

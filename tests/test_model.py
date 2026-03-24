@@ -1,7 +1,7 @@
 import pandas as pd
 
 from uci_points_model.backtest import calibrate_weights
-from uci_points_model.model import score_race_editions, summarize_historical_targets
+from uci_points_model.model import overlay_planning_calendar, score_race_editions, summarize_historical_targets
 
 
 def test_score_race_editions_rewards_soft_fields() -> None:
@@ -357,3 +357,78 @@ def test_calibrate_weights_uses_same_category_history_only() -> None:
     assert result["eligible"] is True
     assert set(fold_detail["race_name"]) == {"Stable Race"}
     assert set(fold_detail["category"]) == {"1.1"}
+
+
+def test_overlay_planning_calendar_marks_current_scope_and_category_changes() -> None:
+    target_summary = pd.DataFrame(
+        [
+            {
+                "race_id": 1,
+                "race_name": "Same Category Race",
+                "category": "1.1",
+                "avg_arbitrage_score": 80.0,
+            },
+            {
+                "race_id": 2,
+                "race_name": "Promoted Race",
+                "category": "1.1",
+                "avg_arbitrage_score": 78.0,
+            },
+            {
+                "race_id": 3,
+                "race_name": "Dropped Race",
+                "category": "1.Pro",
+                "avg_arbitrage_score": 76.0,
+            },
+            {
+                "race_id": 4,
+                "race_name": "Missing Race",
+                "category": "2.1",
+                "avg_arbitrage_score": 70.0,
+            },
+        ]
+    )
+    planning_calendar = pd.DataFrame(
+        [
+            {
+                "race_id": 1,
+                "race_name": "Same Category Race",
+                "category": "1.1",
+                "date_label": "12.04",
+                "month": 4,
+                "year": 2026,
+            },
+            {
+                "race_id": 2,
+                "race_name": "Promoted Race",
+                "category": "1.Pro",
+                "date_label": "19.04",
+                "month": 4,
+                "year": 2026,
+            },
+            {
+                "race_id": 3,
+                "race_name": "Dropped Race",
+                "category": "1.2",
+                "date_label": "25.04",
+                "month": 4,
+                "year": 2026,
+            },
+        ]
+    )
+
+    annotated = overlay_planning_calendar(target_summary, planning_calendar, planning_year=2026)
+
+    same = annotated.loc[annotated["race_id"] == 1].iloc[0]
+    promoted = annotated.loc[annotated["race_id"] == 2].iloc[0]
+    dropped = annotated.loc[annotated["race_id"] == 3].iloc[0]
+    missing = annotated.loc[annotated["race_id"] == 4].iloc[0]
+
+    assert same["planning_calendar_status"] == "On 2026 .1/.Pro calendar"
+    assert bool(same["on_planning_calendar"]) is True
+    assert promoted["planning_calendar_status"] == "On 2026 .1/.Pro calendar (category changed to 1.Pro)"
+    assert bool(promoted["on_planning_calendar"]) is True
+    assert dropped["planning_calendar_status"] == "On 2026 calendar but out of scope (1.2)"
+    assert bool(dropped["on_planning_calendar"]) is False
+    assert missing["planning_calendar_status"] == "Not found on 2026 calendar"
+    assert bool(missing["on_planning_calendar"]) is False

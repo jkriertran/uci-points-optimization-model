@@ -1,12 +1,18 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import asdict
 from pathlib import Path
 from typing import Iterable
 
 import pandas as pd
 
-from .fc_client import FirstCyclingClient, RaceCalendarEntry, TARGET_CATEGORIES
+from .fc_client import (
+    FirstCyclingClient,
+    PLANNING_CALENDAR_CATEGORIES,
+    RaceCalendarEntry,
+    TARGET_CATEGORIES,
+)
 
 OPTIONAL_STAGE_COLUMNS: dict[str, float | int] = {
     "gc_scoring_places": 0,
@@ -95,6 +101,32 @@ def load_snapshot(
     if categories:
         dataset = dataset[dataset["category"].isin(list(categories))]
     return dataset.reset_index(drop=True)
+
+
+def load_calendar(
+    year: int,
+    categories: Iterable[str] | None = None,
+    months: Iterable[int] | None = None,
+) -> pd.DataFrame:
+    try:
+        calendar_client = FirstCyclingClient()
+        entries = calendar_client.get_calendar_entries(
+            year=year,
+            categories=categories or PLANNING_CALENDAR_CATEGORIES,
+            months=months,
+        )
+    except Exception:  # noqa: BLE001
+        return pd.DataFrame(
+            columns=["race_id", "race_name", "category", "date_label", "month", "year"]
+        )
+
+    if not entries:
+        return pd.DataFrame(
+            columns=["race_id", "race_name", "category", "date_label", "month", "year"]
+        )
+
+    calendar = pd.DataFrame(asdict(entry) for entry in entries)
+    return calendar.sort_values(["month", "race_name"]).reset_index(drop=True)
 
 
 def write_snapshot(dataset: pd.DataFrame, snapshot_path: str | Path) -> None:
