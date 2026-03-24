@@ -29,6 +29,7 @@ OPTIONAL_STAGE_COLUMNS: dict[str, float | int] = {
     "gc_points_share": 0.0,
     "stage_points_share": 0.0,
 }
+CALENDAR_COLUMNS = ["race_id", "race_name", "category", "date_label", "month", "year"]
 
 
 def build_dataset(
@@ -108,25 +109,37 @@ def load_calendar(
     categories: Iterable[str] | None = None,
     months: Iterable[int] | None = None,
 ) -> pd.DataFrame:
+    selected_categories = tuple(categories or PLANNING_CALENDAR_CATEGORIES)
+    selected_months = tuple(months or range(1, 13))
     try:
         calendar_client = FirstCyclingClient()
         entries = calendar_client.get_calendar_entries(
             year=year,
-            categories=categories or PLANNING_CALENDAR_CATEGORIES,
-            months=months,
+            categories=selected_categories,
+            months=selected_months,
         )
     except Exception:  # noqa: BLE001
-        return pd.DataFrame(
-            columns=["race_id", "race_name", "category", "date_label", "month", "year"]
-        )
+        fallback = _load_calendar_fallback(year, selected_categories, selected_months)
+        if fallback is not None:
+            fallback.attrs["calendar_source"] = "snapshot"
+            return fallback
+        empty = _empty_calendar_frame()
+        empty.attrs["calendar_source"] = "unavailable"
+        return empty
 
     if not entries:
-        return pd.DataFrame(
-            columns=["race_id", "race_name", "category", "date_label", "month", "year"]
-        )
+        fallback = _load_calendar_fallback(year, selected_categories, selected_months)
+        if fallback is not None:
+            fallback.attrs["calendar_source"] = "snapshot"
+            return fallback
+        empty = _empty_calendar_frame()
+        empty.attrs["calendar_source"] = "unavailable"
+        return empty
 
     calendar = pd.DataFrame(asdict(entry) for entry in entries)
-    return calendar.sort_values(["month", "race_name"]).reset_index(drop=True)
+    calendar = calendar.sort_values(["month", "race_name"]).reset_index(drop=True)
+    calendar.attrs["calendar_source"] = "live"
+    return calendar
 
 
 def write_snapshot(dataset: pd.DataFrame, snapshot_path: str | Path) -> None:
@@ -173,3 +186,30 @@ def ensure_dataset_schema(dataset: pd.DataFrame) -> pd.DataFrame:
         if column_name not in enriched.columns:
             enriched[column_name] = default_value
     return enriched
+
+
+def _empty_calendar_frame() -> pd.DataFrame:
+    return pd.DataFrame(columns=CALENDAR_COLUMNS)
+
+
+def _load_calendar_fallback(
+    year: int,
+    categories: Iterable[str],
+    months: Iterable[int],
+) -> pd.DataFrame | None:
+    fallback_path = Path(__file__).resolve().parent.parent / "data" / f"planning_calendar_{year}.csv"
+    if not fallback_path.exists():
+        return None
+
+    calendar = pd.read_csv(fallback_path)
+    if categories:
+        calendar = calendar[calendar["category"].isin(list(categories))]
+    if months:
+        calendar = calendar[calendar["month"].isin(list(months))]
+
+    if calendar.empty:
+        return _empty_calendar_frame()
+
+    available_columns = [column for column in CALENDAR_COLUMNS if column in calendar.columns]
+    calendar = calendar[available_columns]
+    return calendar.sort_values(["month", "race_name"]).reset_index(drop=True)

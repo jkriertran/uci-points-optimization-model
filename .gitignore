@@ -8,3 +8,4 @@ data/*.csv
 Breaking into Professional Cycling Analytics_ A Guide for Outsiders.md
 !data/.gitkeep
 !data/race_editions_snapshot.csv
+!data/planning_calendar_2026.csv

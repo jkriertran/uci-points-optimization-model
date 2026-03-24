@@ -1,0 +1,334 @@
+race_id,race_name,category,date_label,month,year
+868,AlUla Tour,2.Pro,27.01-31.01,1,2026
+24922,Classica Camp de Morvedre,1.1,23.01,1,2026
+411,Clàssica Comunitat Valenciana 1969,1.1,25.01,1,2026
+22183,Gran Premio Castellón,1.1,24.01,1,2026
+27605,Pune Grand Tour,2.2,19.01-23.01,1,2026
+1,Tour Down Under,2.UWT,20.01-25.01,1,2026
+460,Tour of Sharjah,2.2,23.01-27.01,1,2026
+274,Trofeo Andratx - Pollença,1.1,31.01,1,2026
+271,Trofeo Calvià,1.1,28.01,1,2026
+100,Trofeo Serra Tramuntana,1.1,30.01,1,2026
+27987,Trofeo Ses Salines TTT,1.1,29.01,1,2026
+454,Vuelta al Táchira,2.2,09.01-18.01,1,2026
+1172,Cadel Evans Great Ocean Road Race,1.UWT,01.02,2,2026
+129,Clasica de Almeria,1.Pro,15.02,2,2026
+21999,Classic Var,1.1,21.02,2,2026
+16519,Clásica Jaén,1.1,16.02,2,2026
+121,Faun-Ardèche Classic,1.Pro,28.02,2,2026
+18947,Figueira Champions Classic,1.Pro,14.02,2,2026
+97,GP la Marseillaise,1.1,01.02,2,2026
+27612,Grand Prix Alaiye,1.2,21.02,2,2026
+13421,Grand Prix Antalya,1.2,07.02,2,2026
+27613,Grand Prix Pedalia,1.2,28.02,2,2026
+18946,Muscat Classic,1.Pro,06.02,2,2026
+53,Omloop Nieuwsblad,1.UWT,28.02,2,2026
+4396,Tour de La Provence,2.1,13.02-15.02,2,2026
+111,Tour des Alpes-Maritimes,1.1,22.02,2,2026
+57,Tour of Oman,2.Pro,07.02-11.02,2,2026
+83,Trofeo Palma,1.1,01.02,2,2026
+9800,UAE Tour,2.UWT,16.02-22.02,2,2026
+27602,Visit South Aegean GP,1.1,28.02,2,2026
+319,Volta Comunitat Valenciana,2.Pro,04.02-08.02,2,2026
+107,Volta ao Algarve,2.Pro,18.02-22.02,2,2026
+110,Vuelta a Andalucía,2.Pro,18.02-22.02,2,2026
+74,Vuelta a Murcia,2.1,13.02-14.02,2,2026
+106,Étoile de Bessèges,2.1,04.02-08.02,2,2026
+1529,Annemasse-Bellegarde,1.2,29.03,3,2026
+123,Bredene Koksijde Classic,1.Pro,20.03,3,2026
+124,Classic Loire Atlantique,1.2,28.03,3,2026
+22014,Clásica Terres de l´Ebre,1.1,21.03,3,2026
+114,Coppi e Bartali,2.1,25.03-29.03,3,2026
+510,Dorpenomloop Rucphen,1.2,08.03,3,2026
+47,E3 Saxo Classic,1.UWT,27.03,3,2026
+116,Ename Samyn Classic,1.1,03.03,3,2026
+432,Faun Drome Classic,1.Pro,01.03,3,2026
+937,GP Adria Mobil,1.2,29.03,3,2026
+2729,GP Jean-Pierre Monseré,1.1,22.03,3,2026
+284,GP Lillers,1.2,08.03,3,2026
+508,GP Slovenian Istria,1.2,22.03,3,2026
+146,GP de Denain,1.Pro,19.03,3,2026
+109,Giro di Sardegna,2.1,25.02-01.03,3,2026
+1499,Gran Premio Primavera-Ontur,1.2,22.03,3,2026
+20015,Grand Prix Apollon Temple,1.2,07.03,3,2026
+20016,Grand Prix Syedra Ancient City,1.2,28.03,3,2026
+7,In Flanders Fields,1.UWT,29.03,3,2026
+276,Istrian Spring Tour,2.2,12.03-15.03,3,2026
+84,Kuurne-Brussel-Kuurne,1.Pro,01.03,3,2026
+260,La Roue Tourangelle,1.1,29.03,3,2026
+18953,Le Tour des 100 Communes,1.2,07.03,3,2026
+89,Milano - Torino,1.Pro,18.03,3,2026
+4,Milano-Sanremo,1.UWT,21.03,3,2026
+122,Nokere Koerse,1.Pro,18.03,3,2026
+340,Olympia's Tour,2.2,25.03-29.03,3,2026
+278,POREC Classic,1.2,08.03,3,2026
+145,Paris - Camembert,1.1,31.03,3,2026
+2,Paris-Nice,2.UWT,08.03-15.03,3,2026
+1194,Popolarissima,1.2,15.03,3,2026
+27604,Region on Dodecanese GP,1.1,01.03,3,2026
+7005,Rhodes GP,1.2,07.03,3,2026
+40,Ronde Van Brugge - Tour of Bruges,1.UWT,25.03,3,2026
+283,Ster van Zwolle,1.2,07.03,3,2026
+54,Strade Bianche,1.UWT,07.03,3,2026
+3,Tirreno-Adriatico,2.UWT,09.03-15.03,3,2026
+132,Tour de Taiwan,2.1,15.03-19.03,3,2026
+450,Tour du Rwanda,2.1,22.02-01.03,3,2026
+8472,Tour of Antalya,2.2,12.03-15.03,3,2026
+844,Tour of Rhodes,2.2,12.03-15.03,3,2026
+507,Tour of Thailand,2.1,24.03-29.03,3,2026
+112,Trofeo Laigueglia,1.Pro,04.03,3,2026
+7004,Troféu Internacional da Arrábida,1.2,22.03,3,2026
+277,UMAG Classic,1.2,04.03,3,2026
+14,Volta Ciclista a Catalunya,2.UWT,23.03-29.03,3,2026
+288,Volta ao Alentejo,2.2,25.03-29.03,3,2026
+9,Amstel Gold Race,1.UWT,19.04,4,2026
+9018,Belgrade Banjaluka,2.2,22.04-25.04,4,2026
+290,Boucle de l'Artois,1.2,04.04,4,2026
+77,Brabantse Pijl,1.Pro,17.04,4,2026
+293,Circuit des Ardennes,2.2,08.04-12.04,4,2026
+15075,Classic Grand Besançon Doubs,1.1,17.04,4,2026
+1242,Clásica de Pascua-Padron,1.2,12.04,4,2026
+75,Dwars door Vlaanderen,1.UWT,01.04,4,2026
+48,GP Miguel Indurain,1.Pro,04.04,4,2026
+8772,GP de la Ville d'Alger,1.2,28.04,4,2026
+108,Giro Reggio Calabria,1.1,10.04,4,2026
+149,Giro dell'Appennino,1.1,26.04,4,2026
+27598,Giro della Magna Grecia,2.1,12.04-16.04,4,2026
+798,Giro della Provincia Biella,1.2,19.04,4,2026
+27614,Grand Prix Alanya,1.2,03.04,4,2026
+27599,Grand Prix Fergana,2.2,20.04-21.04,4,2026
+6,Itzulia Basque Country,2.UWT,06.04-11.04,4,2026
+10,La Flèche Wallonne,1.UWT,22.04,4,2026
+11,Liège-Bastogne-Liège,1.UWT,26.04,4,2026
+126,NXT Classic,1.1,04.04,4,2026
+16526,O Gran Camiño,2.1,14.04-18.04,4,2026
+5822,Omloop van de Braakman,1.2,11.04,4,2026
+8,Paris-Roubaix,1.UWT,12.04,4,2026
+437,Ronde van Limburg,1.1,15.04,4,2026
+5,Ronde van Vlaanderen,1.UWT,05.04,4,2026
+134,Route Adélie de Vitré,1.1,03.04,4,2026
+521,Rutland - Melton Classic,1.2,26.04,4,2026
+217,Région Pays de la Loire Tour,2.Pro,07.04-10.04,4,2026
+56,Scheldeprijs,1.Pro,08.04,4,2026
+9376,Slezanski Mnich,1.2,12.04,4,2026
+465,Tour d'Algérie,2.2,17.04-26.04,4,2026
+1285,Tour du Jura,1.1,18.04,4,2026
+294,Tour du Loir-et-Cher,2.2,15.04-19.04,4,2026
+27606,Tour of Bosnia and Herzegovina,2.2,17.04-19.04,4,2026
+22005,Tour of Bostonliq,2.2,28.04-29.04,4,2026
+139,Tour of Hainan,2.Pro,15.04-19.04,4,2026
+938,Tour of Mersin,2.2,09.04-12.04,4,2026
+62,Tour of the Alps,2.Pro,20.04-24.04,4,2026
+153,Vuelta a Asturias,2.1,23.04-26.04,4,2026
+175,4 Jours de Dunkerque,2.Pro,20.05-24.05,5,2026
+315,Alpes Isère Tour,2.2,27.05-31.05,5,2026
+10204,Antwerp Port Epic,1.1,25.05,5,2026
+27600,Baku-Khankendi Azerbaijan Cycling Race,2.1,10.05-14.05,5,2026
+24925,Beskid Classic,1.2,10.05,5,2026
+182,Boucles de l'Aulne,1.1,17.05,5,2026
+343,Boucles de la Mayenne,2.Pro,28.05-31.05,5,2026
+537,Circuit de Wallonie,1.1,14.05,5,2026
+535,Circuito del Porto,1.2,17.05,5,2026
+24917,Classique Dunkerque,1.Pro,19.05,5,2026
+20757,De Fokker Slag om Woensdrecht,1.2,03.05,5,2026
+734,Due Giorni Marchigiana - G.P. Santa Rita,1.2,23.05,5,2026
+35,Eschborn-Frankfurt,1.UWT,01.05,5,2026
+7660,Famenne Ardenne Classic,1.1,03.05,5,2026
+554,Flèche Ardennaise,1.2,07.05,5,2026
+67,Flèche du Sud,2.1,13.05-17.05,5,2026
+736,Fyen Rundt,1.2,03.05,5,2026
+3277,GP Anicolor,2.1,01.05-03.05,5,2026
+4008,GP Beiras e Serra da Estrela,2.1,20.05-24.05,5,2026
+72,GP Herning,1.2,02.05,5,2026
+1047,GP Vorarlberg,1.2,01.05,5,2026
+13,Giro d'Italia,2.UWT,08.05-31.05,5,2026
+22007,Gran Premio New York City,1.2,17.05,5,2026
+539,Grand Prix Criquielion,1.1,24.05,5,2026
+18424,Grand Prix de Cotonou,1.2,03.05,5,2026
+180,Grand Prix du Morbihan,1.Pro,09.05,5,2026
+27797,La Vesdrienne,1.2,06.05,5,2026
+544,Omloop der Kempen,1.2,17.05,5,2026
+286,Omloop van het Waasland,1.2,01.05,5,2026
+285,Paris-Troyes,1.2,25.05,5,2026
+49,Ringerike GP,1.2,10.05,5,2026
+577,Ronde van Overijssel,1.2,02.05,5,2026
+144,Rund um Köln,1.1,17.05,5,2026
+22003,Silesian Beskid Race,1.2,09.05,5,2026
+73,Sundvolden GP,1.2,09.05,5,2026
+82,Tour de Bretagne,2.2,25.04-01.05,5,2026
+765,Tour de Hongrie,2.Pro,13.05-17.05,5,2026
+502,Tour de Kumano,2.2,07.05-10.05,5,2026
+12,Tour de Romandie,2.UWT,28.04-03.05,5,2026
+6156,Tour du Bénin,2.2,27.04-02.05,5,2026
+147,Tour du Finistère,1.1,16.05,5,2026
+7657,Tour of Albania,2.2,18.05-22.05,5,2026
+513,Tour of Hellas,2.1,06.05-10.05,5,2026
+341,Tour of Japan,2.2,24.05-31.05,5,2026
+22010,Tour of Lithuania,2.2,27.05-31.05,5,2026
+152,Tour of Türkiye,2.Pro,26.04-03.05,5,2026
+22519,Tour of Yellow River (Dongying),2.2,16.05-17.05,5,2026
+239,Tour of the Gila,2.2,29.04-03.05,5,2026
+148,Tro-Bro Leon,1.Pro,10.05,5,2026
+408,Trofeo Castelfidardo,1.2,24.05,5,2026
+50,Veenendaal Classic,1.1,23.05,5,2026
+17278,Vuelta Bantrab,2.2,29.04-03.05,5,2026
+18948,Andorra MoraBanc Clàssica,1.1,21.06,6,2026
+60,Baloise Belgium Tour,2.Pro,17.06-21.06,6,2026
+64,Brussels Cycling Classic,1.Pro,07.06,6,2026
+231,Circuit Franco-Belge,1.Pro,10.06,6,2026
+24928,Classique of Mauritius,1.2,07.06,6,2026
+24060,Copenhagen Sprint,1.UWT,14.06,6,2026
+425,Dwars door het Hageland,1.1,13.06,6,2026
+580,GP Czechia,1.2,06.06,6,2026
+199,GP Gippingen,1.1,14.06,6,2026
+579,GP Poland,1.2,07.06,6,2026
+27607,Grand Prix Jizzakh,2.2,18.06-19.06,6,2026
+349,Heistse Pijl,1.1,06.06,6,2026
+13188,Mercan'Tour Classic Alpes-Maritimes,1.1,03.06,6,2026
+996,Muur Classic Geraardsbergen,1.1,14.06,6,2026
+552,Oberösterreich Rundfahrt,2.2,04.06-07.06,6,2026
+345,Ronde de l'Oise,2.2,04.06-07.06,6,2026
+212,Route d'Occitanie,2.1,18.06-20.06,6,2026
+15,Tour Auvergne - Rhône-Alpes,2.UWT,07.06-14.06,6,2026
+27853,Tour Szlakiem Mazurskich Twierdz,2.2,19.06-21.06,6,2026
+235,Tour de Beauce,2.2,10.06-14.06,6,2026
+24919,Tour de Gyeongnam,2.2,09.06-13.06,6,2026
+5228,Tour de Maurice,2.2,02.06-05.06,6,2026
+16,Tour de Suisse,2.UWT,17.06-21.06,6,2026
+193,Tour de Wallonie,2.Pro,01.06-05.06,6,2026
+473,Tour du Cameroun,2.2,05.06-14.06,6,2026
+250,Tour of Estonia,2.1,04.06-06.06,6,2026
+386,Tour of Malopolska,2.2,11.06-14.06,6,2026
+211,Tour of Slovenia,2.Pro,17.06-21.06,6,2026
+546,Trofeo Alcide Degasperi,1.2,02.06,6,2026
+662,Trofeo Citta di Brescia,1.2,30.06,6,2026
+488,Vuelta a Venezuela,2.2,31.05-07.06,6,2026
+563,Dookola Mazowsza,2.2,22.07-25.07,7,2026
+582,GP Hungary,1.2,11.07,7,2026
+287,GP Nogent-sur-Oise,1.2,05.07,7,2026
+581,GP Slovakia,1.2,12.07,7,2026
+398,GP Torres Vedras,2.2,09.07-12.07,7,2026
+583,GP de Pérenchies,1.2,26.07,7,2026
+559,Giro del Medio Brenta,1.2,05.07,7,2026
+27601,Lyon - Torino,2.1,01.07-03.07,7,2026
+531,Mem. A.Trochanowskiego,1.2,21.07,7,2026
+2088,Midden Brabant,1.2,05.07,7,2026
+4014,Puchar Mon,1.2,26.07,7,2026
+20074,SD WORX BW Classic,1.2,05.07,7,2026
+258,Sibiu Cycling Tour,2.1,04.07-07.07,7,2026
+257,Solidarnosc Champions,2.2,01.07-04.07,7,2026
+455,Tour de Banyuwangi Ijen,2.2,27.07-30.07,7,2026
+17,Tour de France,2.UWT,04.07-26.07,7,2026
+63,Tour de l'Ain,2.1,28.07-30.07,7,2026
+38,Tour of Austria,2.1,07.07-12.07,7,2026
+127,Tour of Magnificent Qinghai,2.Pro,05.07-12.07,7,2026
+207,Villafranca de Ordizia,1.1,25.07,7,2026
+85,Vuelta a Castilla y León,1.1,26.07,7,2026
+20,ADAC Cyclassics,1.UWT,16.08,8,2026
+259,Arctic Race of Norway,2.Pro,13.08-16.08,8,2026
+391,Baltic Chain Tour,2.2,20.08-23.08,8,2026
+22,Bretagne Classic,1.UWT,30.08,8,2026
+202,Circuito de Getxo,1.1,02.08,8,2026
+15209,Czech Tour,2.Pro,13.08-16.08,8,2026
+18,Donostia San Sebastian Klasikoa,1.UWT,01.08,8,2026
+209,GP Kranj,1.1,30.08,8,2026
+8328,GP Plouay Elite Open,1.2,30.08,8,2026
+27616,Grand Prix Davraz,1.2,14.08,8,2026
+27617,Grand Prix Gölcük,1.2,16.08,8,2026
+27615,Grand Prix Isparta,1.2,09.08,8,2026
+27608,Grand Prix Navoi,2.2,11.08-13.08,8,2026
+27618,Grand Prix Rose,1.2,22.08,8,2026
+18958,Grote Prijs Stad Halle,1.2,30.08,8,2026
+385,Kreiz Breizh Elites,2.2,31.07-03.08,8,2026
+36,Lidl Deutschland Tour,2.Pro,19.08-23.08,8,2026
+265,Philly Cycling Classic,1.1,30.08,8,2026
+203,Polynormande,1.1,16.08,8,2026
+32,PostNord Tour of Denmark,2.Pro,29.07-02.08,8,2026
+21,Renewi Tour,2.UWT,19.08-23.08,8,2026
+8310,Ronde van de Achterhoek,1.2,30.08,8,2026
+3239,Slag om Norg,1.2,23.08,8,2026
+19,Tour de Pologne,2.UWT,03.08-09.08,8,2026
+586,Tour de la Guadeloupe,2.2,31.07-09.08,8,2026
+431,Tour do Rio,2.2,29.07-02.08,8,2026
+191,Tour du Limousin,2.1,18.08-21.08,8,2026
+187,Tour du Poitou-Charentes,2.1,25.08-28.08,8,2026
+27610,Tour of Kahramanmaras,2.2,04.08-07.08,8,2026
+27609,Tour of Samsun,2.2,27.08-30.08,8,2026
+566,Tour of Szeklerland,2.2,06.08-08.08,8,2026
+18951,Trans-Himalaya Cycling Race,2.1,02.08-06.08,8,2026
+192,Vuelta a Burgos,2.Pro,04.08-08.08,8,2026
+86,Vuelta a Colombia,2.2,07.08-16.08,8,2026
+428,Arno Wallaard Memorial,1.2,12.09,9,2026
+773,CRO Race,2.Pro,22.09-27.09,9,2026
+160,Coppa Sabatini,1.Pro,10.09,9,2026
+26819,Dhofar Classic,1.2,05.09,9,2026
+445,GP Chantal Biya,2.2,02.09-06.09,9,2026
+263,GP Industria & Artigianato,1.Pro,06.09,9,2026
+58,GP Montreal,1.UWT,13.09,9,2026
+59,GP Québec,1.UWT,11.09,9,2026
+9979,GP Rik Van Looy,1.2,13.09,9,2026
+171,GP d'Isbergues,1.1,20.09,9,2026
+19038,GP d'Ongola,1.2,01.09,9,2026
+92,GP de Fourmies,1.Pro,13.09,9,2026
+166,GP de la Somme,1.2,06.09,9,2026
+752,Giro d'Abruzzo,2.1,15.09-18.09,9,2026
+88,Giro del Lazio,1.1,19.09,9,2026
+538,Giro della Regione Friuli,2.2,03.09-06.09,9,2026
+163,Giro della Romagna,1.1,20.09,9,2026
+4025,Giro della Toscana,1.1,09.09,9,2026
+444,Gooikse Pijl,1.1,20.09,9,2026
+142,Grand Prix Cerami,1.2,26.09,9,2026
+93,Grand Prix de Wallonie,1.Pro,16.09,9,2026
+167,Kamp. van Vlaanderen,1.1,18.09,9,2026
+13191,Maryland Cycling Classic,2.Pro,05.09-07.09,9,2026
+68,Memorial Pantani,1.1,12.09,9,2026
+401,Okolo Jiznich Cech,2.2,03.09-06.09,9,2026
+380,Okolo Slovenska,2.1,16.09-20.09,9,2026
+170,Omloop van het Houtland,1.1,23.09,9,2026
+949,Paris-Chauny,1.1,27.09,9,2026
+168,SUPER 8 Classic,1.Pro,19.09,9,2026
+10173,Sauerlandrundfahrt,2.2,03.09-06.09,9,2026
+27611,Tour d'Arménie,2.2,10.09-13.09,9,2026
+255,Tour de Korea,2.1,31.08-04.09,9,2026
+37,Tour de Luxembourg,2.Pro,16.09-20.09,9,2026
+344,Tour de Serbie,2.2,17.09-20.09,9,2026
+7767,Tour de la Mirabelle,1.2,25.09,9,2026
+16539,Tour of Binzhou,2.1,08.09-09.09,9,2026
+45,Tour of Britain,2.Pro,02.09-06.09,9,2026
+955,Tour of Bulgaria,2.2,05.09-10.09,9,2026
+20780,Tour of Huangshan,2.1,18.09-20.09,9,2026
+20781,Tour of Istanbul,2.1,03.09-06.09,9,2026
+9699,Tour of Kosovo,2.2,03.09-05.09,9,2026
+25513,Tour of Mentougou,2.2,25.09-27.09,9,2026
+4048,Tour of Poyang Lake,2.2,17.09-26.09,9,2026
+16578,Tour of Salalah,2.2,06.09-09.09,9,2026
+24779,Tour of Shanghai,2.2,04.09-06.09,9,2026
+242,Tour of Taihu Lake,2.1,12.09-16.09,9,2026
+205,Trofeo Matteotti,1.1,13.09,9,2026
+549,Turul Romaniei,2.2,09.09-13.09,9,2026
+23,Vuelta a España,2.UWT,22.08-13.09,9,2026
+213,ZLM Tour,2.1,02.09-06.09,9,2026
+159,Binche-Chimay-Binche,1.1,06.10,10,2026
+125,Cholet Agglo Tour,1.1,03.10,10,2026
+154,Chrono des Nations,1.1,18.10,10,2026
+262,Coppa Agostoni,1.1,04.10,10,2026
+196,Coppa Bernocchi,1.Pro,05.10,10,2026
+21437,Coppa Citta' di San Daniele,1.2,06.10,10,2026
+183,Giro del Veneto,1.Pro,14.10,10,2026
+29,Giro dell'Emilia,1.Pro,03.10,10,2026
+61,Gran Piemonte,1.Pro,08.10,10,2026
+8499,Hong Kong Cyclothon,1.1,11.10,10,2026
+24,Il Lombardia,1.UWT,10.10,10,2026
+95,Japan Cup,1.Pro,18.10,10,2026
+158,Münsterland Giro,1.Pro,03.10,10,2026
+24921,NIBC Tour of Holland,2.1,13.10-18.10,10,2026
+8523,Oita Urban Classic,1.2,04.10,10,2026
+28,Paris - Tours,1.Pro,11.10,10,2026
+18945,Tour de Kyushu,2.1,10.10-12.10,10,2026
+128,Tour de Langkawi,2.Pro,27.09-04.10,10,2026
+94,Tour de Vendée,1.1,04.10,10,2026
+7591,Tour of Guangxi,2.UWT,13.10-18.10,10,2026
+190,Tre Valli Varesine,1.Pro,06.10,10,2026
+27048,Trofeo Tessile & Moda - Valdengo Oropa,1.1,11.10,10,2026
+15208,Veneto Classic,1.Pro,18.10,10,2026
+27049,Volta Ciclística de Santa Catarina,2.2,07.10-11.10,10,2026

@@ -737,6 +737,8 @@ def main() -> None:
     scored_editions = score_race_editions(dataset, weights)
     target_summary = summarize_historical_targets(scored_editions)
     planning_calendar = get_planning_calendar(planning_year, tuple(PLANNING_CALENDAR_CATEGORIES))
+    planning_calendar_source = planning_calendar.attrs.get("calendar_source", "live")
+    planning_calendar_available = not planning_calendar.empty
     target_summary = overlay_planning_calendar(target_summary, planning_calendar, planning_year)
     target_summary = target_summary.sort_values(
         ["on_planning_calendar", "avg_arbitrage_score", "avg_top10_points"],
@@ -794,48 +796,69 @@ def main() -> None:
 
     with tab_targets:
         st.subheader("Best Races to Target Next Season")
+        if planning_calendar_source == "snapshot":
+            st.caption(
+                f"Using the bundled {planning_year} planning-calendar snapshot because the live calendar fetch "
+                "was unavailable in this session."
+            )
+        elif planning_calendar_source == "unavailable":
+            st.warning(
+                f"The {planning_year} planning calendar could not be loaded right now, so the in-season calendar "
+                "filter is temporarily disabled."
+            )
         show_active_only = st.checkbox(
             f"Only show races on the {planning_year} .1/.Pro calendar",
-            value=True,
+            value=planning_calendar_available,
+            disabled=not planning_calendar_available,
             help="Hide recommendations that are not on this season's in-scope calendar.",
         )
-        display_targets = top_targets.copy()
+        target_columns = [
+            "Race",
+            "Country",
+            "Category",
+            f"{planning_year} Category",
+            f"{planning_year} Date",
+            f"{planning_year} Match",
+            f"{planning_year} Calendar Status",
+            "Category History",
+            "Race Type",
+            "Same-Category Editions",
+            "Years",
+            "Arbitrage Score",
+            "Avg Top-10 Points",
+            "Avg Stage Top-10 Points",
+            "Avg Stage Days",
+            "Avg Top-10 Field Form",
+            "Points per Field-Form",
+        ]
+        export_targets = top_targets.copy()
         if show_active_only:
-            display_targets = display_targets[
-                display_targets[f"{planning_year} Calendar Status"].str.contains(
+            export_targets = export_targets[
+                export_targets[f"{planning_year} Calendar Status"].str.contains(
                     rf"On {planning_year} \.1/\.Pro calendar", regex=True
                 )
             ].copy()
-        display_targets = display_targets.head(15)
+        display_targets = export_targets.head(15)
 
         if display_targets.empty:
             st.info(
                 f"No recommended targets matched the {planning_year} .1/.Pro calendar under the current filters. "
                 "Turn off the checkbox to inspect out-of-scope or missing races."
             )
+        else:
+            st.caption(
+                f"Showing {len(display_targets)} races in the app. The CSV export includes {len(export_targets)} races "
+                "from the current filter state."
+            )
+            st.download_button(
+                "Download recommended targets as CSV",
+                data=export_targets[target_columns].to_csv(index=False).encode("utf-8"),
+                file_name=f"uci_points_recommended_targets_{planning_year}.csv",
+                mime="text/csv",
+            )
 
         st.dataframe(
-            display_targets[
-                [
-                    "Race",
-                    "Country",
-                    "Category",
-                    f"{planning_year} Category",
-                    f"{planning_year} Date",
-                    f"{planning_year} Match",
-                    f"{planning_year} Calendar Status",
-                    "Category History",
-                    "Race Type",
-                    "Same-Category Editions",
-                    "Years",
-                    "Arbitrage Score",
-                    "Avg Top-10 Points",
-                    "Avg Stage Top-10 Points",
-                    "Avg Stage Days",
-                    "Avg Top-10 Field Form",
-                    "Points per Field-Form",
-                ]
-            ],
+            display_targets[target_columns],
             use_container_width=True,
             hide_index=True,
         )
