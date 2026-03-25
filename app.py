@@ -481,6 +481,12 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
     st.caption(
         "The walk-forward backtest calibrates only the core arbitrage model. The new route-and-specialty fit layer is a user/team overlay and is not backtested here."
     )
+    st.markdown(
+        "This is a **walk-forward / time-series** backtest, not ordinary random k-fold cross-validation. "
+        "If you want the general math behind the idea, the "
+        "[scikit-learn TimeSeriesSplit documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html) "
+        "is a good reference."
+    )
 
     with st.form("calibration_form"):
         calibration_dataset_source = st.radio(
@@ -703,6 +709,9 @@ def main() -> None:
             options=list(range(2020, 2027)),
             default=DEFAULT_YEARS,
             help="Use past editions to estimate which races are attractive next season.",
+        )
+        st.caption(
+            "`2020` is available for sensitivity checks, but it is excluded from the default selection because the COVID-disrupted calendar was unusually irregular."
         )
         categories = st.multiselect(
             "Race categories",
