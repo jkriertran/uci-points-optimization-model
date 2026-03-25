@@ -186,6 +186,52 @@ def prepare_backtest_fold_detail(fold_detail: pd.DataFrame, selected_fold: int) 
     return year_detail[required_columns]
 
 
+def render_start_here() -> None:
+    st.markdown("**Start Here**")
+    left, middle, right = st.columns(3)
+    with left:
+        st.markdown(
+            """
+            **What this app does**
+
+            Ranks `.1` and `.Pro` races as historical UCI points opportunities and adds a separate ProTeam concentration monitor.
+            """
+        )
+    with middle:
+        st.markdown(
+            """
+            **What it does not do**
+
+            It does not forecast exact rider results or tell a team exactly how many points it will score.
+            """
+        )
+    with right:
+        st.markdown(
+            """
+            **Best way to use it**
+
+            Start with `Recommended Targets`, then use the other tabs for diagnostics, backtesting, and ProTeam risk.
+            """
+        )
+    st.caption(
+        "The deeper idea, methods, and math are available in the collapsed explainer below whenever you want the full logic."
+    )
+
+
+def render_workspace_guide(planning_year: int) -> None:
+    st.markdown("**Choose A Workspace Below**")
+    st.caption("Use the tabs below to move through the app. Start with `Recommended Targets` if you're new.")
+    st.markdown(
+        f"""
+        - `Recommended Targets`: the best races to target next season, cross-checked against the `{planning_year}` calendar.
+        - `Edition Diagnostics`: inspect one historical race edition and see its payout, field softness, and route-fit context.
+        - `Backtest & Calibration`: see how the model performs on future years and compare default versus calibrated weights.
+        - `ProTeam Risk Monitor`: track how concentrated each ProTeam's counted UCI points are across its rider core.
+        - `Raw Data`: inspect the loaded race dataset directly.
+        """
+    )
+
+
 def render_model_explainer(
     weights: dict[str, float],
     specialty_weights: dict[str, float],
@@ -200,7 +246,7 @@ def render_model_explainer(
         int(dataset.groupby("race_id")["category"].nunique().gt(1).sum()) if not dataset.empty else 0
     )
 
-    with st.expander("How the model works: idea, methods, and math", expanded=True):
+    with st.expander("How the model works: idea, methods, and math", expanded=False):
         st.markdown("**What this app is actually for**")
         st.markdown(
             """
@@ -992,17 +1038,9 @@ def main() -> None:
 
     st.title("UCI Points Optimization Model")
     st.caption(
-        "Score .1 and .Pro races by balancing historical points payout against historical "
-        "startlist strength, then surface the best relegation-battle opportunities."
+        "An explainable race-opportunity and ProTeam-risk app for `.1` and `.Pro` road racing."
     )
-    st.info(
-        "This version uses FirstCycling results plus the extended startlist page. "
-        "Stage races now roll up GC points and individual stage-result points into one event-level opportunity score, "
-        "and it now includes a lightweight route-profile x specialty-fit beta overlay inferred from event structure. "
-        "Full route GPS modeling and true team-specific roster optimization are still outside the model. "
-        "Recommendations can also be checked against a live planning-season calendar, and the app now includes "
-        "a ProTeam Risk Monitor tab for rider-contribution concentration."
-    )
+    render_start_here()
     initialize_weight_state()
     apply_pending_weight_state()
     initialize_dataset_state()
@@ -1180,6 +1218,7 @@ def main() -> None:
     )
     far_right.metric("Average top-10 payout", f"{scored_editions['top10_points'].mean():.1f}")
     farthest.metric("Average startlist size", f"{scored_editions['startlist_size'].mean():.0f}")
+    render_workspace_guide(planning_year)
 
     top_targets = target_summary.copy()
     top_targets["avg_targeting_score"] = top_targets["avg_targeting_score"].round(1)
