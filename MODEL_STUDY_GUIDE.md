@@ -354,6 +354,41 @@ Possible outcomes:
 
 This makes the shortlist actionable instead of purely historical.
 
+## How The ProTeam Risk Monitor Works
+
+The ProTeam monitor is a separate lens on the same planning problem.
+
+Instead of asking:
+
+"Which races look attractive?"
+
+it asks:
+
+"How concentrated are a ProTeam's counted UCI points?"
+
+That matters because a team can look healthy in the ranking table, but still be fragile if one rider is doing most of the work.
+
+The monitor therefore uses rider-by-rider counted team points and computes concentration metrics such as:
+
+- `Top-1 Share`
+- `Top-3 Share`
+- `Top-5 Share`
+- `Effective Contributors`
+- leader shock tests
+
+Simple examples:
+
+- if one rider has 40% of the team's counted points, that is high concentration
+- if removing the top 2 riders wipes out most of the team total, that is structural risk
+
+This module is still not forecasting exact rider performance.
+
+It is a monitoring dashboard that helps answer:
+
+- how dependent is this team on one rider?
+- how deep is the real scoring base?
+- how vulnerable is the team if its leader gets injured or loses form?
+
 ## What The Backtest Is Doing
 
 The backtest is trying to answer:
@@ -361,6 +396,16 @@ The backtest is trying to answer:
 "Do these weights help identify good future race opportunities?"
 
 It does this with walk-forward testing.
+
+This is a time-aware backtest, not ordinary random k-fold cross-validation.
+
+In plain English, that means:
+
+- use only earlier years to train
+- test on the next year
+- then roll the window forward and repeat
+
+If you want a general reference for the math behind this kind of time-series split, the [scikit-learn TimeSeriesSplit documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html) is a good place to start.
 
 Example:
 
@@ -371,6 +416,15 @@ Example:
 The backtest is still race-level.
 
 It does not test rider predictions.
+
+One important implication is that the earliest possible test year is the third loaded historical year, because the app requires two prior training years before it will score a fold.
+
+Example:
+
+- if you load `2021-2025`, the valid test years are `2023`, `2024`, and `2025`
+- if you load `2020-2025`, the first possible test year becomes `2022`
+
+The app also keeps `2020` available only as a sensitivity-check year, not in the default selection. That is because the COVID-disrupted 2020 calendar was unusually irregular, so it is a weaker baseline for normal-season planning.
 
 ## What The Backtest Uses As The Outcome
 

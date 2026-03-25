@@ -26,6 +26,7 @@ The recommendation layer is **category-aware**. If a race changes class across y
 - lets users blend a chosen specialty mix into a fit-aware `Targeting Score`
 - aggregates repeated editions into a shortlist of races worth targeting next season
 - includes a walk-forward backtest that calibrates weights on prior years and checks them against future race editions
+- includes a `ProTeam Risk Monitor` tab that shows how concentrated counted UCI team points are across ProTeam riders
 
 If you want a presentation-ready explanation of the model, see `MODEL_STUDY_GUIDE.md`.
 Planned future work is tracked in `ROADMAP.md`.
@@ -42,13 +43,17 @@ Planned future work is tracked in `ROADMAP.md`.
 │   └── build_snapshot.py
 ├── tests/
 │   ├── test_fc_client.py
-│   └── test_model.py
+│   ├── test_model.py
+│   ├── test_pcs_client.py
+│   └── test_proteam_risk.py
 └── uci_points_model/
     ├── __init__.py
     ├── backtest.py
     ├── data.py
     ├── fc_client.py
-    └── model.py
+    ├── model.py
+    ├── pcs_client.py
+    └── proteam_risk.py
 ```
 
 ## Local run
@@ -76,6 +81,21 @@ Optional flags:
 
 This repository already includes a bundled snapshot at `data/race_editions_snapshot.csv`, so the app can start quickly and the backtest can run out of the box.
 
+The ProTeam monitor also ships with bundled PCS snapshots:
+
+- `data/proteam_risk_current_snapshot.csv`
+- `data/proteam_risk_cycle_2026_2028_snapshot.csv`
+
+Refresh them with:
+
+```bash
+PYTHONPATH=. python3 scripts/build_proteam_risk_snapshot.py
+```
+
+This repo now also includes a GitHub Actions workflow at `.github/workflows/refresh_proteam_snapshots.yml`
+that refreshes those two files on a daily schedule. It is intentionally `latest only`:
+the fixed snapshot filenames are overwritten in place rather than archived by date.
+
 ## Streamlit deployment
 
 This repo is ready for Streamlit Community Cloud:
@@ -98,11 +118,27 @@ That module:
 
 The backtest is intentionally done at the **race level**. It does not forecast exact rider outcomes.
 
+## ProTeam risk monitor
+
+The app also includes a `ProTeam Risk Monitor` tab.
+
+That module:
+
+- loads current-season UCI team ranking data and the `2026-2028` team-ranking cycle
+- filters to `PRT` teams
+- reads each team's rider-by-rider counted-points breakdown
+- computes concentration metrics like `Top-1 Share`, `Top-3 Share`, `Effective Contributors`, and shock tests
+
+It is designed to answer:
+
+"How dependent is a ProTeam on one rider, or a tiny rider core, for its counted UCI points?"
+
 ## Modeling notes
 
 - One-day races are the cleanest use case.
 - Stage races are modeled as one calendar target with `GC + stage-result` points rolled into the event-level payout.
 - Race-category changes are handled explicitly, so a historical `1.1` version and a later `1.Pro` version are not blended into one uninterrupted target history.
 - The app now includes a lightweight beta route-profile x specialty-fit overlay, but it is inferred from event structure rather than full GPX or gradient data.
+- The ProTeam monitor is a concentration-risk dashboard, not a rider-performance model.
 - The model still does not do true team-specific roster optimization, probable lineups, or internal role planning.
 - The startlist-strength proxy comes from FirstCycling's extended startlist stats (`Starts`, `Wins`, `Podium`, `Top 10`), not from private team power files or internal rankings.

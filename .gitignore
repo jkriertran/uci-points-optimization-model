@@ -9,3 +9,5 @@ Breaking into Professional Cycling Analytics_ A Guide for Outsiders.md
 !data/.gitkeep
 !data/race_editions_snapshot.csv
 !data/planning_calendar_2026.csv
+!data/proteam_risk_current_snapshot.csv
+!data/proteam_risk_cycle_2026_2028_snapshot.csv

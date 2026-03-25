@@ -1,0 +1,43 @@
+name: Refresh ProTeam Snapshots
+
+on:
+  schedule:
+    - cron: "15 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-proteam-snapshots:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Refresh latest ProTeam snapshots
+        run: |
+          PYTHONPATH=. python scripts/build_proteam_risk_snapshot.py
+
+      - name: Commit updated snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/proteam_risk_current_snapshot.csv data/proteam_risk_cycle_2026_2028_snapshot.csv; then
+            echo "No snapshot changes to commit."
+            exit 0
+          fi
+          git add data/proteam_risk_current_snapshot.csv data/proteam_risk_cycle_2026_2028_snapshot.csv
+          git commit -m "Refresh latest ProTeam risk snapshots"
+          git push

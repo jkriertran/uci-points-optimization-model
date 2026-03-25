@@ -19,8 +19,19 @@ from uci_points_model.model import (
     score_race_editions,
     summarize_historical_targets,
 )
+from uci_points_model.pcs_client import CYCLE_SCOPE, CURRENT_SCOPE
+from uci_points_model.proteam_risk import (
+    build_proteam_risk_dataset,
+    load_proteam_risk_snapshot,
+    prepare_proteam_detail,
+    summarize_proteam_risk,
+)
 
 SNAPSHOT_PATH = Path("data/race_editions_snapshot.csv")
+PROTEAM_SCOPE_LABELS = {
+    CURRENT_SCOPE: "Current season",
+    CYCLE_SCOPE: "2026-2028 license cycle",
+}
 DEFAULT_YEARS = [2021, 2022, 2023, 2024, 2025]
 DEFAULT_PLANNING_YEAR = date.today().year
 WEIGHT_STATE_KEYS = {name: f"weight_{name}" for name in DEFAULT_WEIGHTS}
@@ -52,6 +63,13 @@ def get_calibration_result(
 @st.cache_data(show_spinner=False, ttl=60 * 60 * 12)
 def get_planning_calendar(year: int, categories: tuple[str, ...]) -> pd.DataFrame:
     return load_calendar(year=year, categories=categories)
+
+
+@st.cache_data(show_spinner=False, ttl=60 * 60)
+def get_live_proteam_risk_dataset(scope: str) -> pd.DataFrame:
+    dataset = build_proteam_risk_dataset(scope=scope)
+    dataset.attrs["risk_data_source"] = "live"
+    return dataset
 
 
 def initialize_weight_state() -> None:
@@ -679,6 +697,299 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
     st.dataframe(leaderboard.round(3), use_container_width=True, hide_index=True)
 
 
+def render_proteam_risk_tab() -> None:
+    st.subheader("ProTeam Risk Monitor")
+    st.markdown(
+        """
+        This monitor is about **points concentration**, not rider forecasting.
+        It asks a simple question:
+        **how dependent is a ProTeam on one rider, or a very small core, for its counted UCI points?**
+        """
+    )
+    st.caption(
+        "High concentration can create vulnerability to injury, transfer, illness, or loss of form. "
+        "The current-season and 2026-2028 views answer different planning questions."
+    )
+
+    control_left, control_mid, control_right = st.columns([2, 1, 1])
+    scope_label = control_left.radio(
+        "Points view",
+        options=[PROTEAM_SCOPE_LABELS[CURRENT_SCOPE], PROTEAM_SCOPE_LABELS[CYCLE_SCOPE]],
+        index=0,
+        horizontal=True,
+    )
+    scope = next(key for key, value in PROTEAM_SCOPE_LABELS.items() if value == scope_label)
+    prefer_snapshot = control_mid.checkbox(
+        "Use bundled snapshot only",
+        value=False,
+        help="Skip live PCS refresh and use the bundled snapshot immediately.",
+    )
+    refresh_live = control_right.button(
+        "Refresh PCS data",
+        disabled=prefer_snapshot,
+        help="Clear the cached live scrape for this scope and fetch fresh PCS data.",
+    )
+    if refresh_live:
+        get_live_proteam_risk_dataset.clear()
+
+    fallback_reason = ""
+    if prefer_snapshot:
+        raw_dataset = load_proteam_risk_snapshot(scope)
+        data_source = "snapshot" if not raw_dataset.empty else "unavailable"
+    else:
+        try:
+            with st.spinner("Loading ProTeam contributions from ProCyclingStats..."):
+                raw_dataset = get_live_proteam_risk_dataset(scope)
+            data_source = "live"
+        except Exception as exc:  # noqa: BLE001
+            fallback_reason = str(exc)
+            raw_dataset = load_proteam_risk_snapshot(scope)
+            data_source = "snapshot" if not raw_dataset.empty else "unavailable"
+
+    if raw_dataset.empty:
+        if data_source == "unavailable":
+            st.error(
+                "The ProTeam monitor could not load live PCS data and no bundled snapshot was available for this scope."
+            )
+            if fallback_reason:
+                st.caption(f"Latest live-fetch error: {fallback_reason}")
+        else:
+            st.info("No ProTeam monitor rows were available for the current settings.")
+        return
+
+    if data_source == "live":
+        scraped_at = str(raw_dataset["scraped_at"].max())
+        st.caption(f"Using live PCS data. Latest scrape timestamp: `{scraped_at}`.")
+    elif data_source == "snapshot":
+        snapshot_path = raw_dataset.attrs.get("snapshot_path", "bundled snapshot")
+        scraped_at = str(raw_dataset["scraped_at"].max())
+        st.warning(
+            f"Using the bundled ProTeam snapshot because the live PCS fetch was skipped or unavailable. "
+            f"Snapshot source: `{snapshot_path}`. Snapshot scrape timestamp: `{scraped_at}`."
+        )
+        if fallback_reason:
+            st.caption(f"Latest live-fetch error: {fallback_reason}")
+
+    st.caption(
+        "Risk thresholds: `High` if Top-1 Share >= 35% or Leader Shock >= 30%; "
+        "`Medium` if Top-1 Share >= 25% or Leader Shock >= 20%; otherwise `Lower`."
+    )
+
+    summary = summarize_proteam_risk(raw_dataset)
+    if summary.empty:
+        st.info("No ProTeam summary rows were available after processing the PCS data.")
+        return
+
+    summary["Top-1 Share %"] = (summary["top1_share"] * 100).round(1)
+    summary["Top-3 Share %"] = (summary["top3_share"] * 100).round(1)
+    summary["Top-5 Share %"] = (summary["top5_share"] * 100).round(1)
+    summary["Leader Shock %"] = (summary["leader_shock_drop_pct"] * 100).round(1)
+    summary["Leader+Coleader Shock %"] = (summary["leader_coleader_shock_drop_pct"] * 100).round(1)
+
+    metric_left, metric_mid, metric_right, metric_far = st.columns(4)
+    metric_left.metric("ProTeams monitored", len(summary))
+    metric_mid.metric("High risk teams", int((summary["risk_band"] == "High").sum()))
+    metric_right.metric("Median Top-1 Share", f"{summary['Top-1 Share %'].median():.1f}%")
+    metric_far.metric("Max Top-1 Share", f"{summary['Top-1 Share %'].max():.1f}%")
+
+    chart_frame = summary.sort_values("Top-1 Share %", ascending=False).copy()
+    chart = px.bar(
+        chart_frame,
+        x="Top-1 Share %",
+        y="team_name",
+        color="risk_band",
+        orientation="h",
+        hover_data={
+            "team_total_points": ":.1f",
+            "leader_name": True,
+            "Top-3 Share %": ":.1f",
+            "Leader Shock %": ":.1f",
+            "Leader+Coleader Shock %": ":.1f",
+            "effective_contributors": ":.2f",
+            "data_check": True,
+        },
+        labels={
+            "team_name": "ProTeam",
+            "risk_band": "Risk",
+        },
+        title=f"ProTeam key-man concentration ({scope_label})",
+        color_discrete_map={"High": "#b23a48", "Medium": "#d99a2b", "Lower": "#3d8b5a"},
+    )
+    chart.update_layout(height=560, yaxis={"categoryorder": "total ascending"})
+    st.plotly_chart(chart, use_container_width=True)
+
+    if int((summary["data_check"] == "Warning").sum()):
+        st.warning(
+            "One or more teams had a noticeable gap between the ranking-table total and the summed rider breakdown. "
+            "Those rows are flagged in `Data Check`."
+        )
+
+    summary_export_columns = [
+        "team_rank",
+        "team_name",
+        "team_class",
+        "team_total_points",
+        "leader_name",
+        "Top-1 Share %",
+        "Top-3 Share %",
+        "Top-5 Share %",
+        "Leader Shock %",
+        "Leader+Coleader Shock %",
+        "effective_contributors",
+        "counted_riders_found",
+        "risk_band",
+        "data_check",
+        "source_url",
+        "scraped_at",
+    ]
+    st.download_button(
+        "Download ProTeam summary as CSV",
+        data=summary[summary_export_columns].to_csv(index=False).encode("utf-8"),
+        file_name=f"proteam_risk_summary_{scope}.csv",
+        mime="text/csv",
+    )
+
+    summary_table = summary[
+        [
+            "team_rank",
+            "team_name",
+            "team_total_points",
+            "leader_name",
+            "Top-1 Share %",
+            "Top-3 Share %",
+            "Top-5 Share %",
+            "Leader Shock %",
+            "Leader+Coleader Shock %",
+            "effective_contributors",
+            "counted_riders_found",
+            "risk_band",
+            "data_check",
+        ]
+    ].rename(
+        columns={
+            "team_rank": "Rank",
+            "team_name": "Team",
+            "team_total_points": "Points",
+            "leader_name": "Leader",
+            "effective_contributors": "Effective Contributors",
+            "counted_riders_found": "Counted Riders",
+            "risk_band": "Risk",
+            "data_check": "Data Check",
+        }
+    )
+    st.dataframe(
+        summary_table.round({"Points": 1, "Effective Contributors": 2}),
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    selected_team_name = st.selectbox(
+        "Inspect team",
+        options=summary["team_name"].tolist(),
+        index=0,
+    )
+    selected_team_slug = summary.loc[summary["team_name"] == selected_team_name, "team_slug"].iloc[0]
+    selected_summary = summary.loc[summary["team_slug"] == selected_team_slug].iloc[0]
+    detail = prepare_proteam_detail(raw_dataset, team_slug=selected_team_slug)
+
+    st.markdown("**Team detail**")
+    detail_left, detail_mid, detail_right, detail_far = st.columns(4)
+    detail_left.metric(
+        "Leader",
+        selected_summary["leader_name"],
+        delta=f"{selected_summary['Top-1 Share %']:.1f}% of team points",
+    )
+    detail_mid.metric("Top-3 Share", f"{selected_summary['Top-3 Share %']:.1f}%")
+    detail_right.metric(
+        "Without rider #1",
+        f"{selected_summary['leader_shock_remaining_points']:.1f} pts",
+        delta=f"-{selected_summary['Leader Shock %']:.1f}%",
+    )
+    detail_far.metric(
+        "Without riders #1-2",
+        f"{selected_summary['leader_coleader_shock_remaining_points']:.1f} pts",
+        delta=f"-{selected_summary['Leader+Coleader Shock %']:.1f}%",
+    )
+
+    bar_chart = px.bar(
+        detail.sort_values("points_counted", ascending=True),
+        x="points_counted",
+        y="rider_name",
+        orientation="h",
+        text="points_counted",
+        color="share_pct",
+        labels={
+            "points_counted": "Counted points",
+            "rider_name": "Rider",
+            "share_pct": "Share of team (%)",
+        },
+        title=f"{selected_team_name}: counted-point contribution by rider",
+    )
+    bar_chart.update_traces(texttemplate="%{text:.1f}", textposition="outside")
+    bar_chart.update_layout(height=max(420, 24 * len(detail) + 120), coloraxis_showscale=False)
+    st.plotly_chart(bar_chart, use_container_width=True)
+
+    cumulative_chart = px.line(
+        detail,
+        x="team_rank_within_counted_list",
+        y="cumulative_share_pct",
+        markers=True,
+        labels={
+            "team_rank_within_counted_list": "Rider rank within team",
+            "cumulative_share_pct": "Cumulative share of team points (%)",
+        },
+        title=f"{selected_team_name}: how quickly the rider core reaches 50%, 75%, and 90%",
+    )
+    cumulative_chart.add_hline(y=50, line_dash="dash", line_color="#8b5cf6")
+    cumulative_chart.add_hline(y=75, line_dash="dash", line_color="#d97706")
+    cumulative_chart.add_hline(y=90, line_dash="dash", line_color="#b91c1c")
+    cumulative_chart.update_layout(height=360)
+    st.plotly_chart(cumulative_chart, use_container_width=True)
+
+    detail_table = detail[
+        [
+            "team_rank_within_counted_list",
+            "rider_name",
+            "season_years",
+            "points_counted",
+            "share_pct",
+            "cumulative_share_pct",
+            "points_not_counted",
+            "sanction_points",
+        ]
+    ].rename(
+        columns={
+            "team_rank_within_counted_list": "Rank",
+            "rider_name": "Rider",
+            "season_years": "Seasons",
+            "points_counted": "Counted Points",
+            "share_pct": "Share of Team (%)",
+            "cumulative_share_pct": "Cumulative Share (%)",
+            "points_not_counted": "Not Counted",
+            "sanction_points": "Sanctions",
+        }
+    )
+    st.download_button(
+        "Download selected team rider breakdown as CSV",
+        data=detail_table.to_csv(index=False).encode("utf-8"),
+        file_name=f"proteam_risk_{selected_team_slug}_{scope}.csv",
+        mime="text/csv",
+    )
+    st.dataframe(
+        detail_table.round(
+            {
+                "Counted Points": 1,
+                "Share of Team (%)": 1,
+                "Cumulative Share (%)": 1,
+                "Not Counted": 1,
+                "Sanctions": 1,
+            }
+        ),
+        use_container_width=True,
+        hide_index=True,
+    )
+
+
 def main() -> None:
     st.set_page_config(
         page_title="UCI Points Optimization Model",
@@ -696,7 +1007,8 @@ def main() -> None:
         "Stage races now roll up GC points and individual stage-result points into one event-level opportunity score, "
         "and it now includes a lightweight route-profile x specialty-fit beta overlay inferred from event structure. "
         "Full route GPS modeling and true team-specific roster optimization are still outside the model. "
-        "Recommendations can also be checked against a live planning-season calendar."
+        "Recommendations can also be checked against a live planning-season calendar, and the app now includes "
+        "a ProTeam Risk Monitor tab for rider-contribution concentration."
     )
     initialize_weight_state()
     apply_pending_weight_state()
@@ -915,8 +1227,14 @@ def main() -> None:
         }
     )
 
-    tab_targets, tab_diagnostics, tab_backtest, tab_raw = st.tabs(
-        ["Recommended Targets", "Edition Diagnostics", "Backtest & Calibration", "Raw Data"]
+    tab_targets, tab_diagnostics, tab_backtest, tab_risk, tab_raw = st.tabs(
+        [
+            "Recommended Targets",
+            "Edition Diagnostics",
+            "Backtest & Calibration",
+            "ProTeam Risk Monitor",
+            "Raw Data",
+        ]
     )
 
     with tab_targets:
@@ -1106,6 +1424,9 @@ def main() -> None:
 
     with tab_backtest:
         render_backtest_tab(dataset, years, categories)
+
+    with tab_risk:
+        render_proteam_risk_tab()
 
     with tab_raw:
         st.subheader("Scraped Dataset")

@@ -12,6 +12,7 @@ The app already supports:
 - walk-forward calibration
 - current-season calendar overlay for actionable recommendations
 - beta route-profile x specialty-fit targeting
+- a ProTeam key-man-risk monitor for counted UCI team-point concentration
 
 ## Planned
 
@@ -65,14 +66,21 @@ Still planned:
 
 ### 3. Team And Roster Fit Layer
 
-Status: Planned
+Status: Partially implemented
 
-Potential additions:
+Implemented:
+
+- a ProTeam concentration monitor that shows how dependent a team is on its leading point scorers
+- current-season and `2026-2028` rider-contribution views
+- transparent concentration metrics like `Top-1 Share`, `Top-3 Share`, `Effective Contributors`, and shock tests
+
+Still planned:
 
 - expected team-specific points
 - roster-dependent scenario comparisons
 - probable lineup modeling
 - public-roster versus private-team availability layers
+- route-fit plus team-strength interaction
 
 ### 4. Travel And Scheduling Constraints
 
