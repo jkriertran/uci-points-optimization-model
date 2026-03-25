@@ -10,7 +10,12 @@ Use it in layers:
 
 ## 30-Second Explanation
 
-This app is a race-selection tool, not a rider-prediction tool.
+This app has two main jobs:
+
+- rank `.1` and `.Pro` races as historical UCI points opportunities
+- monitor how concentrated a ProTeam's counted UCI points are across its rider base
+
+It is not a rider-prediction tool.
 
 It asks:
 "Which races have historically offered the best UCI points opportunities relative to how hard the field looked?"
@@ -21,7 +26,7 @@ It does that by combining:
 - how strong the startlist looked before the race
 - how reliable the race is as a scoring opportunity
 
-Then it ranks races and cross-checks those recommendations against the live planning-season calendar, so you can see whether a suggested target actually exists this year.
+Then it cross-checks those recommendations against the live planning-season calendar, so you can see whether a suggested target actually exists this year.
 
 ## 2-Minute Explanation
 
@@ -53,9 +58,9 @@ For each race edition, the app looks at:
 - the extended startlist
 - for stage races, both GC points and individual stage-result points
 
-Then it estimates field strength using a simple rider-form proxy, converts the inputs to percentiles so they are comparable, and combines them into one "arbitrage score."
+Then it estimates field strength using a simple rider-form proxy, converts the inputs to percentiles so they are comparable, and combines them into one "arbitrage score." The app also includes a lightweight beta route-profile x specialty-fit overlay, but that layer is still intentionally simple and inferred from event structure rather than full GPX analysis.
 
-Finally, it aggregates repeated race histories, handles category changes explicitly, and checks whether a recommended race is actually on the current planning-season calendar.
+Finally, it aggregates repeated race histories, handles category changes explicitly, checks whether a recommended race is actually on the current planning-season calendar, and includes a separate ProTeam Risk Monitor for rider-contribution concentration.
 
 ## What Problem The App Solves
 
@@ -76,7 +81,7 @@ It is not:
 - a rider-versus-rider model
 - a team selection optimizer
 - a travel-cost model
-- a route-fit model
+- a full route-GPX or parcours model
 - a prediction of exact UCI points for a specific roster
 
 If someone asks whether the model predicts what a specific team will score, the honest answer is:
@@ -104,7 +109,7 @@ So a stage race is treated as one event with multiple scoring opportunities insi
 
 ## The Data Inputs
 
-The app uses public FirstCycling pages:
+The race-targeting side of the app uses public FirstCycling pages:
 
 - calendar pages
 - results pages
@@ -118,6 +123,17 @@ From those pages, it pulls:
 - date
 - results and UCI points
 - startlist rider records like Starts, Wins, Podium, Top 10
+
+The ProTeam monitor uses:
+
+- rider-by-rider counted UCI team points as surfaced on ProCyclingStats
+- bundled CSV snapshots of that PCS/UCI view for deployment stability
+
+That distinction matters:
+
+- the ProTeam monitor is about **UCI team points**
+- PCS is mainly the delivery layer because it exposes rider-level team breakdowns
+- it is not using a separate PCS proprietary ranking for that monitor
 
 ## The Main Modeling Logic
 
@@ -368,6 +384,12 @@ it asks:
 
 That matters because a team can look healthy in the ranking table, but still be fragile if one rider is doing most of the work.
 
+One important source detail:
+
+- the monitor uses **UCI team points as shown on PCS**
+- PCS is used because it exposes rider-by-rider counted-point breakdowns
+- the official UCI site is the rules source, but PCS is the practical rider-breakdown source
+
 The monitor therefore uses rider-by-rider counted team points and computes concentration metrics such as:
 
 - `Top-1 Share`
@@ -388,6 +410,59 @@ It is a monitoring dashboard that helps answer:
 - how dependent is this team on one rider?
 - how deep is the real scoring base?
 - how vulnerable is the team if its leader gets injured or loses form?
+
+### What The Data Check Flag Means
+
+The `Data Check` flag is a source-reconciliation warning.
+
+It does **not** mean:
+
+- the team is risky
+- the model is broken
+- the team is bad
+
+It means the team total shown in the ranking table did not fully match the total implied by the rider breakdown table.
+
+In plain English:
+
+- `OK` means the ranking-table total and rider breakdown mostly agree
+- `Warning` means there is a noticeable gap between them
+
+That can happen because PCS updated one table before the other, omitted a rider row, or handled a source-side reconciliation detail differently.
+
+### Why Some Teams Can Have Zero Counted Riders
+
+A team can still appear in the current-season monitor even if it has:
+
+- `0` counted points
+- `0` counted riders
+
+That usually means the team is present in the ranking table but PCS does not yet show any counted rider rows for that scope.
+
+The app now keeps those teams in the monitor instead of dropping them silently.
+
+So if you see a team with no leader and no counted riders, the right interpretation is:
+
+"This team exists in the ranking table, but it has not yet built a counted points base in this scope."
+
+### How Freshness Works In The Deployed App
+
+The deployed app is intentionally snapshot-first for the ProTeam monitor.
+
+That means:
+
+- the app normally reads the latest bundled snapshot
+- it shows the snapshot refresh timestamp in the UI
+- a scheduled GitHub Actions job refreshes those snapshots in the background
+
+Why this exists:
+
+- live PCS fetches can be blocked in hosted environments
+- snapshots make the deployed app more stable
+
+So the right explanation is:
+
+"The monitor is designed to show the latest successful bundled refresh, not to depend on a live PCS request every time a user opens the tab."
 
 ## What The Backtest Is Doing
 
@@ -516,12 +591,12 @@ The model assumes that if a race changed class, the latest version is the releva
 These are the biggest limitations.
 
 - startlist form is a proxy, not a true power model
-- no route-type modeling yet
-- no rider specialty modeling yet
+- route and rider fit are still only a lightweight beta overlay inferred from event structure, not full GPX-based route modeling
 - no team roster simulation yet
 - no travel or logistics costs
 - no conflict modeling across multiple simultaneous race options
 - no guarantee that a historically soft race will stay soft
+- the ProTeam monitor depends on PCS exposing rider-level UCI point breakdowns cleanly
 
 If someone asks whether the model is perfect, the right answer is:
 
@@ -554,6 +629,20 @@ You would need:
 - team tactics
 
 This app is designed as the race-selection layer that comes before that.
+
+### "Are the ProTeam points official UCI points or PCS points?"
+
+For the ProTeam monitor, they are **UCI team points as surfaced by PCS**.
+
+That is an important distinction:
+
+- the ranking logic is about UCI points
+- PCS is used because it exposes the rider-by-rider team breakdown
+- sometimes PCS tables do not reconcile perfectly, which is why the app includes the `Data Check` flag
+
+So the clean answer is:
+
+"The monitor is about UCI team points, but PCS is the practical source for the rider-level breakdown."
 
 ### "Why use percentiles instead of raw values?"
 
@@ -591,7 +680,9 @@ Here is a clean explanation you can say almost word-for-word.
 
 "The app also handles category changes explicitly. If a race moved from 1.1 to 1.Pro, those histories are not blended together. And because historical recommendations are not enough by themselves, the app overlays the live planning-season calendar so you can see whether a recommended race actually exists this year and whether it is still in scope."
 
-"So the best way to think about the app is: it is an explainable historical race-opportunity model that helps a team decide where to look first, before doing roster-specific planning."
+"Separately, the app now includes a ProTeam Risk Monitor. That module is not about forecasting riders. It uses rider-by-rider counted UCI team points, as exposed by PCS, to show how dependent a ProTeam is on one rider or a small core."
+
+"So the best way to think about the app is: it is an explainable historical race-opportunity model, plus a ProTeam concentration monitor, that helps a team decide where to look first before doing roster-specific planning."
 
 ## What To Say If Someone Asks "What Would Improve This Next?"
 
@@ -609,4 +700,4 @@ That shows you understand both the current value and the next frontier.
 
 If you only memorize one paragraph, memorize this:
 
-"The app is an explainable, backtested race-selection model. It ranks races by balancing historical points payout against historical field difficulty, using public FirstCycling data. It works at the race level, includes stage-race stage points, handles category changes explicitly, and checks whether recommended races are actually on the current-season calendar. It is a decision-support shortlist tool, not an exact rider-performance predictor."
+"The app is an explainable, backtested race-selection model with a separate ProTeam concentration monitor. It ranks races by balancing historical points payout against historical field difficulty, using public FirstCycling data. It works at the race level, includes stage-race stage points, handles category changes explicitly, and checks whether recommended races are actually on the current-season calendar. Its ProTeam tab uses UCI team points as surfaced by PCS to show key-man risk. It is a decision-support tool, not an exact rider-performance predictor."
