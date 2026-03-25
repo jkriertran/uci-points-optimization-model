@@ -41,22 +41,42 @@ def build_proteam_risk_dataset(
 
         breakdown = pcs_client.get_team_breakdown(team_path=entry.team_path, scope=scope)
         total_counted_points = float(breakdown.total_counted_points or entry.ranking_points)
-        for breakdown_row in breakdown.rows:
+        team_payload = {
+            "scope": scope,
+            "cycle_label": CYCLE_LABEL if scope == CYCLE_SCOPE else "",
+            "team_rank": entry.team_rank,
+            "team_name": entry.team_name,
+            "team_slug": entry.team_slug,
+            "team_class": entry.team_class,
+            "ranking_total_points": float(entry.ranking_points),
+            "team_total_points": total_counted_points,
+            "sanction_points_total": float(breakdown.sanction_points_total),
+            "ranking_url": entry.breakdown_path if scope == CYCLE_SCOPE else entry.breakdown_path,
+            "source_url": breakdown.source_url,
+            "scraped_at": scraped_at,
+        }
+
+        if breakdown.rows:
+            for breakdown_row in breakdown.rows:
+                rows.append(
+                    {
+                        **team_payload,
+                        "is_placeholder_team_row": False,
+                        **breakdown_row,
+                    }
+                )
+        else:
             rows.append(
                 {
-                    "scope": scope,
-                    "cycle_label": CYCLE_LABEL if scope == CYCLE_SCOPE else "",
-                    "team_rank": entry.team_rank,
-                    "team_name": entry.team_name,
-                    "team_slug": entry.team_slug,
-                    "team_class": entry.team_class,
-                    "ranking_total_points": float(entry.ranking_points),
-                    "team_total_points": total_counted_points,
-                    "sanction_points_total": float(breakdown.sanction_points_total),
-                    "ranking_url": entry.breakdown_path if scope == CYCLE_SCOPE else entry.breakdown_path,
-                    "source_url": breakdown.source_url,
-                    "scraped_at": scraped_at,
-                    **breakdown_row,
+                    **team_payload,
+                    "season_year": pd.NA,
+                    "rider_name": "",
+                    "rider_slug": "",
+                    "team_rank_within_counted_list": 0,
+                    "points_counted": 0.0,
+                    "points_not_counted": 0.0,
+                    "sanction_points": 0.0,
+                    "is_placeholder_team_row": True,
                 }
             )
 
@@ -64,6 +84,7 @@ def build_proteam_risk_dataset(
     if dataset.empty:
         return dataset
 
+    dataset["is_placeholder_team_row"] = dataset["is_placeholder_team_row"].fillna(False).astype(bool)
     dataset["season_year"] = pd.to_numeric(dataset["season_year"], errors="coerce").astype("Int64")
     return dataset.sort_values(["team_rank", "season_year", "team_rank_within_counted_list"]).reset_index(
         drop=True
@@ -89,6 +110,10 @@ def load_proteam_risk_snapshot(
     if not path.exists():
         return pd.DataFrame()
     dataset = pd.read_csv(path)
+    if "is_placeholder_team_row" in dataset.columns:
+        dataset["is_placeholder_team_row"] = dataset["is_placeholder_team_row"].fillna(False).astype(bool)
+    else:
+        dataset["is_placeholder_team_row"] = False
     if "season_year" in dataset.columns:
         dataset["season_year"] = pd.to_numeric(dataset["season_year"], errors="coerce").astype("Int64")
     dataset.attrs["snapshot_path"] = str(path)
@@ -100,6 +125,10 @@ def aggregate_proteam_riders(raw_dataset: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
 
     dataset = raw_dataset.copy()
+    if "is_placeholder_team_row" in dataset.columns:
+        dataset["is_placeholder_team_row"] = dataset["is_placeholder_team_row"].fillna(False).astype(bool)
+    else:
+        dataset["is_placeholder_team_row"] = False
     dataset["season_year"] = pd.to_numeric(dataset["season_year"], errors="coerce").astype("Int64")
     group_columns = [
         "scope",
@@ -116,6 +145,7 @@ def aggregate_proteam_riders(raw_dataset: pd.DataFrame) -> pd.DataFrame:
         "scraped_at",
         "rider_name",
         "rider_slug",
+        "is_placeholder_team_row",
     ]
     aggregated = (
         dataset.groupby(group_columns, dropna=False, as_index=False)
@@ -131,9 +161,18 @@ def aggregate_proteam_riders(raw_dataset: pd.DataFrame) -> pd.DataFrame:
         .sort_values(["team_rank", "points_counted", "rider_name"], ascending=[True, False, True])
         .reset_index(drop=True)
     )
-    aggregated["team_rank_within_counted_list"] = aggregated.groupby("team_slug").cumcount() + 1
-    aggregated["share_of_team"] = aggregated["points_counted"] / aggregated["team_total_points"].replace(0, pd.NA)
-    aggregated["share_of_team"] = aggregated["share_of_team"].fillna(0.0)
+    aggregated["team_rank_within_counted_list"] = 0
+    non_placeholder_mask = ~aggregated["is_placeholder_team_row"]
+    aggregated.loc[non_placeholder_mask, "team_rank_within_counted_list"] = (
+        aggregated.loc[non_placeholder_mask]
+        .groupby("team_slug")
+        .cumcount()
+        .add(1)
+        .astype(int)
+    )
+    team_totals = pd.to_numeric(aggregated["team_total_points"], errors="coerce")
+    points_counted = pd.to_numeric(aggregated["points_counted"], errors="coerce")
+    aggregated["share_of_team"] = points_counted.div(team_totals.where(team_totals != 0)).fillna(0.0)
     aggregated["cumulative_share"] = aggregated.groupby("team_slug")["share_of_team"].cumsum()
     return aggregated
 
@@ -145,16 +184,17 @@ def summarize_proteam_risk(raw_dataset: pd.DataFrame) -> pd.DataFrame:
 
     summary_rows: list[dict[str, object]] = []
     for _, group in rider_dataset.groupby("team_slug", sort=False):
-        sorted_group = group.sort_values(["points_counted", "rider_name"], ascending=[False, True]).reset_index(
-            drop=True
-        )
+        sorted_group = group.sort_values(["points_counted", "rider_name"], ascending=[False, True]).reset_index(drop=True)
+        real_group = sorted_group.loc[~sorted_group["is_placeholder_team_row"]].reset_index(drop=True)
+        scoring_group = real_group if not real_group.empty else sorted_group.iloc[0:0]
+
         team_total_points = float(sorted_group["team_total_points"].iloc[0])
         ranking_total_points = float(sorted_group["ranking_total_points"].iloc[0])
-        leader_points = float(sorted_group["points_counted"].iloc[0]) if not sorted_group.empty else 0.0
-        top3_points = float(sorted_group["points_counted"].head(3).sum())
-        top5_points = float(sorted_group["points_counted"].head(5).sum())
-        top2_points = float(sorted_group["points_counted"].head(2).sum())
-        share_series = (sorted_group["points_counted"] / team_total_points) if team_total_points else pd.Series(0.0)
+        leader_points = float(scoring_group["points_counted"].iloc[0]) if not scoring_group.empty else 0.0
+        top3_points = float(scoring_group["points_counted"].head(3).sum())
+        top5_points = float(scoring_group["points_counted"].head(5).sum())
+        top2_points = float(scoring_group["points_counted"].head(2).sum())
+        share_series = (scoring_group["points_counted"] / team_total_points) if team_total_points else pd.Series(0.0)
         effective_contributors = (
             float(1.0 / (share_series.pow(2).sum())) if team_total_points and share_series.pow(2).sum() else 0.0
         )
@@ -177,8 +217,8 @@ def summarize_proteam_risk(raw_dataset: pd.DataFrame) -> pd.DataFrame:
                 "team_class": sorted_group["team_class"].iloc[0],
                 "team_total_points": team_total_points,
                 "ranking_total_points": ranking_total_points,
-                "counted_riders_found": int(len(sorted_group)),
-                "leader_name": sorted_group["rider_name"].iloc[0] if not sorted_group.empty else "",
+                "counted_riders_found": int(len(real_group)),
+                "leader_name": scoring_group["rider_name"].iloc[0] if not scoring_group.empty else "",
                 "leader_points": leader_points,
                 "top1_share": top1_share,
                 "top3_share": top3_share,
@@ -209,6 +249,8 @@ def summarize_proteam_risk(raw_dataset: pd.DataFrame) -> pd.DataFrame:
 
 def prepare_proteam_detail(raw_dataset: pd.DataFrame, team_slug: str) -> pd.DataFrame:
     rider_dataset = aggregate_proteam_riders(raw_dataset)
+    if "is_placeholder_team_row" in rider_dataset.columns:
+        rider_dataset = rider_dataset.loc[~rider_dataset["is_placeholder_team_row"]].copy()
     detail = rider_dataset[rider_dataset["team_slug"] == team_slug].copy()
     if detail.empty:
         return detail

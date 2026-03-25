@@ -882,7 +882,7 @@ def render_proteam_risk_tab() -> None:
     detail_left, detail_mid, detail_right, detail_far = st.columns(4)
     detail_left.metric(
         "Leader",
-        selected_summary["leader_name"],
+        selected_summary["leader_name"] or "None yet",
         delta=f"{selected_summary['Top-1 Share %']:.1f}% of team points",
     )
     detail_mid.metric("Top-3 Share", f"{selected_summary['Top-3 Share %']:.1f}%")
@@ -896,6 +896,13 @@ def render_proteam_risk_tab() -> None:
         f"{selected_summary['leader_coleader_shock_remaining_points']:.1f} pts",
         delta=f"-{selected_summary['Leader+Coleader Shock %']:.1f}%",
     )
+
+    if detail.empty:
+        st.info(
+            "This team is present in the ranking table, but PCS does not currently list any counted rider rows for it. "
+            "That usually means the team has not scored counted points yet in this scope."
+        )
+        return
 
     bar_chart = px.bar(
         detail.sort_values("points_counted", ascending=True),
