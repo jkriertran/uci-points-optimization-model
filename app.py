@@ -11,8 +11,10 @@ from uci_points_model.backtest import calibrate_weights
 from uci_points_model.data import build_dataset, ensure_dataset_schema, load_calendar, load_snapshot
 from uci_points_model.fc_client import PLANNING_CALENDAR_CATEGORIES, TARGET_CATEGORIES
 from uci_points_model.model import (
+    DEFAULT_SPECIALTY_WEIGHTS,
     DEFAULT_WEIGHTS,
     normalize_weights,
+    normalize_specialty_weights,
     overlay_planning_calendar,
     score_race_editions,
     summarize_historical_targets,
@@ -166,7 +168,12 @@ def prepare_backtest_fold_detail(fold_detail: pd.DataFrame, selected_fold: int) 
     return year_detail[required_columns]
 
 
-def render_model_explainer(weights: dict[str, float], dataset: pd.DataFrame) -> None:
+def render_model_explainer(
+    weights: dict[str, float],
+    specialty_weights: dict[str, float],
+    fit_emphasis: float,
+    dataset: pd.DataFrame,
+) -> None:
     error_count = int(dataset.attrs.get("error_count", 0))
     source_count = len(dataset)
     stage_race_count = int((dataset.get("race_type", pd.Series(dtype=str)) == "Stage race").sum())
@@ -252,9 +259,9 @@ def render_model_explainer(weights: dict[str, float], dataset: pd.DataFrame) -> 
             st.markdown(
                 """
                 - Startlist strength is a proxy, not a perfect measure of rider level.
-                - Stage races now include GC plus stage-result points, but the model still does not understand stage type, route fit, or team-specific rider roles.
+                - The new route-and-specialty layer is a beta overlay inferred from event structure and time-trial keywords, not a full GPS or gradient model.
                 - Latest-category planning is based on the latest category visible in the selected data window, so a later drop to `.2` is only visible if that category is included in the dataset.
-                - The model does not yet include travel cost, route fit, internal team goals, or roster conflicts.
+                - The model still does not include travel cost, full route fit, internal team goals, or roster conflicts.
                 """
             )
 
@@ -391,10 +398,60 @@ def render_model_explainer(weights: dict[str, float], dataset: pd.DataFrame) -> 
             "These startup defaults are the current one-day calibrated weights from the bundled 2021-2025 walk-forward backtest."
         )
 
+        st.markdown("**Optional beta: route profile x specialty fit**")
+        st.markdown(
+            """
+            The app now adds a lightweight overlay that infers a race profile from event structure:
+
+            - `One-day classic`: non-TT one-day races
+            - `Time trial`: TT keyword found in the race name or subtitle
+            - `GC-heavy stage race`: most points come from GC rather than stages
+            - `Balanced stage race`: GC and stage scoring are more evenly mixed
+            - `Stage-hunter stage race`: a large share of points comes from stages
+            """
+        )
+        st.latex(
+            rf"""
+            \text{{targeting\_score}}
+            =
+            (1 - {fit_emphasis:.2f}) \cdot \text{{arbitrage\_score}}
+            +
+            {fit_emphasis:.2f} \cdot \text{{specialty\_fit\_score}}
+            """
+        )
+
+        specialty_frame = pd.DataFrame(
+            {
+                "Specialty axis": [
+                    "One-day / classics",
+                    "GC / climbing",
+                    "Stage hunter / sprinter",
+                    "Time trial",
+                    "All-round stage depth",
+                ],
+                "Current weight": [
+                    specialty_weights["one_day"],
+                    specialty_weights["gc"],
+                    specialty_weights["stage_hunter"],
+                    specialty_weights["time_trial"],
+                    specialty_weights["all_round"],
+                ],
+            }
+        )
+        st.dataframe(specialty_frame.round(3), use_container_width=True, hide_index=True)
+        st.caption(
+            "These specialty weights are normalized inside the fit score. If you leave them equal, the beta overlay stays neutral."
+        )
+        st.caption(
+            "This beta fit layer is not part of the walk-forward calibration yet, because it is a team-specific planning overlay rather than a historical baseline."
+        )
+
         st.markdown("**Interpretation guide**")
         st.markdown(
             """
             - A higher `Arbitrage Score` means the race has looked attractive on a payout-versus-field basis.
+            - A higher `Specialty Fit` means the race profile better matches the specialty mix you selected in the sidebar.
+            - `Targeting Score` is the blended planning score: historical opportunity plus your chosen specialty-fit emphasis.
             - A high `Avg Top-10 Points` with a low `Avg Top-10 Field Form` is usually the sweet spot.
             - `Points per Field-Form` is a simpler efficiency view: payout divided by the strength proxy of the top of the field.
             """
@@ -420,6 +477,9 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
     )
     st.caption(
         "Calibration is now category-aware: a race's `1.1` history and `1.Pro` history are treated as separate target histories."
+    )
+    st.caption(
+        "The walk-forward backtest calibrates only the core arbitrage model. The new route-and-specialty fit layer is a user/team overlay and is not backtested here."
     )
 
     with st.form("calibration_form"):
@@ -555,7 +615,16 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
         queue_weight_state(best_eval["weights"])
         st.rerun()
 
+    calibration_years = sorted(calibration_dataset["year"].unique().tolist())
     fold_options = [int(year) for year in result["fold_years"]]
+    if len(calibration_years) >= 3:
+        earliest_possible_test_year = calibration_years[2]
+        st.caption(
+            f"Walk-forward backtesting requires two prior training years, so the earliest possible "
+            f"`test_year` for the current calibration dataset is `{earliest_possible_test_year}`. "
+            f"That is why the first loaded years, such as `{calibration_years[0]}` and `{calibration_years[1]}`, "
+            "do not appear as test years."
+        )
     selected_fold = st.selectbox("Inspect test year", options=fold_options, index=len(fold_options) - 1)
 
     default_fold_table = default_eval["folds"].copy()
@@ -619,7 +688,8 @@ def main() -> None:
     st.info(
         "This version uses FirstCycling results plus the extended startlist page. "
         "Stage races now roll up GC points and individual stage-result points into one event-level opportunity score, "
-        "but route type and team-specific rider fit are still outside the model. "
+        "and it now includes a lightweight route-profile x specialty-fit beta overlay inferred from event structure. "
+        "Full route GPS modeling and true team-specific roster optimization are still outside the model. "
         "Recommendations can also be checked against a live planning-season calendar."
     )
     initialize_weight_state()
@@ -705,6 +775,32 @@ def main() -> None:
             0.05,
             key=WEIGHT_STATE_KEYS["finish_rate"],
         )
+        st.markdown("**Route & specialty fit (beta)**")
+        fit_emphasis = st.slider(
+            "Fit emphasis",
+            0.0,
+            1.0,
+            0.25,
+            0.05,
+            help="Blend the beta specialty-fit overlay into the final targeting score. Equal specialty weights keep the overlay neutral.",
+        )
+        specialty_one_day = st.slider(
+            "One-day / classics strength", 0.0, 1.0, DEFAULT_SPECIALTY_WEIGHTS["one_day"], 0.05
+        )
+        specialty_gc = st.slider("GC / climbing strength", 0.0, 1.0, DEFAULT_SPECIALTY_WEIGHTS["gc"], 0.05)
+        specialty_stage_hunter = st.slider(
+            "Stage hunter / sprinter strength",
+            0.0,
+            1.0,
+            DEFAULT_SPECIALTY_WEIGHTS["stage_hunter"],
+            0.05,
+        )
+        specialty_time_trial = st.slider(
+            "Time-trial strength", 0.0, 1.0, DEFAULT_SPECIALTY_WEIGHTS["time_trial"], 0.05
+        )
+        specialty_all_round = st.slider(
+            "All-round stage depth", 0.0, 1.0, DEFAULT_SPECIALTY_WEIGHTS["all_round"], 0.05
+        )
 
         submitted = st.form_submit_button("Analyze races")
 
@@ -716,6 +812,15 @@ def main() -> None:
         return
 
     weights = current_weight_state()
+    specialty_weights = normalize_specialty_weights(
+        {
+            "one_day": specialty_one_day,
+            "gc": specialty_gc,
+            "stage_hunter": specialty_stage_hunter,
+            "time_trial": specialty_time_trial,
+            "all_round": specialty_all_round,
+        }
+    )
 
     if submitted or "dataset" not in st.session_state:
         with st.spinner("Loading race history and scoring opportunities..."):
@@ -734,18 +839,23 @@ def main() -> None:
         )
         return
 
-    scored_editions = score_race_editions(dataset, weights)
+    scored_editions = score_race_editions(
+        dataset,
+        weights,
+        specialty_weights=specialty_weights,
+        fit_emphasis=fit_emphasis,
+    )
     target_summary = summarize_historical_targets(scored_editions)
     planning_calendar = get_planning_calendar(planning_year, tuple(PLANNING_CALENDAR_CATEGORIES))
     planning_calendar_source = planning_calendar.attrs.get("calendar_source", "live")
     planning_calendar_available = not planning_calendar.empty
     target_summary = overlay_planning_calendar(target_summary, planning_calendar, planning_year)
     target_summary = target_summary.sort_values(
-        ["on_planning_calendar", "avg_arbitrage_score", "avg_top10_points"],
-        ascending=[False, False, False],
+        ["on_planning_calendar", "avg_targeting_score", "avg_arbitrage_score", "avg_top10_points"],
+        ascending=[False, False, False, False],
     ).reset_index(drop=True)
 
-    render_model_explainer(weights, dataset)
+    render_model_explainer(weights, specialty_weights, fit_emphasis, dataset)
 
     left, middle, right, far_right, farthest = st.columns(5)
     left.metric("Race editions analyzed", f"{len(scored_editions):,}")
@@ -758,7 +868,9 @@ def main() -> None:
     farthest.metric("Average startlist size", f"{scored_editions['startlist_size'].mean():.0f}")
 
     top_targets = target_summary.copy()
+    top_targets["avg_targeting_score"] = top_targets["avg_targeting_score"].round(1)
     top_targets["avg_arbitrage_score"] = top_targets["avg_arbitrage_score"].round(1)
+    top_targets["avg_specialty_fit_score"] = top_targets["avg_specialty_fit_score"].round(1)
     top_targets["avg_top10_points"] = top_targets["avg_top10_points"].round(1)
     top_targets["avg_stage_top10_points"] = top_targets["avg_stage_top10_points"].round(1)
     top_targets["avg_stage_count"] = top_targets["avg_stage_count"].round(1)
@@ -774,10 +886,14 @@ def main() -> None:
             "race_country": "Country",
             "category": "Category",
             "race_type": "Race Type",
+            "route_profile": "Route Profile",
+            "profile_reason": "Profile Reason",
             "category_history": "Category History",
             "years_analyzed": "Same-Category Editions",
             "years": "Years",
+            "avg_targeting_score": "Targeting Score",
             "avg_arbitrage_score": "Arbitrage Score",
+            "avg_specialty_fit_score": "Specialty Fit",
             "avg_top10_points": "Avg Top-10 Points",
             "avg_stage_top10_points": "Avg Stage Top-10 Points",
             "avg_stage_count": "Avg Stage Days",
@@ -816,6 +932,7 @@ def main() -> None:
             "Race",
             "Country",
             "Category",
+            "Route Profile",
             f"{planning_year} Category",
             f"{planning_year} Date",
             f"{planning_year} Match",
@@ -824,7 +941,9 @@ def main() -> None:
             "Race Type",
             "Same-Category Editions",
             "Years",
+            "Targeting Score",
             "Arbitrage Score",
+            "Specialty Fit",
             "Avg Top-10 Points",
             "Avg Stage Top-10 Points",
             "Avg Stage Days",
@@ -868,7 +987,8 @@ def main() -> None:
             "drawing softer startlists. Stage races are still ranked as one target each, but their "
             "points totals now include both GC and stage-result payouts. If a race changed category, "
             "the recommendation uses the latest known category and shows the full category history alongside it. "
-            f"The extra {planning_year} columns tell you whether that race is actually on this season's calendar."
+            f"The extra {planning_year} columns tell you whether that race is actually on this season's calendar. "
+            "The beta route-profile overlay then lets you tilt the shortlist toward the kinds of events your chosen specialty mix should suit better."
         )
 
     with tab_diagnostics:
@@ -887,6 +1007,9 @@ def main() -> None:
                 "finish_rate": ":.2f",
                 "winner_points": True,
                 "total_points": True,
+                "targeting_score": ":.1f",
+                "specialty_fit_score": ":.1f",
+                "route_profile": True,
                 "gc_top10_points": True,
                 "stage_top10_points": True,
                 "stage_count": True,
@@ -910,6 +1033,10 @@ def main() -> None:
                 "category",
                 "race_type",
                 "race_country",
+                "route_profile",
+                "profile_reason",
+                "targeting_score",
+                "specialty_fit_score",
                 "arbitrage_score",
                 "top10_points",
                 "winner_points",
@@ -930,6 +1057,10 @@ def main() -> None:
                 "category": "Category",
                 "race_type": "Race Type",
                 "race_country": "Country",
+                "route_profile": "Route Profile",
+                "profile_reason": "Profile Reason",
+                "targeting_score": "Targeting Score",
+                "specialty_fit_score": "Specialty Fit",
                 "arbitrage_score": "Score",
                 "top10_points": "Top-10 Points",
                 "winner_points": "Winner Points",
@@ -946,6 +1077,8 @@ def main() -> None:
         st.dataframe(
             edition_table.round(
                 {
+                    "Targeting Score": 1,
+                    "Specialty Fit": 1,
                     "Score": 1,
                     "Top-10 Points": 1,
                     "Winner Points": 1,

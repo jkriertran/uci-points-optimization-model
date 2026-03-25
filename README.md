@@ -22,6 +22,8 @@ The recommendation layer is **category-aware**. If a race changes class across y
 - scrapes individual stage-result pages for stage races
 - computes pre-race field-form proxies from the extended startlist page
 - scores each edition
+- infers a lightweight beta route profile from event structure and TT keywords
+- lets users blend a chosen specialty mix into a fit-aware `Targeting Score`
 - aggregates repeated editions into a shortlist of races worth targeting next season
 - includes a walk-forward backtest that calibrates weights on prior years and checks them against future race editions
 
@@ -101,5 +103,6 @@ The backtest is intentionally done at the **race level**. It does not forecast e
 - One-day races are the cleanest use case.
 - Stage races are modeled as one calendar target with `GC + stage-result` points rolled into the event-level payout.
 - Race-category changes are handled explicitly, so a historical `1.1` version and a later `1.Pro` version are not blended into one uninterrupted target history.
-- The model still does not understand route type, rider specialty, or team-specific roster fit.
+- The app now includes a lightweight beta route-profile x specialty-fit overlay, but it is inferred from event structure rather than full GPX or gradient data.
+- The model still does not do true team-specific roster optimization, probable lineups, or internal role planning.
 - The startlist-strength proxy comes from FirstCycling's extended startlist stats (`Starts`, `Wins`, `Podium`, `Top 10`), not from private team power files or internal rankings.

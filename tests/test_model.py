@@ -1,7 +1,12 @@
 import pandas as pd
 
 from uci_points_model.backtest import _spearman_rank_correlation, calibrate_weights
-from uci_points_model.model import overlay_planning_calendar, score_race_editions, summarize_historical_targets
+from uci_points_model.model import (
+    add_route_profile_features,
+    overlay_planning_calendar,
+    score_race_editions,
+    summarize_historical_targets,
+)
 
 
 def test_score_race_editions_rewards_soft_fields() -> None:
@@ -368,6 +373,114 @@ def test_spearman_rank_correlation_avoids_scipy_dependency() -> None:
     assert _spearman_rank_correlation(increasing, aligned) == 1.0
     assert _spearman_rank_correlation(increasing, reversed_order) == -1.0
     assert _spearman_rank_correlation(increasing, constant) == 0.0
+
+
+def test_add_route_profile_features_classifies_route_profiles() -> None:
+    dataset = pd.DataFrame(
+        [
+            {
+                "race_name": "Chrono des Nations",
+                "race_subtitle": "Individual Time Trial",
+                "race_type": "One-day",
+                "stage_points_share": 0.0,
+            },
+            {
+                "race_name": "Tro-Bro Leon",
+                "race_subtitle": "UCI, One-day race, France",
+                "race_type": "One-day",
+                "stage_points_share": 0.0,
+            },
+            {
+                "race_name": "Tour of Austria",
+                "race_subtitle": "UCI, Stage race, Austria",
+                "race_type": "Stage race",
+                "stage_points_share": 0.09,
+            },
+            {
+                "race_name": "Tour of Britain",
+                "race_subtitle": "UCI, Stage race, Great Britain",
+                "race_type": "Stage race",
+                "stage_points_share": 0.15,
+            },
+            {
+                "race_name": "Tour de Langkawi",
+                "race_subtitle": "UCI, Stage race, Malaysia",
+                "race_type": "Stage race",
+                "stage_points_share": 0.22,
+            },
+        ]
+    )
+
+    profiled = add_route_profile_features(dataset)
+
+    assert profiled.loc[0, "route_profile"] == "Time trial"
+    assert profiled.loc[1, "route_profile"] == "One-day classic"
+    assert profiled.loc[2, "route_profile"] == "GC-heavy stage race"
+    assert profiled.loc[3, "route_profile"] == "Balanced stage race"
+    assert profiled.loc[4, "route_profile"] == "Stage-hunter stage race"
+    assert profiled.loc[0, "time_trial_requirement"] > 0.9
+    assert profiled.loc[3, "all_round_requirement"] > profiled.loc[2, "all_round_requirement"]
+
+
+def test_score_race_editions_adds_specialty_fit_overlay() -> None:
+    dataset = pd.DataFrame(
+        [
+            {
+                "race_id": 1,
+                "race_name": "Classic Example",
+                "race_subtitle": "UCI, One-day race, Belgium",
+                "race_country": "Belgium",
+                "category": "1.1",
+                "race_type": "One-day",
+                "year": 2025,
+                "month": 3,
+                "top10_points": 200,
+                "winner_points": 125,
+                "total_points": 220,
+                "avg_top10_field_form": 6,
+                "total_field_form": 60,
+                "finish_rate": 0.8,
+                "stage_points_share": 0.0,
+                "startlist_size": 120,
+            },
+            {
+                "race_id": 2,
+                "race_name": "Sprint Tour",
+                "race_subtitle": "UCI, Stage race, Türkiye",
+                "race_country": "Türkiye",
+                "category": "2.Pro",
+                "race_type": "Stage race",
+                "year": 2025,
+                "month": 4,
+                "top10_points": 650,
+                "winner_points": 195,
+                "total_points": 720,
+                "avg_top10_field_form": 6,
+                "total_field_form": 60,
+                "finish_rate": 0.8,
+                "stage_points_share": 0.22,
+                "startlist_size": 140,
+            },
+        ]
+    )
+
+    scored = score_race_editions(
+        dataset,
+        specialty_weights={
+            "one_day": 0.0,
+            "gc": 0.0,
+            "stage_hunter": 1.0,
+            "time_trial": 0.0,
+            "all_round": 0.0,
+        },
+        fit_emphasis=0.5,
+    )
+
+    sprint_tour = scored.loc[scored["race_id"] == 2].iloc[0]
+    classic = scored.loc[scored["race_id"] == 1].iloc[0]
+
+    assert sprint_tour["specialty_fit_score"] > classic["specialty_fit_score"]
+    assert sprint_tour["targeting_score"] > classic["targeting_score"]
 
 
 def test_overlay_planning_calendar_marks_current_scope_and_category_changes() -> None:

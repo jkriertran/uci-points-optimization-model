@@ -11,6 +11,7 @@ The app already supports:
 - category-aware race histories
 - walk-forward calibration
 - current-season calendar overlay for actionable recommendations
+- beta route-profile x specialty-fit targeting
 
 ## Planned
 
@@ -47,13 +48,20 @@ Important note:
 
 ### 2. Route-Type Modeling
 
-Status: Planned
+Status: Partially implemented in beta
 
-Potential additions:
+Implemented in beta:
+
+- event-structure-based route profiles
+- one-day / TT / GC-heavy / balanced / stage-hunter labeling
+- specialty-fit targeting overlay for user-selected team strengths
+
+Still planned:
 
 - sprint-stage versus mountain-stage identification
-- TT recognition
-- race-route opportunity profiles
+- full GPX or roadbook-derived route classification
+- richer TT detection at the stage level
+- race-route opportunity profiles grounded in actual parcours data
 
 ### 3. Team And Roster Fit Layer
 
@@ -61,9 +69,10 @@ Status: Planned
 
 Potential additions:
 
-- rider specialty fit
 - expected team-specific points
 - roster-dependent scenario comparisons
+- probable lineup modeling
+- public-roster versus private-team availability layers
 
 ### 4. Travel And Scheduling Constraints
 

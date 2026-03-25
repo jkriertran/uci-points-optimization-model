@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from typing import Mapping
 
 import pandas as pd
@@ -15,6 +14,29 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     "field_softness": 0.10517435889360816,
     "depth_softness": 0.3073988715769149,
     "finish_rate": 0.20313307104563885,
+}
+
+DEFAULT_SPECIALTY_WEIGHTS: dict[str, float] = {
+    "one_day": 1.0,
+    "gc": 1.0,
+    "stage_hunter": 1.0,
+    "time_trial": 1.0,
+    "all_round": 1.0,
+}
+
+SPECIALTY_REQUIREMENT_COLUMNS: dict[str, str] = {
+    "one_day": "one_day_requirement",
+    "gc": "gc_requirement",
+    "stage_hunter": "stage_hunter_requirement",
+    "time_trial": "time_trial_requirement",
+    "all_round": "all_round_requirement",
+}
+
+PROFILE_COLUMNS: dict[str, object] = {
+    "route_profile": "Unknown",
+    "profile_reason": "",
+    "specialty_fit_score": 50.0,
+    "targeting_score": 0.0,
 }
 
 COMPONENT_COLUMNS: dict[str, str] = {
@@ -83,6 +105,18 @@ def normalize_weights(weights: Mapping[str, float] | None = None) -> dict[str, f
     return {name: value / denominator for name, value in normalized.items()}
 
 
+def normalize_specialty_weights(weights: Mapping[str, float] | None = None) -> dict[str, float]:
+    active_weights = dict(DEFAULT_SPECIALTY_WEIGHTS)
+    if weights is not None:
+        active_weights.update(weights)
+
+    normalized = {name: max(float(value), 0.0) for name, value in active_weights.items()}
+    denominator = sum(normalized.values())
+    if denominator <= 0:
+        return {name: 1.0 / len(normalized) for name in normalized}
+    return {name: value / denominator for name, value in normalized.items()}
+
+
 def calculate_arbitrage_score(
     dataset: pd.DataFrame, weights: Mapping[str, float] | None = None
 ) -> pd.Series:
@@ -93,8 +127,114 @@ def calculate_arbitrage_score(
     return scored
 
 
+def add_route_profile_features(dataset: pd.DataFrame) -> pd.DataFrame:
+    if dataset.empty:
+        enriched = dataset.copy()
+        for column_name, default_value in PROFILE_COLUMNS.items():
+            enriched[column_name] = default_value
+        for requirement_column in SPECIALTY_REQUIREMENT_COLUMNS.values():
+            enriched[requirement_column] = 0.0
+        return enriched
+
+    profile_frame = dataset.copy()
+    race_name = profile_frame.get("race_name", pd.Series("", index=profile_frame.index)).fillna("").astype(str)
+    race_subtitle = (
+        profile_frame.get("race_subtitle", pd.Series("", index=profile_frame.index)).fillna("").astype(str)
+    )
+    search_text = (race_name + " " + race_subtitle).str.lower()
+    tt_hint = search_text.str.contains(
+        r"\b(?:tt|itt|ttt|prologue|time\s*trial|chrono|contre[- ]la[- ]montre)\b",
+        regex=True,
+        na=False,
+    )
+    stage_share = pd.to_numeric(
+        profile_frame.get("stage_points_share", pd.Series(0.0, index=profile_frame.index)),
+        errors="coerce",
+    ).fillna(0.0).clip(lower=0.0, upper=1.0)
+    one_day_mask = profile_frame.get("race_type", pd.Series("", index=profile_frame.index)).eq("One-day")
+    stage_race_mask = profile_frame.get("race_type", pd.Series("", index=profile_frame.index)).eq("Stage race")
+
+    profile_frame["one_day_requirement"] = (one_day_mask & ~tt_hint).astype(float)
+    profile_frame["time_trial_requirement"] = tt_hint.astype(float)
+    profile_frame["gc_requirement"] = (stage_race_mask.astype(float) * (1.0 - stage_share)).clip(
+        lower=0.0, upper=1.0
+    )
+    profile_frame["stage_hunter_requirement"] = (stage_race_mask.astype(float) * stage_share).clip(
+        lower=0.0, upper=1.0
+    )
+    profile_frame["all_round_requirement"] = (
+        stage_race_mask.astype(float)
+        * (1.0 - ((stage_share - 0.15).abs() / 0.10).clip(lower=0.0, upper=1.0))
+    ).clip(lower=0.0, upper=1.0)
+
+    requirement_columns = list(SPECIALTY_REQUIREMENT_COLUMNS.values())
+    requirement_totals = profile_frame[requirement_columns].sum(axis=1)
+    fallback_one_day = one_day_mask & (requirement_totals <= 0)
+    fallback_stage = stage_race_mask & (requirement_totals <= 0)
+    profile_frame.loc[fallback_one_day, "one_day_requirement"] = 1.0
+    profile_frame.loc[fallback_stage, "all_round_requirement"] = 1.0
+    requirement_totals = profile_frame[requirement_columns].sum(axis=1).replace(0, pd.NA)
+    normalized_requirements = profile_frame[requirement_columns].div(requirement_totals, axis=0)
+    profile_frame[requirement_columns] = normalized_requirements.apply(
+        pd.to_numeric, errors="coerce"
+    ).fillna(0.0)
+
+    profile_frame["route_profile"] = "Balanced stage race"
+    profile_frame.loc[one_day_mask & ~tt_hint, "route_profile"] = "One-day classic"
+    profile_frame.loc[tt_hint, "route_profile"] = "Time trial"
+    profile_frame.loc[stage_race_mask & (stage_share <= 0.12), "route_profile"] = "GC-heavy stage race"
+    profile_frame.loc[stage_race_mask & (stage_share >= 0.18), "route_profile"] = "Stage-hunter stage race"
+
+    profile_frame["profile_reason"] = (
+        "Balanced stage race inferred from the share of points paid on stages versus GC."
+    )
+    profile_frame.loc[
+        one_day_mask & ~tt_hint,
+        "profile_reason",
+    ] = "One-day race with no explicit time-trial keyword in the race name or subtitle."
+    profile_frame.loc[
+        tt_hint,
+        "profile_reason",
+    ] = "Time-trial keyword detected in the race name or subtitle."
+    profile_frame.loc[
+        stage_race_mask & (stage_share <= 0.12),
+        "profile_reason",
+    ] = (
+        "GC-heavy stage race inferred from a low share of top-10 points being paid on stages."
+    )
+    profile_frame.loc[
+        stage_race_mask & (stage_share >= 0.18),
+        "profile_reason",
+    ] = (
+        "Stage-hunter stage race inferred from a high share of top-10 points being paid on stages."
+    )
+
+    return profile_frame
+
+
+def calculate_specialty_fit_score(
+    dataset: pd.DataFrame, specialty_weights: Mapping[str, float] | None = None
+) -> pd.Series:
+    active_weights = normalize_specialty_weights(specialty_weights)
+    fit_score = pd.Series(0.0, index=dataset.index, dtype=float)
+    for specialty_name, column_name in SPECIALTY_REQUIREMENT_COLUMNS.items():
+        fit_score = fit_score + (dataset[column_name] * active_weights[specialty_name] * 100.0)
+    return fit_score
+
+
+def calculate_targeting_score(
+    dataset: pd.DataFrame,
+    fit_emphasis: float = 0.0,
+) -> pd.Series:
+    emphasis = min(max(float(fit_emphasis), 0.0), 1.0)
+    return ((1.0 - emphasis) * dataset["arbitrage_score"]) + (emphasis * dataset["specialty_fit_score"])
+
+
 def score_race_editions(
-    dataset: pd.DataFrame, weights: Mapping[str, float] | None = None
+    dataset: pd.DataFrame,
+    weights: Mapping[str, float] | None = None,
+    specialty_weights: Mapping[str, float] | None = None,
+    fit_emphasis: float = 0.0,
 ) -> pd.DataFrame:
     if dataset.empty:
         return dataset.copy()
@@ -102,6 +242,13 @@ def score_race_editions(
     edition_scores = annotate_target_history(dataset)
     edition_scores = add_score_component_percentiles(edition_scores)
     edition_scores["arbitrage_score"] = calculate_arbitrage_score(edition_scores, weights)
+    edition_scores = add_route_profile_features(edition_scores)
+    edition_scores["specialty_fit_score"] = calculate_specialty_fit_score(
+        edition_scores, specialty_weights
+    )
+    edition_scores["targeting_score"] = calculate_targeting_score(
+        edition_scores, fit_emphasis=fit_emphasis
+    )
 
     field_form_for_efficiency = (
         edition_scores["top10_field_form"]
@@ -113,7 +260,7 @@ def score_race_editions(
     ).fillna(0)
 
     return edition_scores.sort_values(
-        ["arbitrage_score", "top10_points", "winner_points"], ascending=False
+        ["targeting_score", "arbitrage_score", "top10_points", "winner_points"], ascending=False
     ).reset_index(drop=True)
 
 
@@ -127,6 +274,14 @@ def summarize_historical_targets(
     for column_name, default_value in OPTIONAL_STAGE_COLUMNS.items():
         if column_name not in edition_summary.columns:
             edition_summary[column_name] = default_value
+    for column_name, default_value in PROFILE_COLUMNS.items():
+        if column_name not in edition_summary.columns:
+            if column_name == "targeting_score":
+                edition_summary[column_name] = edition_summary.get(
+                    "arbitrage_score", pd.Series(0.0, index=edition_summary.index)
+                )
+            else:
+                edition_summary[column_name] = default_value
 
     grouped = (
         edition_summary.sort_values(["year", "month"])
@@ -140,9 +295,13 @@ def summarize_historical_targets(
             category_history=("category_history", "last"),
             category_change_count=("category_change_count", "max"),
             race_type=("race_type", "last"),
+            route_profile=("route_profile", "last"),
+            profile_reason=("profile_reason", "last"),
             years_analyzed=("year", "nunique"),
             years=("year", lambda values: ", ".join(str(value) for value in sorted(set(values)))),
+            avg_targeting_score=("targeting_score", "mean"),
             avg_arbitrage_score=("arbitrage_score", "mean"),
+            avg_specialty_fit_score=("specialty_fit_score", "mean"),
             best_edition_score=("arbitrage_score", "max"),
             avg_top10_points=("top10_points", "mean"),
             avg_winner_points=("winner_points", "mean"),
@@ -164,7 +323,7 @@ def summarize_historical_targets(
         grouped = grouped[grouped["category"] == grouped["latest_known_category"]].copy()
 
     return grouped.sort_values(
-        ["avg_arbitrage_score", "avg_top10_points"], ascending=False
+        ["avg_targeting_score", "avg_arbitrage_score", "avg_top10_points"], ascending=False
     ).reset_index(drop=True)
 
 
