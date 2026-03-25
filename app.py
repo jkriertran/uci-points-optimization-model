@@ -711,31 +711,18 @@ def render_proteam_risk_tab() -> None:
         "The current-season and 2026-2028 views answer different planning questions."
     )
 
-    control_left, control_mid, control_right = st.columns([2, 1, 1])
-    scope_label = control_left.radio(
+    scope_label = st.radio(
         "Points view",
         options=[PROTEAM_SCOPE_LABELS[CURRENT_SCOPE], PROTEAM_SCOPE_LABELS[CYCLE_SCOPE]],
         index=0,
         horizontal=True,
     )
     scope = next(key for key, value in PROTEAM_SCOPE_LABELS.items() if value == scope_label)
-    prefer_snapshot = control_mid.checkbox(
-        "Use bundled snapshot only",
-        value=False,
-        help="Skip live PCS refresh and use the bundled snapshot immediately.",
-    )
-    refresh_live = control_right.button(
-        "Refresh PCS data",
-        disabled=prefer_snapshot,
-        help="Clear the cached live scrape for this scope and fetch fresh PCS data.",
-    )
-    if refresh_live:
-        get_live_proteam_risk_dataset.clear()
 
     fallback_reason = ""
-    if prefer_snapshot:
-        raw_dataset = load_proteam_risk_snapshot(scope)
-        data_source = "snapshot" if not raw_dataset.empty else "unavailable"
+    raw_dataset = load_proteam_risk_snapshot(scope)
+    if not raw_dataset.empty:
+        data_source = "snapshot"
     else:
         try:
             with st.spinner("Loading ProTeam contributions from ProCyclingStats..."):
@@ -743,13 +730,12 @@ def render_proteam_risk_tab() -> None:
             data_source = "live"
         except Exception as exc:  # noqa: BLE001
             fallback_reason = str(exc)
-            raw_dataset = load_proteam_risk_snapshot(scope)
-            data_source = "snapshot" if not raw_dataset.empty else "unavailable"
+            data_source = "unavailable"
 
     if raw_dataset.empty:
         if data_source == "unavailable":
             st.error(
-                "The ProTeam monitor could not load live PCS data and no bundled snapshot was available for this scope."
+                "The ProTeam monitor could not load a bundled snapshot for this scope, and the live PCS fallback was unavailable."
             )
             if fallback_reason:
                 st.caption(f"Latest live-fetch error: {fallback_reason}")
@@ -761,14 +747,14 @@ def render_proteam_risk_tab() -> None:
         scraped_at = str(raw_dataset["scraped_at"].max())
         st.caption(f"Using live PCS data. Latest scrape timestamp: `{scraped_at}`.")
     elif data_source == "snapshot":
-        snapshot_path = raw_dataset.attrs.get("snapshot_path", "bundled snapshot")
         scraped_at = str(raw_dataset["scraped_at"].max())
-        st.warning(
-            f"Using the bundled ProTeam snapshot because the live PCS fetch was skipped or unavailable. "
-            f"Snapshot source: `{snapshot_path}`. Snapshot scrape timestamp: `{scraped_at}`."
+        st.caption(
+            f"Showing the latest bundled ProTeam snapshot. Last refresh timestamp: `{scraped_at}`."
         )
-        if fallback_reason:
-            st.caption(f"Latest live-fetch error: {fallback_reason}")
+        st.caption(
+            "These ProTeam snapshots are intended to stay fresh via the scheduled GitHub Actions refresh job, "
+            "so the deployed app does not depend on live PCS access during each user session."
+        )
 
     st.caption(
         "Risk thresholds: `High` if Top-1 Share >= 35% or Leader Shock >= 30%; "

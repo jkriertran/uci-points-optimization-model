@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   refresh-proteam-snapshots:
@@ -41,3 +42,101 @@ jobs:
           git add data/proteam_risk_current_snapshot.csv data/proteam_risk_cycle_2026_2028_snapshot.csv
           git commit -m "Refresh latest ProTeam risk snapshots"
           git push
+
+      - name: Open or update refresh failure alert
+        if: ${{ failure() }}
+        uses: actions/github-script@v7
+        env:
+          ISSUE_TITLE: ProTeam snapshot refresh failed
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const labelName = "automation-alert";
+            const title = process.env.ISSUE_TITLE;
+            const body = [
+              `@${owner} the scheduled ProTeam snapshot refresh failed.`,
+              "",
+              `Workflow: ${context.workflow}`,
+              `Event: ${context.eventName}`,
+              `Run: ${process.env.RUN_URL}`,
+              `UTC time: ${new Date().toISOString()}`,
+            ].join("\n");
+
+            const labels = await github.paginate(github.rest.issues.listLabelsForRepo, {
+              owner,
+              repo,
+              per_page: 100,
+            });
+            if (!labels.some((label) => label.name === labelName)) {
+              await github.rest.issues.createLabel({
+                owner,
+                repo,
+                name: labelName,
+                color: "B60205",
+                description: "Automated workflow failure notifications",
+              });
+            }
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: "open",
+              labels: labelName,
+              per_page: 100,
+            });
+            const existing = openIssues.find((issue) => issue.title === title);
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner,
+                repo,
+                title,
+                body,
+                labels: [labelName],
+              });
+            }
+
+      - name: Close refresh failure alert after recovery
+        if: ${{ success() }}
+        uses: actions/github-script@v7
+        env:
+          ISSUE_TITLE: ProTeam snapshot refresh failed
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const labelName = "automation-alert";
+            const title = process.env.ISSUE_TITLE;
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: "open",
+              labels: labelName,
+              per_page: 100,
+            });
+            const matches = openIssues.filter((issue) => issue.title === title);
+
+            for (const issue of matches) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issue.number,
+                body: "The latest ProTeam snapshot refresh succeeded, so this alert is being closed automatically.",
+              });
+              await github.rest.issues.update({
+                owner,
+                repo,
+                issue_number: issue.number,
+                state: "closed",
+              });
+            }

@@ -95,6 +95,7 @@ PYTHONPATH=. python3 scripts/build_proteam_risk_snapshot.py
 This repo now also includes a GitHub Actions workflow at `.github/workflows/refresh_proteam_snapshots.yml`
 that refreshes those two files on a daily schedule. It is intentionally `latest only`:
 the fixed snapshot filenames are overwritten in place rather than archived by date.
+If the scheduled refresh fails, the workflow opens or updates a GitHub issue so the failure is visible without opening the app.
 
 ## Streamlit deployment
 
