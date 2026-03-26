@@ -806,6 +806,10 @@ def render_proteam_risk_tab() -> None:
         "Risk thresholds: `High` if Top-1 Share >= 35% or Leader Shock >= 30%; "
         "`Medium` if Top-1 Share >= 25% or Leader Shock >= 20%; otherwise `Lower`."
     )
+    st.caption(
+        "`Effective N` is the effective number of equally important contributors: "
+        "`1 / sum(share^2)`. Higher values usually mean deeper, less concentrated scoring support."
+    )
 
     summary = summarize_proteam_risk(raw_dataset)
     if summary.empty:
@@ -818,11 +822,12 @@ def render_proteam_risk_tab() -> None:
     summary["Leader Shock %"] = (summary["leader_shock_drop_pct"] * 100).round(1)
     summary["Leader+Coleader Shock %"] = (summary["leader_coleader_shock_drop_pct"] * 100).round(1)
 
-    metric_left, metric_mid, metric_right, metric_far = st.columns(4)
+    metric_left, metric_mid, metric_right, metric_far, metric_farthest = st.columns(5)
     metric_left.metric("ProTeams monitored", len(summary))
     metric_mid.metric("High risk teams", int((summary["risk_band"] == "High").sum()))
     metric_right.metric("Median Top-1 Share", f"{summary['Top-1 Share %'].median():.1f}%")
     metric_far.metric("Max Top-1 Share", f"{summary['Top-1 Share %'].max():.1f}%")
+    metric_farthest.metric("Median Effective N", f"{summary['effective_contributors'].median():.2f}")
 
     chart_frame = summary.sort_values("Top-1 Share %", ascending=False).copy()
     chart = px.bar(
@@ -874,9 +879,12 @@ def render_proteam_risk_tab() -> None:
         "source_url",
         "scraped_at",
     ]
+    summary_export_frame = summary[summary_export_columns].rename(
+        columns={"effective_contributors": "Effective N"}
+    )
     st.download_button(
         "Download ProTeam summary as CSV",
-        data=summary[summary_export_columns].to_csv(index=False).encode("utf-8"),
+        data=summary_export_frame.to_csv(index=False).encode("utf-8"),
         file_name=f"proteam_risk_summary_{scope}.csv",
         mime="text/csv",
     )
@@ -903,14 +911,14 @@ def render_proteam_risk_tab() -> None:
             "team_name": "Team",
             "team_total_points": "Points",
             "leader_name": "Leader",
-            "effective_contributors": "Effective Contributors",
+            "effective_contributors": "Effective N",
             "counted_riders_found": "Counted Riders",
             "risk_band": "Risk",
             "data_check": "Data Check",
         }
     )
     st.dataframe(
-        summary_table.round({"Points": 1, "Effective Contributors": 2}),
+        summary_table.round({"Points": 1, "Effective N": 2}),
         use_container_width=True,
         hide_index=True,
     )
@@ -925,7 +933,7 @@ def render_proteam_risk_tab() -> None:
     detail = prepare_proteam_detail(raw_dataset, team_slug=selected_team_slug)
 
     st.markdown("**Team detail**")
-    detail_left, detail_mid, detail_right, detail_far = st.columns(4)
+    detail_left, detail_mid, detail_right, detail_far, detail_farthest = st.columns(5)
     detail_left.metric(
         "Leader",
         selected_summary["leader_name"] or "None yet",
@@ -933,11 +941,15 @@ def render_proteam_risk_tab() -> None:
     )
     detail_mid.metric("Top-3 Share", f"{selected_summary['Top-3 Share %']:.1f}%")
     detail_right.metric(
+        "Effective N",
+        f"{selected_summary['effective_contributors']:.2f}",
+    )
+    detail_far.metric(
         "Without rider #1",
         f"{selected_summary['leader_shock_remaining_points']:.1f} pts",
         delta=f"-{selected_summary['Leader Shock %']:.1f}%",
     )
-    detail_far.metric(
+    detail_farthest.metric(
         "Without riders #1-2",
         f"{selected_summary['leader_coleader_shock_remaining_points']:.1f} pts",
         delta=f"-{selected_summary['Leader+Coleader Shock %']:.1f}%",
