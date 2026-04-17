@@ -29,7 +29,7 @@ def test_match_observed_races_uses_alias_map() -> None:
     alias_df = pd.DataFrame(
         [
             {
-                "team_slug": "unibet-rose-rockets-2026",
+                "team_slug": "unibet-rose-rockets",
                 "planning_year": 2026,
                 "source_race_name": "Grand Prix Cycliste la Marseillaise",
                 "canonical_race_name": "GP la Marseillaise",
@@ -52,7 +52,7 @@ def test_match_observed_races_uses_alias_map() -> None:
         observed_df,
         planning_df,
         alias_df,
-        team_slug="unibet-rose-rockets-2026",
+        team_slug="unibet-rose-rockets",
         planning_year=2026,
     )
 
@@ -108,7 +108,7 @@ def test_overlap_flagging_and_changelog_track_changes() -> None:
     changelog_df = module.build_schedule_changelog(
         previous_df=previous_df,
         latest_df=latest_df,
-        team_slug="unibet-rose-rockets-2026",
+        team_slug="unibet-rose-rockets",
         planning_year=2026,
         detected_at_utc="2026-04-16T00:00:00+00:00",
     )
@@ -152,7 +152,7 @@ def test_build_team_calendar_from_source_rows_derives_completed_status() -> None
         planning_df.to_csv(planning_path, index=False)
         result_df = module.build_team_calendar_from_source_rows(
             source_rows_df=source_rows_df,
-            team_slug="unibet-rose-rockets-2026",
+            team_slug="unibet-rose-rockets",
             planning_year=2026,
             team_name="Unibet Rose Rockets",
             planning_calendar_path=planning_path,

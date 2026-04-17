@@ -39,6 +39,18 @@ WEIGHT_DEFAULT_VERSION = "calibrated-one-day-v1"
 DATASET_SCHEMA_VERSION = "stage-breakdown-v1"
 PENDING_WEIGHT_STATE_KEY = "pending_weight_state"
 CALIBRATION_RESULT_VERSION = "category-aware-v1"
+TEAM_EV_DIR = Path("data/team_ev")
+TEAM_EV_BUILD_COMMAND = """python scripts/build_team_calendar_ev.py \\
+  --team-slug <team-slug> \\
+  --pcs-team-slug <pcs-team-slug> \\
+  --planning-year <year> \\
+  --team-profile-path data/team_profiles/<team_slug>_<year>_profile.json \\
+  --calendar-path data/team_calendars/<team_slug>_<year>_latest.csv \\
+  --actual-points-path data/team_results/<team_slug>_<year>_actual_points.csv \\
+  --ev-output-path data/team_ev/<team_slug>_<year>_calendar_ev.csv \\
+  --summary-output-path data/team_ev/<team_slug>_<year>_calendar_ev_summary.csv \\
+  --readme-path data/team_ev/README.md \\
+  --dictionary-path data/team_ev/data_dictionary.md"""
 
 
 @st.cache_data(show_spinner=False, ttl=60 * 60 * 24)
@@ -70,6 +82,360 @@ def get_live_proteam_risk_dataset(scope: str) -> pd.DataFrame:
     dataset = build_proteam_risk_dataset(scope=scope)
     dataset.attrs["risk_data_source"] = "live"
     return dataset
+
+
+@st.cache_data(show_spinner=False)
+def discover_team_calendar_ev_datasets() -> pd.DataFrame:
+    if not TEAM_EV_DIR.exists():
+        return pd.DataFrame()
+
+    datasets: list[dict[str, object]] = []
+    for summary_path in sorted(TEAM_EV_DIR.glob("*_calendar_ev_summary.csv")):
+        race_path = summary_path.with_name(summary_path.name.replace("_calendar_ev_summary.csv", "_calendar_ev.csv"))
+        if not race_path.exists():
+            continue
+
+        try:
+            summary_df = pd.read_csv(summary_path, low_memory=False)
+            race_sample_df = pd.read_csv(race_path, low_memory=False, nrows=1)
+        except Exception:  # noqa: BLE001
+            continue
+
+        if summary_df.empty:
+            continue
+
+        summary_row = summary_df.iloc[0]
+        team_slug = str(summary_row.get("team_slug") or "").strip()
+        planning_year = pd.to_numeric(summary_row.get("planning_year"), errors="coerce")
+        if not team_slug or pd.isna(planning_year):
+            continue
+
+        team_name = ""
+        if not race_sample_df.empty and "team_name" in race_sample_df.columns:
+            team_name = str(race_sample_df["team_name"].iloc[0] or "").strip()
+        if not team_name:
+            team_name = team_slug.replace("-", " ").title()
+
+        metadata_path = summary_path.with_name(summary_path.name.replace("_calendar_ev_summary.csv", "_calendar_ev_metadata.json"))
+        datasets.append(
+            {
+                "team_slug": team_slug,
+                "planning_year": int(planning_year),
+                "team_name": team_name,
+                "label": f"{team_name} ({int(planning_year)})",
+                "race_path": str(race_path),
+                "summary_path": str(summary_path),
+                "metadata_path": str(metadata_path) if metadata_path.exists() else "",
+            }
+        )
+
+    if not datasets:
+        return pd.DataFrame()
+
+    return (
+        pd.DataFrame(datasets)
+        .sort_values(["planning_year", "team_name"], ascending=[False, True])
+        .reset_index(drop=True)
+    )
+
+
+def _select_team_calendar_dataset(team_slug: str, planning_year: int) -> pd.Series:
+    datasets = discover_team_calendar_ev_datasets()
+    if datasets.empty:
+        raise KeyError("No Team Calendar EV datasets are available.")
+
+    matches = datasets.loc[
+        (datasets["team_slug"] == team_slug) & (datasets["planning_year"] == int(planning_year))
+    ]
+    if matches.empty:
+        raise KeyError(f"Missing Team Calendar EV dataset for {team_slug} {planning_year}.")
+    return matches.iloc[0]
+
+
+@st.cache_data(show_spinner=False)
+def load_team_calendar_ev(team_slug: str, planning_year: int) -> pd.DataFrame:
+    dataset_row = _select_team_calendar_dataset(team_slug, planning_year)
+    return pd.read_csv(dataset_row["race_path"], low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_team_calendar_ev_summary(team_slug: str, planning_year: int) -> pd.DataFrame:
+    dataset_row = _select_team_calendar_dataset(team_slug, planning_year)
+    return pd.read_csv(dataset_row["summary_path"], low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_team_calendar_ev_metadata(team_slug: str, planning_year: int) -> dict[str, object]:
+    dataset_row = _select_team_calendar_dataset(team_slug, planning_year)
+    metadata_path = str(dataset_row.get("metadata_path") or "").strip()
+    if not metadata_path:
+        return {}
+    try:
+        return pd.read_json(metadata_path, typ="series").to_dict()
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _filtered_team_calendar_ev(calendar_ev_df: pd.DataFrame, view_mode: str) -> pd.DataFrame:
+    if calendar_ev_df.empty:
+        return calendar_ev_df.copy()
+
+    if view_mode == "Completed races only":
+        return calendar_ev_df.loc[calendar_ev_df["status"] == "completed"].copy()
+    if view_mode == "Season so far":
+        return calendar_ev_df.loc[calendar_ev_df["status"] != "cancelled"].copy()
+    return calendar_ev_df.copy()
+
+
+def render_team_calendar_ev_workspace() -> None:
+    st.subheader("Team Calendar EV")
+    datasets = discover_team_calendar_ev_datasets()
+    if datasets.empty:
+        st.info("No Team Calendar EV artifacts are available yet.")
+        st.caption("Build the saved artifacts first, then this workspace will discover them automatically.")
+        st.code(TEAM_EV_BUILD_COMMAND, language="bash")
+        return
+
+    selector_left, selector_mid, selector_right = st.columns([2, 1, 1])
+    options = datasets["label"].tolist()
+    default_index = 0
+    with selector_left:
+        selected_label = st.selectbox(
+            "Team-season",
+            options=options,
+            index=default_index,
+            disabled=len(options) == 1,
+        )
+    dataset_row = datasets.loc[datasets["label"] == selected_label].iloc[0]
+    team_slug = str(dataset_row["team_slug"])
+    planning_year = int(dataset_row["planning_year"])
+
+    with selector_mid:
+        view_mode = st.selectbox(
+            "View mode",
+            options=["Season so far", "Full calendar", "Completed races only"],
+            index=0,
+        )
+
+    race_df = load_team_calendar_ev(team_slug, planning_year)
+    summary_df = load_team_calendar_ev_summary(team_slug, planning_year)
+    metadata = load_team_calendar_ev_metadata(team_slug, planning_year)
+
+    if race_df.empty or summary_df.empty:
+        st.warning("The selected Team Calendar EV artifact is missing required race-level or summary data.")
+        return
+
+    summary_row = summary_df.iloc[0]
+    as_of_date = str(metadata.get("as_of_date") or summary_row.get("as_of_date") or "")
+    with selector_right:
+        st.markdown("**As of**")
+        st.caption(as_of_date or "Not available")
+
+    filtered_df = _filtered_team_calendar_ev(race_df, view_mode)
+    if filtered_df.empty:
+        st.info("No races matched the current Team Calendar EV view.")
+        return
+
+    st.caption(
+        f"KPI row reflects the saved `{planning_year}` team-season snapshot. Charts and tables follow the `{view_mode}` filter."
+    )
+
+    metric_left, metric_mid, metric_right, metric_far, metric_farthest, metric_extra = st.columns(6)
+    metric_left.metric("Total expected", f"{float(summary_row['total_expected_points']):.1f}")
+    metric_mid.metric("Completed expected", f"{float(summary_row['completed_expected_points']):.1f}")
+    metric_right.metric("Remaining expected", f"{float(summary_row['remaining_expected_points']):.1f}")
+    metric_far.metric("Actual points known", f"{float(summary_row['actual_points_known']):.1f}")
+    metric_farthest.metric("EV gap known", f"{float(summary_row['ev_gap_known']):+.1f}")
+    metric_extra.metric("Race count", int(summary_row["race_count"]))
+
+    completed_missing_ev = filtered_df.loc[
+        (filtered_df["status"] == "completed")
+        & (
+            filtered_df["expected_points"].isna()
+            | filtered_df["base_opportunity_points"].isna()
+            | filtered_df["team_fit_multiplier"].isna()
+            | filtered_df["participation_confidence"].isna()
+            | filtered_df["execution_multiplier"].isna()
+        )
+    ]
+    if not completed_missing_ev.empty:
+        st.warning(
+            f"{len(completed_missing_ev)} completed races are missing one or more EV components. Check the detail table notes."
+        )
+
+    chart_left, chart_right = st.columns(2)
+
+    cumulative_df = filtered_df.copy().sort_values(["start_date", "race_name"]).reset_index(drop=True)
+    cumulative_df["expected_points"] = pd.to_numeric(cumulative_df["expected_points"], errors="coerce").fillna(0.0)
+    cumulative_df["actual_points"] = pd.to_numeric(cumulative_df["actual_points"], errors="coerce")
+    cumulative_df["expected_cumulative"] = cumulative_df["expected_points"].cumsum()
+    cumulative_df["actual_cumulative"] = cumulative_df["actual_points"].fillna(0.0).cumsum()
+    cumulative_plot_df = cumulative_df.melt(
+        id_vars=["race_name", "start_date"],
+        value_vars=["expected_cumulative", "actual_cumulative"],
+        var_name="series",
+        value_name="points",
+    )
+    cumulative_plot_df["series"] = cumulative_plot_df["series"].map(
+        {
+            "expected_cumulative": "Expected cumulative",
+            "actual_cumulative": "Actual cumulative",
+        }
+    )
+    with chart_left:
+        cumulative_chart = px.line(
+            cumulative_plot_df,
+            x="start_date",
+            y="points",
+            color="series",
+            markers=True,
+            hover_data={"race_name": True},
+            labels={"start_date": "Race date", "points": "Points", "series": "Series"},
+            title="Cumulative actual vs expected points",
+        )
+        cumulative_chart.update_layout(height=360)
+        st.plotly_chart(cumulative_chart, use_container_width=True)
+
+    monthly_df = filtered_df.copy()
+    monthly_df["expected_points"] = pd.to_numeric(monthly_df["expected_points"], errors="coerce").fillna(0.0)
+    monthly_df["actual_points"] = pd.to_numeric(monthly_df["actual_points"], errors="coerce").fillna(0.0)
+    monthly_df["month_label"] = pd.to_datetime(monthly_df["start_date"], errors="coerce").dt.strftime("%b")
+    monthly_summary = (
+        monthly_df.groupby("month_label", dropna=False, as_index=False)
+        .agg(expected_points=("expected_points", "sum"), actual_points=("actual_points", "sum"))
+    )
+    monthly_summary["month_order"] = pd.to_datetime(monthly_summary["month_label"], format="%b", errors="coerce").dt.month
+    monthly_summary = monthly_summary.sort_values(["month_order", "month_label"]).drop(columns=["month_order"])
+    monthly_plot_df = monthly_summary.melt(
+        id_vars=["month_label"],
+        value_vars=["expected_points", "actual_points"],
+        var_name="series",
+        value_name="points",
+    )
+    monthly_plot_df["series"] = monthly_plot_df["series"].map(
+        {"expected_points": "Expected", "actual_points": "Actual"}
+    )
+    with chart_right:
+        monthly_chart = px.bar(
+            monthly_plot_df,
+            x="month_label",
+            y="points",
+            color="series",
+            barmode="group",
+            labels={"month_label": "Month", "points": "Points", "series": "Series"},
+            title="Monthly actual vs expected",
+        )
+        monthly_chart.update_layout(height=360)
+        st.plotly_chart(monthly_chart, use_container_width=True)
+
+    lower_left, lower_right = st.columns(2)
+
+    category_df = filtered_df.copy()
+    category_df["expected_points"] = pd.to_numeric(category_df["expected_points"], errors="coerce").fillna(0.0)
+    category_df["actual_points"] = pd.to_numeric(category_df["actual_points"], errors="coerce").fillna(0.0)
+    category_summary = (
+        category_df.groupby("category", dropna=False, as_index=False)
+        .agg(expected_points=("expected_points", "sum"), actual_points=("actual_points", "sum"))
+        .sort_values("expected_points", ascending=False)
+    )
+    category_plot_df = category_summary.melt(
+        id_vars=["category"],
+        value_vars=["expected_points", "actual_points"],
+        var_name="series",
+        value_name="points",
+    )
+    category_plot_df["series"] = category_plot_df["series"].map(
+        {"expected_points": "Expected", "actual_points": "Actual"}
+    )
+    with lower_left:
+        category_chart = px.bar(
+            category_plot_df,
+            x="category",
+            y="points",
+            color="series",
+            barmode="group",
+            labels={"category": "Category", "points": "Points", "series": "Series"},
+            title="Points by category",
+        )
+        category_chart.update_layout(height=360)
+        st.plotly_chart(category_chart, use_container_width=True)
+
+    known_gap_df = filtered_df.loc[filtered_df["ev_gap"].notna()].copy()
+    with lower_right:
+        if known_gap_df.empty:
+            st.info("No races in this view have known actual points yet, so there is no race-gap chart to show.")
+        else:
+            known_gap_df["ev_gap"] = pd.to_numeric(known_gap_df["ev_gap"], errors="coerce").fillna(0.0)
+            gap_chart_df = pd.concat(
+                [
+                    known_gap_df.nlargest(5, "ev_gap"),
+                    known_gap_df.nsmallest(5, "ev_gap"),
+                ],
+                ignore_index=True,
+            ).drop_duplicates(subset=["race_id"]).sort_values("ev_gap")
+            gap_chart = px.bar(
+                gap_chart_df,
+                x="ev_gap",
+                y="race_name",
+                orientation="h",
+                color="ev_gap",
+                color_continuous_scale=["#b23a48", "#f0f0f0", "#3d8b5a"],
+                labels={"ev_gap": "Actual minus expected", "race_name": "Race"},
+                title="Largest over- and under-expectation races",
+            )
+            gap_chart.update_layout(height=360, coloraxis_showscale=False)
+            st.plotly_chart(gap_chart, use_container_width=True)
+
+    st.markdown("**Race detail**")
+    download_left, download_right = st.columns(2)
+    with download_left:
+        st.download_button(
+            "Download race-level CSV",
+            data=race_df.to_csv(index=False).encode("utf-8"),
+            file_name=f"{team_slug}_{planning_year}_calendar_ev.csv",
+            mime="text/csv",
+        )
+    with download_right:
+        st.download_button(
+            "Download summary CSV",
+            data=summary_df.to_csv(index=False).encode("utf-8"),
+            file_name=f"{team_slug}_{planning_year}_calendar_ev_summary.csv",
+            mime="text/csv",
+        )
+
+    detail_columns = [
+        "race_name",
+        "category",
+        "start_date",
+        "status",
+        "base_opportunity_points",
+        "team_fit_multiplier",
+        "participation_confidence",
+        "execution_multiplier",
+        "expected_points",
+        "actual_points",
+        "ev_gap",
+        "source",
+        "overlap_group",
+        "notes",
+    ]
+    available_detail_columns = [column for column in detail_columns if column in filtered_df.columns]
+    detail_df = filtered_df[available_detail_columns].copy().sort_values(["start_date", "race_name"])
+    st.dataframe(
+        detail_df.round(
+            {
+                "base_opportunity_points": 1,
+                "team_fit_multiplier": 3,
+                "participation_confidence": 3,
+                "execution_multiplier": 3,
+                "expected_points": 1,
+                "actual_points": 1,
+                "ev_gap": 1,
+            }
+        ),
+        use_container_width=True,
+        hide_index=True,
+    )
 
 
 def initialize_weight_state() -> None:
@@ -227,6 +593,7 @@ def render_workspace_guide(planning_year: int) -> None:
         - `Edition Diagnostics`: inspect one historical race edition and see its payout, field softness, and route-fit context.
         - `Backtest & Calibration`: see how the model performs on future years and compare default versus calibrated weights.
         - `ProTeam Risk Monitor`: track how concentrated each ProTeam's counted UCI points are across its rider core.
+        - `Team Calendar EV`: load saved team-season EV artifacts with KPIs, charts, and explainable race detail.
         - `Raw Data`: inspect the loaded race dataset directly.
         """
     )
@@ -1271,12 +1638,13 @@ def main() -> None:
         }
     )
 
-    tab_targets, tab_diagnostics, tab_backtest, tab_risk, tab_raw = st.tabs(
+    tab_targets, tab_diagnostics, tab_backtest, tab_risk, tab_team_ev, tab_raw = st.tabs(
         [
             "Recommended Targets",
             "Edition Diagnostics",
             "Backtest & Calibration",
             "ProTeam Risk Monitor",
+            "Team Calendar EV",
             "Raw Data",
         ]
     )
@@ -1471,6 +1839,9 @@ def main() -> None:
 
     with tab_risk:
         render_proteam_risk_tab()
+
+    with tab_team_ev:
+        render_team_calendar_ev_workspace()
 
     with tab_raw:
         st.subheader("Scraped Dataset")

@@ -11,11 +11,17 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from uci_points_model.team_calendar import build_live_team_calendar, build_schedule_changelog
+from uci_points_model.calendar_ev import canonicalize_team_slug
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build tracked team calendar snapshots and changelog files.")
-    parser.add_argument("--team-slug", required=True, help="Team slug with season year, for example unibet-rose-rockets-2026.")
+    parser.add_argument("--team-slug", required=True, help="Stable team slug used inside the saved snapshots.")
+    parser.add_argument(
+        "--pcs-team-slug",
+        default=None,
+        help="Optional season-qualified PCS team slug used for live fetches.",
+    )
     parser.add_argument("--planning-year", type=int, required=True, help="Planning year for the tracked team calendar.")
     parser.add_argument("--program-path", default=None, help="Optional local CSV file with program rows.")
     parser.add_argument(
@@ -47,6 +53,8 @@ def _load_previous_snapshot(path: Path) -> pd.DataFrame:
 
 def main() -> None:
     args = parse_args()
+    team_slug = canonicalize_team_slug(args.team_slug, args.planning_year)
+    pcs_team_slug = args.pcs_team_slug or args.team_slug
     calendar_output_path = Path(args.calendar_output)
     changelog_output_path = Path(args.changelog_output)
     calendar_output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -54,18 +62,19 @@ def main() -> None:
 
     previous_snapshot_df = _load_previous_snapshot(calendar_output_path)
     latest_snapshot_df = build_live_team_calendar(
-        team_slug=args.team_slug,
+        team_slug=team_slug,
         planning_year=args.planning_year,
+        pcs_team_slug=pcs_team_slug,
         program_path=args.program_path,
         as_of_date=args.as_of_date,
     )
     if latest_snapshot_df.empty:
-        raise RuntimeError(f"No team calendar rows were built for {args.team_slug} {args.planning_year}.")
+        raise RuntimeError(f"No team calendar rows were built for {team_slug} {args.planning_year}.")
 
     changelog_df = build_schedule_changelog(
         previous_df=previous_snapshot_df,
         latest_df=latest_snapshot_df,
-        team_slug=args.team_slug,
+        team_slug=team_slug,
         planning_year=args.planning_year,
     )
 

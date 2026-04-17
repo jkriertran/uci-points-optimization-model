@@ -223,6 +223,7 @@ def team_name_from_snapshot(team_slug: str, snapshot_path: str | Path | None = N
 def build_live_team_calendar(
     team_slug: str,
     planning_year: int,
+    pcs_team_slug: str | None = None,
     client: ProCyclingStatsTeamCalendarClient | None = None,
     program_path: str | None = None,
     planning_calendar_path: str | Path | None = None,
@@ -230,12 +231,13 @@ def build_live_team_calendar(
     as_of_date: str | date | None = None,
 ) -> pd.DataFrame:
     pcs_client = client or ProCyclingStatsTeamCalendarClient()
+    pcs_lookup_slug = pcs_team_slug or team_slug
     if program_path:
         source_rows_df = load_team_program_rows(program_path)
-        team_name = team_name_from_snapshot(team_slug)
+        team_name = team_name_from_snapshot(pcs_lookup_slug)
         source_label = "team_program_file"
     else:
-        team_name, entries = pcs_client.get_team_program_entries(team_slug)
+        team_name, entries = pcs_client.get_team_program_entries(pcs_lookup_slug)
         source_rows_df = program_entries_to_frame(entries)
         source_label = "team_program_live"
 

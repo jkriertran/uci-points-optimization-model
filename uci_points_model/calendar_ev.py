@@ -34,6 +34,20 @@ ACTUAL_POINTS_COLUMNS = [
     "notes",
 ]
 
+SUMMARY_COLUMNS = [
+    "team_slug",
+    "planning_year",
+    "as_of_date",
+    "total_expected_points",
+    "completed_expected_points",
+    "remaining_expected_points",
+    "actual_points_known",
+    "ev_gap_known",
+    "race_count",
+    "completed_race_count",
+    "remaining_race_count",
+]
+
 DEFAULT_EV_WEIGHTS = {
     "avg_points_efficiency": 0.50,
     "avg_top10_points": 0.15,
@@ -73,7 +87,31 @@ def _minmax_scale(series: pd.Series, invert: bool = False) -> pd.Series:
 
 
 def load_team_profile(path: str | Path) -> dict:
-    return json.loads(Path(path).read_text())
+    return normalize_team_profile(json.loads(Path(path).read_text()))
+
+
+def normalize_team_profile(team_profile: dict) -> dict:
+    normalized = dict(team_profile)
+    planning_year = int(normalized.get("planning_year")) if normalized.get("planning_year") is not None else None
+    raw_team_slug = str(normalized.get("team_slug") or "").strip()
+    pcs_team_slug = str(normalized.get("pcs_team_slug") or raw_team_slug).strip()
+
+    if planning_year is not None:
+        normalized["team_slug"] = canonicalize_team_slug(raw_team_slug or pcs_team_slug, planning_year)
+        normalized["planning_year"] = planning_year
+    else:
+        normalized["team_slug"] = raw_team_slug or pcs_team_slug
+
+    normalized["pcs_team_slug"] = pcs_team_slug or normalized["team_slug"]
+    return normalized
+
+
+def canonicalize_team_slug(team_slug: str, planning_year: int) -> str:
+    cleaned = str(team_slug or "").strip()
+    suffix = f"-{int(planning_year)}"
+    if cleaned.endswith(suffix):
+        return cleaned[: -len(suffix)]
+    return cleaned
 
 
 def build_historical_target_summary(
@@ -169,6 +207,7 @@ def build_actual_points_table(
     team_slug: str,
     planning_year: int,
     team_calendar: pd.DataFrame,
+    pcs_team_slug: str | None = None,
     client: ProCyclingStatsTeamCalendarClient | None = None,
     checked_at_utc: str | None = None,
     max_workers: int = 8,
@@ -191,6 +230,7 @@ def build_actual_points_table(
                 row._asdict(),
                 team_slug=team_slug,
                 planning_year=planning_year,
+                pcs_team_slug=pcs_team_slug or team_slug,
                 checked_at_utc=checked_at,
                 comparison_date=comparison_date,
                 client=pcs_client,
@@ -206,6 +246,7 @@ def build_actual_points_table(
                     row._asdict(),
                     team_slug=team_slug,
                     planning_year=planning_year,
+                    pcs_team_slug=pcs_team_slug or team_slug,
                     checked_at_utc=checked_at,
                     comparison_date=comparison_date,
                     client=None,
@@ -246,6 +287,7 @@ def build_team_calendar_ev(
     team_calendar: pd.DataFrame,
     team_profile: dict,
     actual_points_df: pd.DataFrame | None = None,
+    as_of_date: str | date | None = None,
 ) -> pd.DataFrame:
     if team_calendar.empty:
         return pd.DataFrame()
@@ -303,6 +345,7 @@ def build_team_calendar_ev(
     ).astype("Float64")
 
     result_df = attach_actual_points(merged_df, actual_points_df if actual_points_df is not None else pd.DataFrame())
+    result_df["as_of_date"] = _resolve_as_of_date(as_of_date).isoformat()
     ordered_columns = [
         "team_slug",
         "team_name",
@@ -340,6 +383,7 @@ def build_team_calendar_ev(
         "source",
         "overlap_group",
         "notes",
+        "as_of_date",
     ]
     missing_columns = [column for column in ordered_columns if column not in result_df.columns]
     for column in missing_columns:
@@ -347,57 +391,32 @@ def build_team_calendar_ev(
     return result_df[ordered_columns].sort_values(["start_date", "race_name"]).reset_index(drop=True)
 
 
-def summarize_team_calendar_ev(calendar_ev_df: pd.DataFrame) -> dict[str, pd.DataFrame]:
+def summarize_team_calendar_ev(calendar_ev_df: pd.DataFrame) -> pd.DataFrame:
     if calendar_ev_df.empty:
-        empty_df = pd.DataFrame()
-        return {"overview": empty_df, "by_month": empty_df, "by_category": empty_df}
+        return pd.DataFrame(columns=SUMMARY_COLUMNS)
 
-    overview_df = pd.DataFrame(
+    summary_df = pd.DataFrame(
         [
             {
                 "team_slug": calendar_ev_df["team_slug"].iloc[0],
                 "planning_year": int(calendar_ev_df["planning_year"].iloc[0]),
-                "race_count": len(calendar_ev_df),
-                "completed_race_count": int((calendar_ev_df["status"] == "completed").sum()),
-                "scheduled_race_count": int((calendar_ev_df["status"] == "scheduled").sum()),
+                "as_of_date": str(calendar_ev_df["as_of_date"].iloc[0]) if "as_of_date" in calendar_ev_df.columns else "",
                 "total_expected_points": float(calendar_ev_df["expected_points"].fillna(0.0).sum()),
                 "completed_expected_points": float(
                     calendar_ev_df.loc[calendar_ev_df["status"] == "completed", "expected_points"].fillna(0.0).sum()
                 ),
                 "remaining_expected_points": float(
-                    calendar_ev_df.loc[calendar_ev_df["status"] != "completed", "expected_points"].fillna(0.0).sum()
+                    calendar_ev_df.loc[calendar_ev_df["status"] == "scheduled", "expected_points"].fillna(0.0).sum()
                 ),
-                "actual_points_known": float(calendar_ev_df["actual_points"].fillna(0.0).sum()),
-                "ev_gap_known": float(calendar_ev_df["ev_gap"].fillna(0.0).sum()),
+                "actual_points_known": float(calendar_ev_df.loc[calendar_ev_df["actual_points"].notna(), "actual_points"].sum()),
+                "ev_gap_known": float(calendar_ev_df.loc[calendar_ev_df["ev_gap"].notna(), "ev_gap"].sum()),
+                "race_count": len(calendar_ev_df),
+                "completed_race_count": int((calendar_ev_df["status"] == "completed").sum()),
+                "remaining_race_count": int((calendar_ev_df["status"] == "scheduled").sum()),
             }
         ]
     )
-
-    by_month_df = (
-        calendar_ev_df.groupby("month", dropna=False, as_index=False)
-        .agg(
-            race_count=("race_id", "count"),
-            expected_points=("expected_points", "sum"),
-            actual_points=("actual_points", "sum"),
-            ev_gap=("ev_gap", "sum"),
-        )
-        .sort_values(["month"])
-        .reset_index(drop=True)
-    )
-
-    by_category_df = (
-        calendar_ev_df.groupby("category", dropna=False, as_index=False)
-        .agg(
-            race_count=("race_id", "count"),
-            expected_points=("expected_points", "sum"),
-            actual_points=("actual_points", "sum"),
-            ev_gap=("ev_gap", "sum"),
-        )
-        .sort_values(["category"])
-        .reset_index(drop=True)
-    )
-
-    return {"overview": overview_df, "by_month": by_month_df, "by_category": by_category_df}
+    return summary_df[SUMMARY_COLUMNS]
 
 
 def load_team_reference_total(team_slug: str) -> float | None:
@@ -415,6 +434,7 @@ def _build_actual_points_row(
     row: dict[str, object],
     team_slug: str,
     planning_year: int,
+    pcs_team_slug: str,
     checked_at_utc: str,
     comparison_date: date,
     client: ProCyclingStatsTeamCalendarClient | None,
@@ -423,14 +443,14 @@ def _build_actual_points_row(
     race_slug = str(row.get("pcs_race_slug") or "").strip()
     status = str(row.get("status") or derive_calendar_status(row.get("end_date"), comparison_date))
     team_name = str(row.get("team_name") or "")
-    source_url = build_team_in_race_points_url(team_slug, race_slug) if race_slug else ""
+    source_url = build_team_in_race_points_url(pcs_team_slug, race_slug) if race_slug else ""
     actual_points: float | None
     rider_count = pd.NA
     notes = ""
 
     if race_slug:
         try:
-            race_points = pcs_client.get_team_race_points(team_slug, race_slug)
+            race_points = pcs_client.get_team_race_points(pcs_team_slug, race_slug)
             source_url = race_points.source_url
             if race_points.has_rows:
                 actual_points = float(race_points.actual_points)
@@ -441,18 +461,14 @@ def _build_actual_points_row(
                 notes = "points_page_empty_after_race"
             else:
                 actual_points = None
-                rider_count = 0
+                rider_count = pd.NA
         except Exception as exc:  # noqa: BLE001
-            if status == "completed":
-                actual_points = 0.0
-                rider_count = 0
-            else:
-                actual_points = None
-                rider_count = 0
+            actual_points = None
+            rider_count = pd.NA
             notes = f"points_page_error={type(exc).__name__}"
     else:
-        actual_points = 0.0 if status == "completed" else None
-        notes = "missing_race_slug" if status == "completed" else ""
+        actual_points = None
+        notes = "missing_race_slug"
 
     return {
         "team_slug": team_slug,

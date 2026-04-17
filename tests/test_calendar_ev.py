@@ -35,7 +35,7 @@ def build_calendar_rows() -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
-                "team_slug": "unibet-rose-rockets-2026",
+                "team_slug": "unibet-rose-rockets",
                 "team_name": "Unibet Rose Rockets",
                 "planning_year": 2026,
                 "race_id": 1,
@@ -53,7 +53,7 @@ def build_calendar_rows() -> pd.DataFrame:
                 "notes": "",
             },
             {
-                "team_slug": "unibet-rose-rockets-2026",
+                "team_slug": "unibet-rose-rockets",
                 "team_name": "Unibet Rose Rockets",
                 "planning_year": 2026,
                 "race_id": 2,
@@ -109,7 +109,7 @@ def test_build_team_calendar_ev_preserves_calendar_rows() -> None:
     historical_df = build_historical_rows()
 
     result_df = module.build_team_calendar_ev(
-        team_slug="unibet-rose-rockets-2026",
+        team_slug="unibet-rose-rockets",
         planning_year=2026,
         historical_summary=historical_df,
         team_calendar=calendar_df,
@@ -127,7 +127,7 @@ def test_expected_points_is_component_product() -> None:
     historical_df = build_historical_rows()
 
     result_df = module.build_team_calendar_ev(
-        team_slug="unibet-rose-rockets-2026",
+        team_slug="unibet-rose-rockets",
         planning_year=2026,
         historical_summary=historical_df,
         team_calendar=calendar_df,
@@ -153,7 +153,7 @@ def test_team_fit_multiplier_is_bounded() -> None:
     historical_df.loc[0, "sprint_bonus_signal"] = 3.0
 
     result_df = module.build_team_calendar_ev(
-        team_slug="unibet-rose-rockets-2026",
+        team_slug="unibet-rose-rockets",
         planning_year=2026,
         historical_summary=historical_df,
         team_calendar=calendar_df,
@@ -240,9 +240,10 @@ def test_build_actual_points_table_marks_completed_empty_rows_as_zero() -> None:
             return Result()
 
     actual_points_df = module.build_actual_points_table(
-        team_slug="unibet-rose-rockets-2026",
+        team_slug="unibet-rose-rockets",
         planning_year=2026,
         team_calendar=build_calendar_rows().iloc[[0]].copy(),
+        pcs_team_slug="unibet-rose-rockets-2026",
         client=StubClient(),
     )
 
@@ -256,7 +257,7 @@ def test_build_team_calendar_ev_uses_category_fallback_for_missing_uwt_history()
     calendar_df = pd.DataFrame(
         [
             {
-                "team_slug": "unibet-rose-rockets-2026",
+                "team_slug": "unibet-rose-rockets",
                 "team_name": "Unibet Rose Rockets",
                 "planning_year": 2026,
                 "race_id": 50,
@@ -304,7 +305,7 @@ def test_build_team_calendar_ev_uses_category_fallback_for_missing_uwt_history()
     )
 
     result_df = module.build_team_calendar_ev(
-        team_slug="unibet-rose-rockets-2026",
+        team_slug="unibet-rose-rockets",
         planning_year=2026,
         historical_summary=historical_df,
         team_calendar=calendar_df,
@@ -316,3 +317,70 @@ def test_build_team_calendar_ev_uses_category_fallback_for_missing_uwt_history()
     assert float(row["base_opportunity_points"]) == 70.0
     assert "history_fallback_from=1.Pro" in row["notes"]
     assert "history_missing" in row["notes"]
+
+
+def test_build_actual_points_table_marks_completed_errors_as_unknown() -> None:
+    class StubClient:
+        def get_team_race_points(self, team_slug: str, race_slug: str):
+            raise RuntimeError("boom")
+
+    actual_points_df = module.build_actual_points_table(
+        team_slug="unibet-rose-rockets",
+        planning_year=2026,
+        team_calendar=build_calendar_rows().iloc[[0]].copy(),
+        pcs_team_slug="unibet-rose-rockets-2026",
+        client=StubClient(),
+    )
+
+    row = actual_points_df.iloc[0]
+    assert pd.isna(row["actual_points"])
+    assert row["notes"] == "points_page_error=RuntimeError"
+
+
+def test_summarize_team_calendar_ev_returns_one_row_kpis() -> None:
+    calendar_ev_df = pd.DataFrame(
+        [
+            {
+                "team_slug": "unibet-rose-rockets",
+                "planning_year": 2026,
+                "as_of_date": "2026-04-17",
+                "status": "completed",
+                "expected_points": 10.0,
+                "actual_points": 12.0,
+                "ev_gap": 2.0,
+            },
+            {
+                "team_slug": "unibet-rose-rockets",
+                "planning_year": 2026,
+                "as_of_date": "2026-04-17",
+                "status": "scheduled",
+                "expected_points": 8.0,
+                "actual_points": pd.NA,
+                "ev_gap": pd.NA,
+            },
+            {
+                "team_slug": "unibet-rose-rockets",
+                "planning_year": 2026,
+                "as_of_date": "2026-04-17",
+                "status": "cancelled",
+                "expected_points": 6.0,
+                "actual_points": pd.NA,
+                "ev_gap": pd.NA,
+            },
+        ]
+    )
+
+    summary_df = module.summarize_team_calendar_ev(calendar_ev_df)
+
+    assert len(summary_df) == 1
+    row = summary_df.iloc[0]
+    assert row["team_slug"] == "unibet-rose-rockets"
+    assert row["as_of_date"] == "2026-04-17"
+    assert float(row["total_expected_points"]) == 24.0
+    assert float(row["completed_expected_points"]) == 10.0
+    assert float(row["remaining_expected_points"]) == 8.0
+    assert float(row["actual_points_known"]) == 12.0
+    assert float(row["ev_gap_known"]) == 2.0
+    assert int(row["race_count"]) == 3
+    assert int(row["completed_race_count"]) == 1
+    assert int(row["remaining_race_count"]) == 1
