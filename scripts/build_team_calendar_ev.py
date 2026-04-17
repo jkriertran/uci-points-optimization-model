@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -11,6 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from uci_points_model.calendar_ev import (
+    DEFAULT_EV_WEIGHTS,
     build_actual_points_table,
     build_historical_target_summary,
     build_team_calendar_ev,
@@ -19,6 +22,33 @@ from uci_points_model.calendar_ev import (
     summarize_team_calendar_ev,
 )
 from uci_points_model.team_calendar import build_live_team_calendar, derive_calendar_status
+
+OPPORTUNITY_WEIGHT_RATIONALE = {
+    "avg_points_efficiency": "Highest weight because the model should favor races that have historically turned field quality into points efficiently.",
+    "avg_top10_points": "Rewards broad scoring opportunity instead of only winner upside.",
+    "avg_winner_points": "Keeps a smaller reward for races with real ceiling if the team lands a big result.",
+    "avg_stage_top10_points": "Adds stage-race scoring depth without letting stage volume dominate the entire ranking.",
+    "field_softness_score": "Rewards races whose historical top end has looked softer for the points on offer.",
+}
+
+TEAM_STRENGTH_RATIONALE = {
+    "one_day": "How much the team profile should care about classic-style one-day signals.",
+    "stage_hunter": "How much the profile should value stage-hunting or sprinter-friendly stage-race signals.",
+    "gc": "How much the profile should care about GC-heavy stage-race opportunity.",
+    "time_trial": "How much time-trial signals should influence team fit.",
+    "all_round": "How much the profile should reward balanced, all-round stage-race opportunity.",
+    "sprint_bonus": "Extra boost for sprint-sensitive opportunities when the roster is built to exploit them.",
+}
+
+PARTICIPATION_RULE_RATIONALE = {
+    "completed": "Completed races get full participation confidence because the team actually started.",
+    "program_confirmed": "A live team program listing is strong evidence, but still below a completed race.",
+    "observed_startlist": "Observed startlists are nearly as strong as a program-confirmed entry.",
+    "calendar_seed": "The planning calendar alone is a weaker signal, so future starts get a haircut.",
+    "overlap_penalty": "When races overlap, confidence is capped because a team cannot fully commit to both.",
+}
+
+EXECUTION_RULE_RATIONALE = "Execution multipliers are conservative realization haircuts by race category. Bigger races keep a lower multiplier because historical opportunity does not fully translate into team-level realized points."
 
 
 def parse_args() -> argparse.Namespace:
@@ -159,6 +189,63 @@ def _write_dictionary(path: Path) -> None:
     path.write_text("\n".join(lines) + "\n")
 
 
+def _metadata_path_for_summary(summary_output_path: Path) -> Path:
+    if summary_output_path.name.endswith("_calendar_ev_summary.csv"):
+        return summary_output_path.with_name(
+            summary_output_path.name.replace("_calendar_ev_summary.csv", "_calendar_ev_metadata.json")
+        )
+    return summary_output_path.with_suffix(".json")
+
+
+def _build_metadata(
+    *,
+    team_slug: str,
+    pcs_team_slug: str,
+    planning_year: int,
+    team_profile: dict,
+    summary_df: pd.DataFrame,
+    calendar_rows: int,
+) -> dict[str, object]:
+    summary_row = summary_df.iloc[0].to_dict() if not summary_df.empty else {}
+    strength_weights = {
+        key: float(value)
+        for key, value in dict(team_profile.get("strength_weights", {})).items()
+    }
+    execution_rules = {
+        key: float(value)
+        for key, value in dict(team_profile.get("execution_rules", {})).items()
+    }
+    participation_rules = {
+        key: float(value)
+        for key, value in dict(team_profile.get("participation_rules", {})).items()
+    }
+    return {
+        "team_slug": team_slug,
+        "pcs_team_slug": pcs_team_slug,
+        "planning_year": int(planning_year),
+        "team_name": str(team_profile.get("team_name") or ""),
+        "as_of_date": str(summary_row.get("as_of_date") or ""),
+        "built_at_utc": datetime.now(timezone.utc).isoformat(),
+        "artifact_row_count": int(calendar_rows),
+        "expected_points_formula": "base_opportunity_points * team_fit_multiplier * participation_confidence * execution_multiplier",
+        "opportunity_model": {
+            "weights": {key: float(value) for key, value in DEFAULT_EV_WEIGHTS.items()},
+            "rationale": OPPORTUNITY_WEIGHT_RATIONALE,
+        },
+        "team_profile": {
+            "strength_weights": strength_weights,
+            "strength_weight_rationale": TEAM_STRENGTH_RATIONALE,
+            "team_fit_floor": float(team_profile.get("team_fit_floor", 0.70)),
+            "team_fit_range": float(team_profile.get("team_fit_range", 0.30)),
+            "team_fit_rationale": "The multiplier is bounded as floor + range * team_fit_score, which keeps team fit as an adjustment rather than letting it overwhelm the historical opportunity anchor.",
+            "execution_rules": execution_rules,
+            "execution_rule_rationale": EXECUTION_RULE_RATIONALE,
+            "participation_rules": participation_rules,
+            "participation_rule_rationale": PARTICIPATION_RULE_RATIONALE,
+        },
+    }
+
+
 def main() -> None:
     args = parse_args()
     team_profile = load_team_profile(args.team_profile_path)
@@ -168,6 +255,7 @@ def main() -> None:
     actual_points_path = Path(args.actual_points_path)
     ev_output_path = Path(args.ev_output_path)
     summary_output_path = Path(args.summary_output_path)
+    metadata_output_path = _metadata_path_for_summary(summary_output_path)
     readme_path = Path(args.readme_path)
     dictionary_path = Path(args.dictionary_path)
 
@@ -197,18 +285,42 @@ def main() -> None:
     )
     summary_df = summarize_team_calendar_ev(calendar_ev_df)
 
-    for output_path in [calendar_path, actual_points_path, ev_output_path, summary_output_path, readme_path, dictionary_path]:
+    for output_path in [
+        calendar_path,
+        actual_points_path,
+        ev_output_path,
+        summary_output_path,
+        metadata_output_path,
+        readme_path,
+        dictionary_path,
+    ]:
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
     actual_points_df.to_csv(actual_points_path, index=False)
     calendar_ev_df.to_csv(ev_output_path, index=False)
     summary_df.to_csv(summary_output_path, index=False)
+    metadata_output_path.write_text(
+        json.dumps(
+            _build_metadata(
+                team_slug=team_slug,
+                pcs_team_slug=pcs_team_slug,
+                planning_year=args.planning_year,
+                team_profile=team_profile,
+                summary_df=summary_df,
+                calendar_rows=len(calendar_ev_df),
+            ),
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
     _write_readme(readme_path, team_slug, args.planning_year)
     _write_dictionary(dictionary_path)
 
     print(f"Wrote {len(actual_points_df)} actual-points rows to {actual_points_path}")
     print(f"Wrote {len(calendar_ev_df)} race-level EV rows to {ev_output_path}")
     print(f"Wrote {len(summary_df)} summary rows to {summary_output_path}")
+    print(f"Wrote metadata to {metadata_output_path}")
 
 
 if __name__ == "__main__":

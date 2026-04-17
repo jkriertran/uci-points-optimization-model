@@ -14,8 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEAM_SLUG: unibet-rose-rockets-2026
+      TEAM_SLUG: unibet-rose-rockets
+      PCS_TEAM_SLUG: unibet-rose-rockets-2026
       PLANNING_YEAR: "2026"
+      ARTIFACT_STEM: unibet_rose_rockets_2026
+      TEAM_PROFILE_PATH: data/team_profiles/unibet_rose_rockets_2026_profile.json
 
     steps:
       - name: Check out repository
@@ -35,47 +38,51 @@ jobs:
         run: |
           python scripts/build_team_calendar_snapshots.py \
             --team-slug "$TEAM_SLUG" \
+            --pcs-team-slug "$PCS_TEAM_SLUG" \
             --planning-year "$PLANNING_YEAR" \
-            --calendar-output "data/team_calendars/${TEAM_SLUG}_latest.csv" \
-            --changelog-output "data/team_calendars/${TEAM_SLUG}_changelog.csv"
+            --calendar-output "data/team_calendars/${ARTIFACT_STEM}_latest.csv" \
+            --changelog-output "data/team_calendars/${ARTIFACT_STEM}_changelog.csv"
 
       - name: Refresh team calendar EV outputs
         run: |
           python scripts/build_team_calendar_ev.py \
             --team-slug "$TEAM_SLUG" \
+            --pcs-team-slug "$PCS_TEAM_SLUG" \
             --planning-year "$PLANNING_YEAR" \
-            --team-profile-path "data/team_profiles/unibet_rose_rockets_2026_profile.json" \
-            --calendar-path "data/team_calendars/${TEAM_SLUG}_latest.csv" \
-            --actual-points-path "data/team_results/${TEAM_SLUG}_actual_points.csv" \
-            --ev-output-path "data/team_ev/${TEAM_SLUG}_calendar_ev.csv" \
-            --summary-output-path "data/team_ev/${TEAM_SLUG}_calendar_ev_summary.csv" \
-            --readme-path "data/team_ev/${TEAM_SLUG}_README.md" \
-            --dictionary-path "data/team_ev/${TEAM_SLUG}_data_dictionary.md"
+            --team-profile-path "$TEAM_PROFILE_PATH" \
+            --calendar-path "data/team_calendars/${ARTIFACT_STEM}_latest.csv" \
+            --actual-points-path "data/team_results/${ARTIFACT_STEM}_actual_points.csv" \
+            --ev-output-path "data/team_ev/${ARTIFACT_STEM}_calendar_ev.csv" \
+            --summary-output-path "data/team_ev/${ARTIFACT_STEM}_calendar_ev_summary.csv" \
+            --readme-path "data/team_ev/README.md" \
+            --dictionary-path "data/team_ev/data_dictionary.md"
 
       - name: Commit updated calendar outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git diff --quiet -- \
-            data/team_calendars/${TEAM_SLUG}_latest.csv \
-            data/team_calendars/${TEAM_SLUG}_changelog.csv \
-            data/team_results/${TEAM_SLUG}_actual_points.csv \
-            data/team_ev/${TEAM_SLUG}_calendar_ev.csv \
-            data/team_ev/${TEAM_SLUG}_calendar_ev_summary.csv \
-            data/team_ev/${TEAM_SLUG}_README.md \
-            data/team_ev/${TEAM_SLUG}_data_dictionary.md; then
+            data/team_calendars/${ARTIFACT_STEM}_latest.csv \
+            data/team_calendars/${ARTIFACT_STEM}_changelog.csv \
+            data/team_results/${ARTIFACT_STEM}_actual_points.csv \
+            data/team_ev/${ARTIFACT_STEM}_calendar_ev.csv \
+            data/team_ev/${ARTIFACT_STEM}_calendar_ev_summary.csv \
+            data/team_ev/${ARTIFACT_STEM}_calendar_ev_metadata.json \
+            data/team_ev/README.md \
+            data/team_ev/data_dictionary.md; then
             echo "No team calendar output changes to commit."
             exit 0
           fi
           git add \
-            data/team_calendars/${TEAM_SLUG}_latest.csv \
-            data/team_calendars/${TEAM_SLUG}_changelog.csv \
-            data/team_results/${TEAM_SLUG}_actual_points.csv \
-            data/team_ev/${TEAM_SLUG}_calendar_ev.csv \
-            data/team_ev/${TEAM_SLUG}_calendar_ev_summary.csv \
-            data/team_ev/${TEAM_SLUG}_README.md \
-            data/team_ev/${TEAM_SLUG}_data_dictionary.md
-          git commit -m "Refresh ${TEAM_SLUG} team calendar outputs"
+            data/team_calendars/${ARTIFACT_STEM}_latest.csv \
+            data/team_calendars/${ARTIFACT_STEM}_changelog.csv \
+            data/team_results/${ARTIFACT_STEM}_actual_points.csv \
+            data/team_ev/${ARTIFACT_STEM}_calendar_ev.csv \
+            data/team_ev/${ARTIFACT_STEM}_calendar_ev_summary.csv \
+            data/team_ev/${ARTIFACT_STEM}_calendar_ev_metadata.json \
+            data/team_ev/README.md \
+            data/team_ev/data_dictionary.md
+          git commit -m "Refresh ${TEAM_SLUG} ${PLANNING_YEAR} team calendar outputs"
           git push
 
       - name: Open or update refresh failure alert

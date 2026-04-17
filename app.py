@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from datetime import date
 from pathlib import Path
 
@@ -40,6 +41,16 @@ DATASET_SCHEMA_VERSION = "stage-breakdown-v1"
 PENDING_WEIGHT_STATE_KEY = "pending_weight_state"
 CALIBRATION_RESULT_VERSION = "category-aware-v1"
 TEAM_EV_DIR = Path("data/team_ev")
+TEAM_EV_DATASET_LABEL_KEY = "team_calendar_ev_dataset_label"
+CATEGORY_DISPLAY_ORDER = ["2.UWT", "1.UWT", "2.Pro", "1.Pro", "2.1", "1.1", "2.2", "1.2"]
+WORKSPACE_OPTIONS = [
+    "Recommended Targets",
+    "Edition Diagnostics",
+    "Backtest & Calibration",
+    "ProTeam Risk Monitor",
+    "Team Calendar EV",
+    "Data Sources",
+]
 TEAM_EV_BUILD_COMMAND = """python scripts/build_team_calendar_ev.py \\
   --team-slug <team-slug> \\
   --pcs-team-slug <pcs-team-slug> \\
@@ -85,6 +96,16 @@ def get_live_proteam_risk_dataset(scope: str) -> pd.DataFrame:
 
 
 @st.cache_data(show_spinner=False)
+def load_local_csv(path: str) -> pd.DataFrame:
+    return pd.read_csv(path, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_local_json(path: str) -> dict[str, object]:
+    return json.loads(Path(path).read_text())
+
+
+@st.cache_data(show_spinner=False)
 def discover_team_calendar_ev_datasets() -> pd.DataFrame:
     if not TEAM_EV_DIR.exists():
         return pd.DataFrame()
@@ -116,7 +137,10 @@ def discover_team_calendar_ev_datasets() -> pd.DataFrame:
         if not team_name:
             team_name = team_slug.replace("-", " ").title()
 
+        artifact_prefix = summary_path.name.replace("_calendar_ev_summary.csv", "")
         metadata_path = summary_path.with_name(summary_path.name.replace("_calendar_ev_summary.csv", "_calendar_ev_metadata.json"))
+        calendar_path = Path("data/team_calendars") / f"{artifact_prefix}_latest.csv"
+        actual_points_path = Path("data/team_results") / f"{artifact_prefix}_actual_points.csv"
         datasets.append(
             {
                 "team_slug": team_slug,
@@ -125,6 +149,8 @@ def discover_team_calendar_ev_datasets() -> pd.DataFrame:
                 "label": f"{team_name} ({int(planning_year)})",
                 "race_path": str(race_path),
                 "summary_path": str(summary_path),
+                "calendar_path": str(calendar_path) if calendar_path.exists() else "",
+                "actual_points_path": str(actual_points_path) if actual_points_path.exists() else "",
                 "metadata_path": str(metadata_path) if metadata_path.exists() else "",
             }
         )
@@ -171,9 +197,21 @@ def load_team_calendar_ev_metadata(team_slug: str, planning_year: int) -> dict[s
     if not metadata_path:
         return {}
     try:
-        return pd.read_json(metadata_path, typ="series").to_dict()
+        return json.loads(Path(metadata_path).read_text())
     except Exception:  # noqa: BLE001
         return {}
+
+
+def get_active_team_calendar_ev_dataset_row() -> pd.Series | None:
+    datasets = discover_team_calendar_ev_datasets()
+    if datasets.empty:
+        return None
+
+    selected_label = str(st.session_state.get(TEAM_EV_DATASET_LABEL_KEY) or "")
+    matches = datasets.loc[datasets["label"] == selected_label]
+    if matches.empty:
+        return datasets.iloc[0]
+    return matches.iloc[0]
 
 
 def _filtered_team_calendar_ev(calendar_ev_df: pd.DataFrame, view_mode: str) -> pd.DataFrame:
@@ -187,6 +225,130 @@ def _filtered_team_calendar_ev(calendar_ev_df: pd.DataFrame, view_mode: str) -> 
     return calendar_ev_df.copy()
 
 
+def _ordered_category_summary(category_df: pd.DataFrame) -> pd.DataFrame:
+    if category_df.empty:
+        return pd.DataFrame(columns=["category", "expected_points", "actual_points"])
+
+    summary_df = category_df.copy()
+    summary_df["expected_points"] = pd.to_numeric(summary_df["expected_points"], errors="coerce").fillna(0.0)
+    summary_df["actual_points"] = pd.to_numeric(summary_df["actual_points"], errors="coerce").fillna(0.0)
+    summary_df = (
+        summary_df.groupby("category", dropna=False, as_index=False)
+        .agg(expected_points=("expected_points", "sum"), actual_points=("actual_points", "sum"))
+    )
+    summary_df["category"] = summary_df["category"].fillna("Unknown").astype(str)
+    existing_categories = summary_df["category"].tolist()
+    category_order = [category for category in CATEGORY_DISPLAY_ORDER if category in existing_categories]
+    category_order.extend(sorted(category for category in existing_categories if category not in category_order))
+    category_rank = {category: index for index, category in enumerate(category_order)}
+    summary_df["category_rank"] = summary_df["category"].map(category_rank).fillna(len(category_order))
+    return summary_df.sort_values(["category_rank", "category"]).drop(columns=["category_rank"]).reset_index(drop=True)
+
+
+def get_active_team_calendar_ev_metadata() -> dict[str, object]:
+    dataset_row = get_active_team_calendar_ev_dataset_row()
+    if dataset_row is None:
+        return {}
+    return load_team_calendar_ev_metadata(str(dataset_row["team_slug"]), int(dataset_row["planning_year"]))
+
+
+def render_team_calendar_ev_weight_explainer(metadata: dict[str, object]) -> None:
+    if not metadata:
+        return
+
+    opportunity_model = dict(metadata.get("opportunity_model", {}))
+    opportunity_weights = dict(opportunity_model.get("weights", {}))
+    opportunity_rationale = dict(opportunity_model.get("rationale", {}))
+
+    team_profile = dict(metadata.get("team_profile", {}))
+    strength_weights = dict(team_profile.get("strength_weights", {}))
+    strength_rationale = dict(team_profile.get("strength_weight_rationale", {}))
+    execution_rules = dict(team_profile.get("execution_rules", {}))
+    participation_rules = dict(team_profile.get("participation_rules", {}))
+    participation_rationale = dict(team_profile.get("participation_rule_rationale", {}))
+
+    team_name = str(metadata.get("team_name") or metadata.get("team_slug") or "").strip()
+    planning_year = metadata.get("planning_year")
+    if team_name and planning_year:
+        st.caption(f"Saved Team Calendar EV weight assumptions for `{team_name}` in `{planning_year}`.")
+
+    st.markdown(
+        """
+        Expected points are built in four layers:
+
+        `base_opportunity_points × team_fit_multiplier × participation_confidence × execution_multiplier`
+
+        The first term is the historical race-opportunity anchor. The next three terms translate that opportunity into a team-specific expectation.
+        """
+    )
+
+    formula = str(metadata.get("expected_points_formula") or "").strip()
+    if formula:
+        st.caption(f"Saved formula: `{formula}`")
+
+    if opportunity_weights:
+        st.markdown("**1. Historical opportunity weights**")
+        opportunity_frame = pd.DataFrame(
+            [
+                {
+                    "Component": component,
+                    "Weight": float(weight),
+                    "Why it matters": opportunity_rationale.get(component, ""),
+                }
+                for component, weight in opportunity_weights.items()
+            ]
+        )
+        st.dataframe(opportunity_frame.round({"Weight": 2}), use_container_width=True, hide_index=True)
+        st.caption(
+            "The heaviest weight sits on points efficiency, which is the clearest signal of payout value relative to field strength. The smaller payout and stage terms keep raw upside in the model without letting it drown out efficiency."
+        )
+
+    if strength_weights:
+        st.markdown("**2. Team-fit weights**")
+        strength_frame = pd.DataFrame(
+            [
+                {
+                    "Axis": axis,
+                    "Weight": float(weight),
+                    "Why it matters": strength_rationale.get(axis, ""),
+                }
+                for axis, weight in strength_weights.items()
+            ]
+        )
+        st.dataframe(strength_frame.round({"Weight": 2}), use_container_width=True, hide_index=True)
+        st.caption(
+            f"Team fit is bounded rather than open-ended: floor `{float(team_profile.get('team_fit_floor', 0.70)):.2f}` plus range `{float(team_profile.get('team_fit_range', 0.30)):.2f}` times the team-fit score."
+        )
+        if team_profile.get("team_fit_rationale"):
+            st.caption(str(team_profile["team_fit_rationale"]))
+
+    if execution_rules:
+        st.markdown("**3. Execution multipliers by category**")
+        execution_frame = pd.DataFrame(
+            [{"Category": category, "Multiplier": float(value)} for category, value in execution_rules.items()]
+        ).sort_values("Category")
+        st.dataframe(execution_frame.round({"Multiplier": 2}), use_container_width=True, hide_index=True)
+        if team_profile.get("execution_rule_rationale"):
+            st.caption(str(team_profile["execution_rule_rationale"]))
+
+    if participation_rules:
+        st.markdown("**4. Participation confidence rules**")
+        participation_frame = pd.DataFrame(
+            [
+                {
+                    "Signal": signal,
+                    "Confidence": float(value),
+                    "Why it matters": participation_rationale.get(signal, ""),
+                }
+                for signal, value in participation_rules.items()
+            ]
+        )
+        st.dataframe(participation_frame.round({"Confidence": 2}), use_container_width=True, hide_index=True)
+        st.caption(
+            "These values express how sure the model is that the team actually starts the race. Completed races get full confidence; future races are discounted unless there is stronger evidence than the planning calendar alone."
+        )
+
+
 def render_team_calendar_ev_workspace() -> None:
     st.subheader("Team Calendar EV")
     datasets = discover_team_calendar_ev_datasets()
@@ -198,12 +360,13 @@ def render_team_calendar_ev_workspace() -> None:
 
     selector_left, selector_mid, selector_right = st.columns([2, 1, 1])
     options = datasets["label"].tolist()
-    default_index = 0
+    if TEAM_EV_DATASET_LABEL_KEY not in st.session_state or st.session_state[TEAM_EV_DATASET_LABEL_KEY] not in options:
+        st.session_state[TEAM_EV_DATASET_LABEL_KEY] = options[0]
     with selector_left:
         selected_label = st.selectbox(
             "Team-season",
             options=options,
-            index=default_index,
+            key=TEAM_EV_DATASET_LABEL_KEY,
             disabled=len(options) == 1,
         )
     dataset_row = datasets.loc[datasets["label"] == selected_label].iloc[0]
@@ -237,7 +400,8 @@ def render_team_calendar_ev_workspace() -> None:
         return
 
     st.caption(
-        f"KPI row reflects the saved `{planning_year}` team-season snapshot. Charts and tables follow the `{view_mode}` filter."
+        f"KPI row reflects the saved `{planning_year}` team-season snapshot. Most charts and tables follow the "
+        f"`{view_mode}` filter. The category chart has its own picker for season-plan versus completed-race views."
     )
 
     metric_left, metric_mid, metric_right, metric_far, metric_farthest, metric_extra = st.columns(6)
@@ -247,6 +411,7 @@ def render_team_calendar_ev_workspace() -> None:
     metric_far.metric("Actual points known", f"{float(summary_row['actual_points_known']):.1f}")
     metric_farthest.metric("EV gap known", f"{float(summary_row['ev_gap_known']):+.1f}")
     metric_extra.metric("Race count", int(summary_row["race_count"]))
+    st.caption("Weight details for this EV model live in the `How the model works: idea, methods, and math` expander above.")
 
     completed_missing_ev = filtered_df.loc[
         (filtered_df["status"] == "completed")
@@ -330,35 +495,70 @@ def render_team_calendar_ev_workspace() -> None:
 
     lower_left, lower_right = st.columns(2)
 
-    category_df = filtered_df.copy()
-    category_df["expected_points"] = pd.to_numeric(category_df["expected_points"], errors="coerce").fillna(0.0)
-    category_df["actual_points"] = pd.to_numeric(category_df["actual_points"], errors="coerce").fillna(0.0)
-    category_summary = (
-        category_df.groupby("category", dropna=False, as_index=False)
-        .agg(expected_points=("expected_points", "sum"), actual_points=("actual_points", "sum"))
-        .sort_values("expected_points", ascending=False)
-    )
-    category_plot_df = category_summary.melt(
-        id_vars=["category"],
-        value_vars=["expected_points", "actual_points"],
-        var_name="series",
-        value_name="points",
-    )
-    category_plot_df["series"] = category_plot_df["series"].map(
-        {"expected_points": "Expected", "actual_points": "Actual"}
-    )
     with lower_left:
-        category_chart = px.bar(
-            category_plot_df,
-            x="category",
-            y="points",
-            color="series",
-            barmode="group",
-            labels={"category": "Category", "points": "Points", "series": "Series"},
-            title="Points by category",
+        category_chart_view = st.radio(
+            "Category view",
+            options=["Results so far", "Season plan"],
+            index=0,
+            horizontal=True,
+            key="team_ev_category_chart_view",
         )
-        category_chart.update_layout(height=360)
-        st.plotly_chart(category_chart, use_container_width=True)
+        if category_chart_view == "Season plan":
+            category_summary = _ordered_category_summary(race_df)
+            if category_summary.empty:
+                st.info("No category totals are available for the saved team-season artifact yet.")
+            else:
+                category_chart = px.bar(
+                    category_summary,
+                    x="category",
+                    y="expected_points",
+                    labels={"category": "Category", "expected_points": "Points"},
+                    title="Projected points by category (full schedule)",
+                    category_orders={"category": category_summary["category"].tolist()},
+                )
+                category_chart.update_traces(marker_color="#176dbd")
+                category_chart.update_xaxes(type="category")
+                category_chart.update_layout(height=360)
+                st.plotly_chart(category_chart, use_container_width=True)
+                st.caption("This view shows projected points from the full saved team-season schedule.")
+        else:
+            completed_category_df = race_df.loc[race_df["status"] == "completed"].copy()
+            completed_unknown_actuals = int(completed_category_df["actual_points"].isna().sum())
+            category_summary = _ordered_category_summary(completed_category_df)
+            if category_summary.empty:
+                st.info("No completed races are available yet, so there is no results-so-far category view to show.")
+            else:
+                category_plot_df = category_summary.melt(
+                    id_vars=["category"],
+                    value_vars=["expected_points", "actual_points"],
+                    var_name="series",
+                    value_name="points",
+                )
+                category_plot_df["series"] = category_plot_df["series"].map(
+                    {"expected_points": "Projected", "actual_points": "Actual"}
+                )
+                category_chart = px.bar(
+                    category_plot_df,
+                    x="category",
+                    y="points",
+                    color="series",
+                    barmode="group",
+                    labels={"category": "Category", "points": "Points", "series": "Series"},
+                    title="Projected vs actual points by category (completed races)",
+                    category_orders={"category": category_summary["category"].tolist()},
+                    color_discrete_map={"Projected": "#176dbd", "Actual": "#79b4e6"},
+                )
+                category_chart.update_xaxes(type="category")
+                category_chart.update_layout(height=360)
+                st.plotly_chart(category_chart, use_container_width=True)
+                st.caption(
+                    "`Projected` is the model expectation for completed races only. `Actual` is the known PCS result total for those same completed races."
+                )
+                if completed_unknown_actuals:
+                    st.caption(
+                        f"`Actual` currently excludes {completed_unknown_actuals} completed race(s) whose PCS "
+                        "actual points are still missing, so those rows contribute `0` until the artifact is refreshed."
+                    )
 
     known_gap_df = filtered_df.loc[filtered_df["ev_gap"].notna()].copy()
     with lower_right:
@@ -383,7 +583,8 @@ def render_team_calendar_ev_workspace() -> None:
                 labels={"ev_gap": "Actual minus expected", "race_name": "Race"},
                 title="Largest over- and under-expectation races",
             )
-            gap_chart.update_layout(height=360, coloraxis_showscale=False)
+            gap_chart_height = max(440, 28 * len(gap_chart_df) + 160)
+            gap_chart.update_layout(height=gap_chart_height, coloraxis_showscale=False)
             st.plotly_chart(gap_chart, use_container_width=True)
 
     st.markdown("**Race detail**")
@@ -436,6 +637,196 @@ def render_team_calendar_ev_workspace() -> None:
         use_container_width=True,
         hide_index=True,
     )
+
+
+def render_data_sources_tab(
+    dataset: pd.DataFrame,
+    dataset_source_label: str,
+    planning_calendar: pd.DataFrame,
+    planning_calendar_source: str,
+    planning_year: int,
+) -> None:
+    st.subheader("Data Sources")
+    st.caption(
+        "Inspect the actual datasets currently driving the app. Historical race editions stay separate from the "
+        "current-season planning calendar, ProTeam monitor snapshots, and saved Team Calendar EV artifacts."
+    )
+
+    sources: list[dict[str, object]] = []
+
+    sources.append(
+        {
+            "label": "Historical race editions",
+            "kind": "dataframe",
+            "data": dataset,
+            "description": "The current historical analysis dataset used for Recommended Targets, Diagnostics, and Backtesting.",
+            "source_note": (
+                "Loaded from the bundled snapshot and filtered to the current sidebar year/category settings."
+                if dataset_source_label == "Bundled snapshot"
+                else "Loaded from the current live FirstCycling scrape using the current sidebar year/category settings."
+            ),
+            "path": str(SNAPSHOT_PATH) if dataset_source_label == "Bundled snapshot" and SNAPSHOT_PATH.exists() else "",
+            "download_name": "uci_points_race_editions.csv",
+        }
+    )
+
+    planning_calendar_path = Path("data") / f"planning_calendar_{planning_year}.csv"
+    planning_calendar_note = {
+        "live": "Loaded from the live FirstCycling planning calendar fetch used to cross-check current-season targets.",
+        "snapshot": f"Loaded from the bundled planning-calendar fallback for {planning_year}.",
+        "unavailable": f"The {planning_year} planning calendar is unavailable in this session.",
+    }.get(planning_calendar_source, "Planning calendar source status is unknown.")
+    sources.append(
+        {
+            "label": f"{planning_year} planning calendar",
+            "kind": "dataframe",
+            "data": planning_calendar,
+            "description": f"The planning calendar used to label which targets are on the {planning_year} .1/.Pro schedule.",
+            "source_note": planning_calendar_note,
+            "path": str(planning_calendar_path) if planning_calendar_source == "snapshot" and planning_calendar_path.exists() else "",
+            "download_name": f"planning_calendar_{planning_year}.csv",
+        }
+    )
+
+    for scope, scope_label in PROTEAM_SCOPE_LABELS.items():
+        raw_snapshot = load_proteam_risk_snapshot(scope)
+        if raw_snapshot.empty:
+            continue
+        sources.append(
+            {
+                "label": f"ProTeam risk raw snapshot ({scope_label})",
+                "kind": "dataframe",
+                "data": raw_snapshot,
+                "description": f"The raw PCS rider-contribution snapshot used by the ProTeam Risk Monitor for the {scope_label.lower()} view.",
+                "source_note": f"Bundled snapshot with latest scrape timestamp `{raw_snapshot['scraped_at'].max()}`.",
+                "path": str(raw_snapshot.attrs.get("snapshot_path") or ""),
+                "download_name": Path(str(raw_snapshot.attrs.get("snapshot_path") or f"proteam_risk_{scope}.csv")).name,
+            }
+        )
+
+    active_team_dataset = get_active_team_calendar_ev_dataset_row()
+    if active_team_dataset is not None:
+        team_label = str(active_team_dataset["label"])
+        team_slug = str(active_team_dataset["team_slug"])
+        team_year = int(active_team_dataset["planning_year"])
+        calendar_path = str(active_team_dataset.get("calendar_path") or "")
+        actual_points_path = str(active_team_dataset.get("actual_points_path") or "")
+        metadata_path = str(active_team_dataset.get("metadata_path") or "")
+
+        if calendar_path:
+            team_calendar_df = load_local_csv(calendar_path)
+            sources.append(
+                {
+                    "label": f"Team calendar snapshot ({team_label})",
+                    "kind": "dataframe",
+                    "data": team_calendar_df,
+                    "description": "The saved team schedule/program snapshot used as the base input to the Team Calendar EV build.",
+                    "source_note": "This is the current matched team calendar artifact, including race status, PCS slugs, and overlap flags.",
+                    "path": calendar_path,
+                    "download_name": Path(calendar_path).name,
+                }
+            )
+
+        if actual_points_path:
+            actual_points_df = load_local_csv(actual_points_path)
+            sources.append(
+                {
+                    "label": f"Team actual points ({team_label})",
+                    "kind": "dataframe",
+                    "data": actual_points_df,
+                    "description": "The saved race-level actual-points table pulled from PCS team-in-race pages for the selected team-season.",
+                    "source_note": "Completed zero-point races stay as `0`; unknown or unavailable actuals stay blank.",
+                    "path": actual_points_path,
+                    "download_name": Path(actual_points_path).name,
+                }
+            )
+
+        team_ev_df = load_team_calendar_ev(team_slug, team_year)
+        sources.append(
+            {
+                "label": f"Team Calendar EV race-level output ({team_label})",
+                "kind": "dataframe",
+                "data": team_ev_df,
+                "description": "The saved race-level Team Calendar EV output used for the workspace charts and detailed table.",
+                "source_note": "This artifact combines historical opportunity, team fit, participation confidence, execution multipliers, and actuals when known.",
+                "path": str(active_team_dataset["race_path"]),
+                "download_name": Path(str(active_team_dataset["race_path"])).name,
+            }
+        )
+
+        team_summary_df = load_team_calendar_ev_summary(team_slug, team_year)
+        sources.append(
+            {
+                "label": f"Team Calendar EV summary ({team_label})",
+                "kind": "dataframe",
+                "data": team_summary_df,
+                "description": "The one-row summary artifact used for the Team Calendar EV KPI cards.",
+                "source_note": "This row stores season-level totals for expected points, known actual points, EV gap, and race counts.",
+                "path": str(active_team_dataset["summary_path"]),
+                "download_name": Path(str(active_team_dataset["summary_path"])).name,
+            }
+        )
+
+        if metadata_path:
+            team_metadata = load_local_json(metadata_path)
+            sources.append(
+                {
+                    "label": f"Team Calendar EV metadata ({team_label})",
+                    "kind": "json",
+                    "data": team_metadata,
+                    "description": "The saved explainability metadata for the selected Team Calendar EV artifact, including weights and rationale.",
+                    "source_note": "This JSON powers the Team Calendar EV explanation shown in the main model explainer.",
+                    "path": metadata_path,
+                    "download_name": Path(metadata_path).name,
+                }
+            )
+
+    selected_label = st.selectbox(
+        "Dataset",
+        options=[str(source["label"]) for source in sources],
+        index=0,
+        key="data_sources_dataset_label",
+    )
+    selected_source = next(source for source in sources if source["label"] == selected_label)
+    selected_kind = str(selected_source["kind"])
+    selected_path = str(selected_source.get("path") or "")
+
+    meta_left, meta_mid, meta_right = st.columns(3)
+    if selected_kind == "dataframe":
+        selected_frame = pd.DataFrame(selected_source["data"])
+        meta_left.metric("Rows", f"{len(selected_frame):,}")
+        meta_mid.metric("Columns", len(selected_frame.columns))
+    else:
+        selected_json = dict(selected_source["data"])
+        meta_left.metric("Top-level keys", len(selected_json))
+        meta_mid.metric("JSON type", "object")
+    meta_right.markdown("**What this is**")
+    meta_right.caption(str(selected_source["description"]))
+
+    if selected_source.get("source_note"):
+        st.caption(str(selected_source["source_note"]))
+    if selected_path:
+        st.caption(f"Path: `{selected_path}`")
+
+    if selected_kind == "dataframe":
+        selected_frame = pd.DataFrame(selected_source["data"])
+        st.download_button(
+            "Download this dataset as CSV",
+            data=selected_frame.to_csv(index=False).encode("utf-8"),
+            file_name=str(selected_source["download_name"]),
+            mime="text/csv",
+        )
+        st.dataframe(selected_frame, use_container_width=True, hide_index=True)
+    else:
+        selected_json = dict(selected_source["data"])
+        json_text = json.dumps(selected_json, indent=2, sort_keys=True)
+        st.download_button(
+            "Download this dataset as JSON",
+            data=json_text.encode("utf-8"),
+            file_name=str(selected_source["download_name"]),
+            mime="application/json",
+        )
+        st.json(selected_json, expanded=False)
 
 
 def initialize_weight_state() -> None:
@@ -586,7 +977,7 @@ def render_start_here() -> None:
 
 def render_workspace_guide(planning_year: int) -> None:
     st.markdown("**Choose A Workspace Below**")
-    st.caption("Use the tabs below to move through the app. Start with `Recommended Targets` if you're new.")
+    st.caption("Use the workspace selector below to move through the app. Start with `Recommended Targets` if you're new.")
     st.markdown(
         f"""
         - `Recommended Targets`: the best races to target next season, cross-checked against the `{planning_year}` calendar.
@@ -594,16 +985,17 @@ def render_workspace_guide(planning_year: int) -> None:
         - `Backtest & Calibration`: see how the model performs on future years and compare default versus calibrated weights.
         - `ProTeam Risk Monitor`: track how concentrated each ProTeam's counted UCI points are across its rider core.
         - `Team Calendar EV`: load saved team-season EV artifacts with KPIs, charts, and explainable race detail.
-        - `Raw Data`: inspect the loaded race dataset directly.
+        - `Data Sources`: inspect the historical dataset plus the planning, ProTeam, and Team Calendar EV artifacts currently driving the app.
         """
     )
 
 
-def render_model_explainer(
+def _render_model_explainer_legacy(
     weights: dict[str, float],
     specialty_weights: dict[str, float],
     fit_emphasis: float,
     dataset: pd.DataFrame,
+    team_calendar_ev_metadata: dict[str, object] | None = None,
 ) -> None:
     error_count = int(dataset.attrs.get("error_count", 0))
     source_count = len(dataset)
@@ -678,7 +1070,7 @@ def render_model_explainer(
             st.markdown(
                 f"""
                 - The current run is based on **{source_count}** historical race editions.
-                - Any score is built from observable fields in the scraped dataset shown in the `Raw Data` tab.
+                - Any score is built from observable fields shown in the `Data Sources` tab.
                 - The opportunity score is explainable because every component is exposed below.
                 - Stage races in this run: **{stage_race_count}**. Missing stage pages inside parsed stage races: **{missing_stage_pages}**.
                 - Races with at least one category change inside this run: **{category_change_races}**.
@@ -877,7 +1269,330 @@ def render_model_explainer(
             "This beta fit layer is not part of the walk-forward calibration yet, because it is a team-specific planning overlay rather than a historical baseline."
         )
 
+        if team_calendar_ev_metadata:
+            render_team_calendar_ev_weight_explainer(team_calendar_ev_metadata)
+
         st.markdown("**Interpretation guide**")
+        st.markdown(
+            """
+            - A higher `Arbitrage Score` means the race has looked attractive on a payout-versus-field basis.
+            - A higher `Specialty Fit` means the race profile better matches the specialty mix you selected in the sidebar.
+            - `Targeting Score` is the blended planning score: historical opportunity plus your chosen specialty-fit emphasis.
+            - A high `Avg Top-10 Points` with a low `Avg Top-10 Field Form` is usually the sweet spot.
+            - `Points per Field-Form` is a simpler efficiency view: payout divided by the strength proxy of the top of the field.
+            """
+        )
+
+
+def render_model_explainer(
+    weights: dict[str, float],
+    specialty_weights: dict[str, float],
+    fit_emphasis: float,
+    dataset: pd.DataFrame,
+    team_calendar_ev_metadata: dict[str, object] | None = None,
+) -> None:
+    error_count = int(dataset.attrs.get("error_count", 0))
+    source_count = len(dataset)
+    stage_race_count = int((dataset.get("race_type", pd.Series(dtype=str)) == "Stage race").sum())
+    missing_stage_pages = int(dataset.get("stage_pages_missing", pd.Series(0)).sum())
+    category_change_races = (
+        int(dataset.groupby("race_id")["category"].nunique().gt(1).sum()) if not dataset.empty else 0
+    )
+
+    with st.expander("How the model works: idea, methods, and math", expanded=False):
+        st.markdown("**What This App Is Doing**")
+        st.markdown(
+            """
+            - This app is **not** trying to predict exactly how many points a specific rider or team will score.
+            - It is **not** a rider-vs-rider forecast model.
+            - It **is** trying to rank races as **historical points opportunities**.
+            - In plain language: it asks, "Which races have usually been the best value for scoring points?"
+            """
+        )
+        st.markdown(
+            """
+            The practical question is:
+            for a team chasing UCI points, which `.1` and `.Pro` races have historically offered
+            the best tradeoff between **points available** and **how hard the field looked**?
+            """
+        )
+
+        overview_col, trust_col = st.columns(2)
+        with overview_col:
+            st.markdown("**Overall idea**")
+            st.markdown(
+                """
+                - High-value races are not just races with big payouts.
+                - They are races where the payout has been strong **relative to the level of the field**.
+                - The model therefore rewards high points and penalizes historically strong startlists.
+                - Output should be treated as a targeting shortlist for planners, not an autopilot schedule.
+                """
+            )
+            st.markdown("**What gets scraped**")
+            st.markdown(
+                """
+                - Race calendar pages to find eligible `.1` and `.Pro` events.
+                - Race result pages to capture actual UCI points paid out.
+                - Individual stage-result pages for stage races, so stage points are not collapsed into GC only.
+                - Extended startlist pages to estimate pre-race field strength.
+                """
+            )
+        with trust_col:
+            st.markdown("**Trust checklist**")
+            st.markdown(
+                f"""
+                - The current run is based on **{source_count}** historical race editions.
+                - Any score is built from observable fields shown in the `Data Sources` tab.
+                - The opportunity score is explainable because every component is exposed below.
+                - Stage races in this run: **{stage_race_count}**. Missing stage pages inside parsed stage races: **{missing_stage_pages}**.
+                - Races with at least one category change inside this run: **{category_change_races}**.
+                - Skipped races in this run: **{error_count}**.
+                """
+            )
+            st.markdown("**Main limitations**")
+            st.markdown(
+                """
+                - Startlist strength is a proxy, not a perfect measure of rider level.
+                - The route-and-specialty layer is a beta overlay inferred from event structure and time-trial keywords, not a full GPS or gradient model.
+                - Latest-category planning is based on the latest category visible in the selected data window, so a later drop to `.2` is only visible if that category is included in the dataset.
+                - The model still does not include travel cost, full route fit, internal team goals, or roster conflicts.
+                """
+            )
+
+        st.divider()
+        st.markdown("**Historical Opportunity Model**")
+        st.markdown(
+            """
+            The historical model works in five moves:
+
+            1. build a rider-form proxy from past results,
+            2. turn that into field-strength measures,
+            3. measure how much a race paid out,
+            4. convert those raw measures into comparable percentiles,
+            5. combine them into one opportunity score.
+            """
+        )
+
+        history_left, history_right = st.columns(2)
+        with history_left:
+            st.markdown("**Stage races**")
+            st.markdown(
+                """
+                - The app still ranks **whole races**, because a team chooses whether to enter the full stage race.
+                - For stage races, the payout side includes **GC points plus the sum of parsed stage-result points**.
+                - That means a seven-stage race is one target with several internal scoring chances, not seven separate targets.
+                """
+            )
+        with history_right:
+            st.markdown("**Category changes**")
+            st.markdown(
+                """
+                - If a race changes class, the model no longer blends those editions into one uninterrupted history.
+                - A `1.1` version and a later `1.Pro` version are treated as different historical targets.
+                - For planning, the app keeps the **latest known category** as the live recommendation and shows the category path for context.
+                """
+            )
+
+        with st.expander("Advanced formulas for the historical opportunity model", expanded=False):
+            st.markdown("**Step 1: Build a rider form proxy from the extended startlist**")
+            st.latex(
+                r"""
+                \text{rider\_form}
+                =
+                5 \cdot \text{wins}
+                + 2 \cdot (\text{podiums} - \text{wins})
+                + 1 \cdot (\text{top10s} - \text{podiums})
+                + 0.1 \cdot \text{starts}
+                """
+            )
+            st.markdown(
+                """
+                This intentionally weights wins most heavily, then podium depth, then top-10 frequency,
+                with a small reward for recent race volume.
+                """
+            )
+
+            st.markdown("**Step 2: Turn rider form into field-strength measures**")
+            st.latex(
+                r"""
+                \text{top10\_field\_form}
+                =
+                \sum_{i=1}^{10} \text{rider\_form}_{(i)}
+                \qquad
+                \text{avg\_top10\_field\_form}
+                =
+                \frac{\text{top10\_field\_form}}{10}
+                \qquad
+                \text{total\_field\_form}
+                =
+                \sum_{j=1}^{N} \text{rider\_form}_j
+                """
+            )
+            st.markdown(
+                """
+                Lower values mean a historically softer field. In the final score, lower field strength is
+                converted into a higher softness percentile.
+                """
+            )
+
+            st.markdown("**Step 3: Stage-race payout treatment**")
+            st.latex(
+                r"""
+                \text{event\_top10\_points}
+                =
+                \text{gc\_top10\_points}
+                +
+                \sum_{s=1}^{S} \text{stage\_top10\_points}_s
+                \qquad
+                \text{event\_winner\_points}
+                =
+                \text{gc\_winner\_points}
+                +
+                \sum_{s=1}^{S} \text{stage\_winner\_points}_s
+                """
+            )
+            st.markdown(
+                """
+                One-day races have no stage component, so their event-level payout is just the final result table.
+                Stage races keep one row in the model, but that row carries both the GC and stage payout totals.
+                """
+            )
+
+            st.markdown("**Step 4: Convert raw measures into comparable percentiles**")
+            st.latex(
+                r"""
+                \text{top10\_points\_pct} = \text{percentile}(\text{top10\_points})
+                \qquad
+                \text{winner\_points\_pct} = \text{percentile}(\text{winner\_points})
+                """
+            )
+            st.latex(
+                r"""
+                \text{field\_softness\_pct} = 100 - \text{percentile}(\text{avg\_top10\_field\_form})
+                \qquad
+                \text{depth\_softness\_pct} = 100 - \text{percentile}(\text{total\_field\_form})
+                """
+            )
+            st.latex(
+                r"""
+                \text{finish\_rate\_pct} = \text{percentile}(\text{finish\_rate})
+                """
+            )
+
+            st.markdown("**Step 5: Combine the components into the arbitrage score**")
+            st.latex(
+                rf"""
+                \text{{arbitrage\_score}}
+                =
+                \frac{{
+                {weights["top10_points"]:.2f}\cdot\text{{top10\_points\_pct}}
+                +
+                {weights["winner_points"]:.2f}\cdot\text{{winner\_points\_pct}}
+                +
+                {weights["field_softness"]:.2f}\cdot\text{{field\_softness\_pct}}
+                +
+                {weights["depth_softness"]:.2f}\cdot\text{{depth\_softness\_pct}}
+                +
+                {weights["finish_rate"]:.2f}\cdot\text{{finish\_rate\_pct}}
+                }}{{
+                {sum(weights.values()):.2f}
+                }}
+                """
+            )
+
+            weight_frame = pd.DataFrame(
+                {
+                    "Component": [
+                        "Top-10 payout",
+                        "Winner upside",
+                        "Softness of top riders",
+                        "Softness of full field",
+                        "Finish-rate reliability",
+                    ],
+                    "Current weight": [
+                        weights["top10_points"],
+                        weights["winner_points"],
+                        weights["field_softness"],
+                        weights["depth_softness"],
+                        weights["finish_rate"],
+                    ],
+                }
+            )
+            st.dataframe(weight_frame, use_container_width=True, hide_index=True)
+            st.caption(
+                "Sidebar weights are normalized before scoring, so they act as relative emphasis rather than fixed coefficients."
+            )
+            st.caption(
+                "These startup defaults are the current one-day calibrated weights from the bundled 2021-2025 walk-forward backtest."
+            )
+
+        st.divider()
+        st.markdown("**Route & Specialty Fit**")
+        st.markdown(
+            """
+            The app adds a lightweight overlay that infers a race profile from event structure:
+
+            - `One-day classic`: non-TT one-day races
+            - `Time trial`: TT keyword found in the race name or subtitle
+            - `GC-heavy stage race`: most points come from GC rather than stages
+            - `Balanced stage race`: GC and stage scoring are more evenly mixed
+            - `Stage-hunter stage race`: a large share of points comes from stages
+            """
+        )
+        st.latex(
+            rf"""
+            \text{{targeting\_score}}
+            =
+            (1 - {fit_emphasis:.2f}) \cdot \text{{arbitrage\_score}}
+            +
+            {fit_emphasis:.2f} \cdot \text{{specialty\_fit\_score}}
+            """
+        )
+
+        specialty_frame = pd.DataFrame(
+            {
+                "Specialty axis": [
+                    "One-day / classics",
+                    "GC / climbing",
+                    "Stage hunter / sprinter",
+                    "Time trial",
+                    "All-round stage depth",
+                ],
+                "Current weight": [
+                    specialty_weights["one_day"],
+                    specialty_weights["gc"],
+                    specialty_weights["stage_hunter"],
+                    specialty_weights["time_trial"],
+                    specialty_weights["all_round"],
+                ],
+            }
+        )
+        st.dataframe(specialty_frame.round(3), use_container_width=True, hide_index=True)
+        st.caption(
+            "These specialty weights are normalized inside the fit score. If you leave them equal, the beta overlay stays neutral."
+        )
+        st.caption(
+            "This beta fit layer is not part of the walk-forward calibration yet, because it is a team-specific planning overlay rather than a historical baseline."
+        )
+
+        if team_calendar_ev_metadata:
+            st.divider()
+            st.markdown("**Team Calendar EV Model**")
+            st.markdown(
+                """
+                The Team Calendar EV workspace takes the historical opportunity idea and turns it into a saved team-season expectation.
+
+                - `base_opportunity_points` is the historical opportunity anchor for the race.
+                - `team_fit_multiplier` adjusts that anchor to the selected team's specialty profile.
+                - `participation_confidence` discounts future races when start certainty is weaker.
+                - `execution_multiplier` is a conservative haircut by race category.
+                """
+            )
+            with st.expander("Advanced Team Calendar EV weights and assumptions", expanded=False):
+                render_team_calendar_ev_weight_explainer(team_calendar_ev_metadata)
+
+        st.divider()
+        st.markdown("**Interpretation Guide**")
         st.markdown(
             """
             - A higher `Arbitrage Score` means the race has looked attractive on a payout-versus-field basis.
@@ -1560,10 +2275,12 @@ def main() -> None:
             else:
                 dataset = get_live_dataset(tuple(years), tuple(categories), max_races)
             st.session_state["dataset"] = ensure_dataset_schema(dataset)
+            st.session_state["dataset_source_label"] = data_source
             st.session_state["weights"] = weights
 
     dataset = ensure_dataset_schema(st.session_state.get("dataset", pd.DataFrame()))
     st.session_state["dataset"] = dataset
+    st.session_state.setdefault("dataset_source_label", data_source)
     if dataset.empty:
         st.warning(
             "No race data was loaded. Try live scraping, widen the category/year filters, or generate a snapshot first."
@@ -1586,7 +2303,13 @@ def main() -> None:
         ascending=[False, False, False, False],
     ).reset_index(drop=True)
 
-    render_model_explainer(weights, specialty_weights, fit_emphasis, dataset)
+    render_model_explainer(
+        weights,
+        specialty_weights,
+        fit_emphasis,
+        dataset,
+        team_calendar_ev_metadata=get_active_team_calendar_ev_metadata(),
+    )
 
     left, middle, right, far_right, farthest = st.columns(5)
     left.metric("Race editions analyzed", f"{len(scored_editions):,}")
@@ -1638,18 +2361,16 @@ def main() -> None:
         }
     )
 
-    tab_targets, tab_diagnostics, tab_backtest, tab_risk, tab_team_ev, tab_raw = st.tabs(
-        [
-            "Recommended Targets",
-            "Edition Diagnostics",
-            "Backtest & Calibration",
-            "ProTeam Risk Monitor",
-            "Team Calendar EV",
-            "Raw Data",
-        ]
+    selected_workspace = st.segmented_control(
+        "Workspace",
+        options=WORKSPACE_OPTIONS,
+        default=WORKSPACE_OPTIONS[0],
+        key="workspace_selection",
+        label_visibility="collapsed",
+        width="stretch",
     )
 
-    with tab_targets:
+    if selected_workspace == "Recommended Targets":
         st.subheader("Best Races to Target Next Season")
         if planning_calendar_source == "snapshot":
             st.caption(
@@ -1730,7 +2451,7 @@ def main() -> None:
             "The beta route-profile overlay then lets you tilt the shortlist toward the kinds of events your chosen specialty mix should suit better."
         )
 
-    with tab_diagnostics:
+    if selected_workspace == "Edition Diagnostics":
         st.subheader("Edition-Level Opportunity Map")
         chart_frame = scored_editions.copy()
         chart_frame["label"] = chart_frame["race_name"] + " (" + chart_frame["year"].astype(str) + ")"
@@ -1834,27 +2555,23 @@ def main() -> None:
             hide_index=True,
         )
 
-    with tab_backtest:
+    if selected_workspace == "Backtest & Calibration":
         render_backtest_tab(dataset, years, categories)
 
-    with tab_risk:
+    if selected_workspace == "ProTeam Risk Monitor":
         render_proteam_risk_tab()
 
-    with tab_team_ev:
+    if selected_workspace == "Team Calendar EV":
         render_team_calendar_ev_workspace()
 
-    with tab_raw:
-        st.subheader("Scraped Dataset")
-        st.dataframe(dataset, use_container_width=True, hide_index=True)
-        st.download_button(
-            "Download current dataset as CSV",
-            data=dataset.to_csv(index=False).encode("utf-8"),
-            file_name="uci_points_race_editions.csv",
-            mime="text/csv",
+    if selected_workspace == "Data Sources":
+        render_data_sources_tab(
+            dataset=dataset,
+            dataset_source_label=str(st.session_state.get("dataset_source_label") or data_source),
+            planning_calendar=planning_calendar,
+            planning_calendar_source=planning_calendar_source,
+            planning_year=planning_year,
         )
-        error_count = dataset.attrs.get("error_count", 0)
-        if error_count:
-            st.caption(f"{error_count} races were skipped during scraping because one or more pages were missing.")
 
 
 if __name__ == "__main__":
