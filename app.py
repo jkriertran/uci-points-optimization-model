@@ -245,6 +245,67 @@ def _ordered_category_summary(category_df: pd.DataFrame) -> pd.DataFrame:
     return summary_df.sort_values(["category_rank", "category"]).drop(columns=["category_rank"]).reset_index(drop=True)
 
 
+def _sensitive_data_source_fields(items: list[str]) -> list[str]:
+    return [
+        item
+        for item in items
+        if any(token in item.casefold() for token in ("url", "pcs"))
+    ]
+
+
+def _contains_sensitive_data_source_value(value: object) -> bool:
+    if isinstance(value, dict):
+        return any(
+            any(token in str(key).casefold() for token in ("url", "pcs"))
+            or _contains_sensitive_data_source_value(item)
+            for key, item in value.items()
+        )
+    if isinstance(value, list):
+        return any(_contains_sensitive_data_source_value(item) for item in value)
+    if isinstance(value, str):
+        normalized = value.casefold().strip()
+        return (
+            normalized.startswith("http://")
+            or normalized.startswith("https://")
+            or "procyclingstats" in normalized
+            or " pcs " in f" {normalized} "
+        )
+    return False
+
+
+def _sanitize_data_source_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    sanitized = frame.copy()
+    hidden_columns = set(_sensitive_data_source_fields([str(column) for column in sanitized.columns]))
+    for column in sanitized.columns:
+        sample_values = sanitized[column].dropna().head(200).tolist()
+        if any(_contains_sensitive_data_source_value(value) for value in sample_values):
+            hidden_columns.add(column)
+    if hidden_columns:
+        sanitized = sanitized.drop(columns=list(hidden_columns), errors="ignore")
+    return sanitized
+
+
+def _sanitize_data_source_json(value: object) -> object:
+    if isinstance(value, dict):
+        return {
+            key: _sanitize_data_source_json(item)
+            for key, item in value.items()
+            if not any(token in str(key).casefold() for token in ("url", "pcs"))
+            and not _contains_sensitive_data_source_value(item)
+        }
+    if isinstance(value, list):
+        sanitized_items: list[object] = []
+        for item in value:
+            if isinstance(item, (dict, list)):
+                sanitized_item = _sanitize_data_source_json(item)
+                if sanitized_item not in ({}, []):
+                    sanitized_items.append(sanitized_item)
+            elif not _contains_sensitive_data_source_value(item):
+                sanitized_items.append(item)
+        return sanitized_items
+    return value
+
+
 def get_active_team_calendar_ev_metadata() -> dict[str, object]:
     dataset_row = get_active_team_calendar_ev_dataset_row()
     if dataset_row is None:
@@ -790,14 +851,19 @@ def render_data_sources_tab(
     selected_source = next(source for source in sources if source["label"] == selected_label)
     selected_kind = str(selected_source["kind"])
     selected_path = str(selected_source.get("path") or "")
+    url_hidden = False
 
     meta_left, meta_mid, meta_right = st.columns(3)
     if selected_kind == "dataframe":
-        selected_frame = pd.DataFrame(selected_source["data"])
+        raw_frame = pd.DataFrame(selected_source["data"])
+        selected_frame = _sanitize_data_source_frame(raw_frame)
+        url_hidden = len(selected_frame.columns) != len(raw_frame.columns)
         meta_left.metric("Rows", f"{len(selected_frame):,}")
         meta_mid.metric("Columns", len(selected_frame.columns))
     else:
-        selected_json = dict(selected_source["data"])
+        raw_json = dict(selected_source["data"])
+        selected_json = _sanitize_data_source_json(raw_json)
+        url_hidden = selected_json != raw_json
         meta_left.metric("Top-level keys", len(selected_json))
         meta_mid.metric("JSON type", "object")
     meta_right.markdown("**What this is**")
@@ -807,9 +873,10 @@ def render_data_sources_tab(
         st.caption(str(selected_source["source_note"]))
     if selected_path:
         st.caption(f"Path: `{selected_path}`")
+    if url_hidden:
+        st.caption("URL fields are hidden in this viewer and its download.")
 
     if selected_kind == "dataframe":
-        selected_frame = pd.DataFrame(selected_source["data"])
         st.download_button(
             "Download this dataset as CSV",
             data=selected_frame.to_csv(index=False).encode("utf-8"),
@@ -818,7 +885,6 @@ def render_data_sources_tab(
         )
         st.dataframe(selected_frame, use_container_width=True, hide_index=True)
     else:
-        selected_json = dict(selected_source["data"])
         json_text = json.dumps(selected_json, indent=2, sort_keys=True)
         st.download_button(
             "Download this dataset as JSON",
