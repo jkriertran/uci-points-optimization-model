@@ -1,0 +1,177 @@
+name: Refresh Team Calendars
+
+on:
+  schedule:
+    - cron: "25 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  refresh-team-calendars:
+    runs-on: ubuntu-latest
+
+    env:
+      TEAM_SLUG: unibet-rose-rockets-2026
+      PLANNING_YEAR: "2026"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Refresh team calendar snapshot
+        run: |
+          python scripts/build_team_calendar_snapshots.py \
+            --team-slug "$TEAM_SLUG" \
+            --planning-year "$PLANNING_YEAR" \
+            --calendar-output "data/team_calendars/${TEAM_SLUG}_latest.csv" \
+            --changelog-output "data/team_calendars/${TEAM_SLUG}_changelog.csv"
+
+      - name: Refresh team calendar EV outputs
+        run: |
+          python scripts/build_team_calendar_ev.py \
+            --team-slug "$TEAM_SLUG" \
+            --planning-year "$PLANNING_YEAR" \
+            --team-profile-path "data/team_profiles/unibet_rose_rockets_2026_profile.json" \
+            --calendar-path "data/team_calendars/${TEAM_SLUG}_latest.csv" \
+            --actual-points-path "data/team_results/${TEAM_SLUG}_actual_points.csv" \
+            --ev-output-path "data/team_ev/${TEAM_SLUG}_calendar_ev.csv" \
+            --summary-output-path "data/team_ev/${TEAM_SLUG}_calendar_ev_summary.csv" \
+            --readme-path "data/team_ev/${TEAM_SLUG}_README.md" \
+            --dictionary-path "data/team_ev/${TEAM_SLUG}_data_dictionary.md"
+
+      - name: Commit updated calendar outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- \
+            data/team_calendars/${TEAM_SLUG}_latest.csv \
+            data/team_calendars/${TEAM_SLUG}_changelog.csv \
+            data/team_results/${TEAM_SLUG}_actual_points.csv \
+            data/team_ev/${TEAM_SLUG}_calendar_ev.csv \
+            data/team_ev/${TEAM_SLUG}_calendar_ev_summary.csv \
+            data/team_ev/${TEAM_SLUG}_README.md \
+            data/team_ev/${TEAM_SLUG}_data_dictionary.md; then
+            echo "No team calendar output changes to commit."
+            exit 0
+          fi
+          git add \
+            data/team_calendars/${TEAM_SLUG}_latest.csv \
+            data/team_calendars/${TEAM_SLUG}_changelog.csv \
+            data/team_results/${TEAM_SLUG}_actual_points.csv \
+            data/team_ev/${TEAM_SLUG}_calendar_ev.csv \
+            data/team_ev/${TEAM_SLUG}_calendar_ev_summary.csv \
+            data/team_ev/${TEAM_SLUG}_README.md \
+            data/team_ev/${TEAM_SLUG}_data_dictionary.md
+          git commit -m "Refresh ${TEAM_SLUG} team calendar outputs"
+          git push
+
+      - name: Open or update refresh failure alert
+        if: ${{ failure() }}
+        uses: actions/github-script@v7
+        env:
+          ISSUE_TITLE: Team calendar refresh failed
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const labelName = "automation-alert";
+            const title = process.env.ISSUE_TITLE;
+            const body = [
+              `@${owner} the scheduled team calendar refresh failed.`,
+              "",
+              `Workflow: ${context.workflow}`,
+              `Event: ${context.eventName}`,
+              `Run: ${process.env.RUN_URL}`,
+              `UTC time: ${new Date().toISOString()}`,
+            ].join("\n");
+
+            const labels = await github.paginate(github.rest.issues.listLabelsForRepo, {
+              owner,
+              repo,
+              per_page: 100,
+            });
+            if (!labels.some((label) => label.name === labelName)) {
+              await github.rest.issues.createLabel({
+                owner,
+                repo,
+                name: labelName,
+                color: "B60205",
+                description: "Automated workflow failure notifications",
+              });
+            }
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: "open",
+              labels: labelName,
+              per_page: 100,
+            });
+            const existing = openIssues.find((issue) => issue.title === title);
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner,
+                repo,
+                title,
+                body,
+                labels: [labelName],
+              });
+            }
+
+      - name: Close refresh failure alert after recovery
+        if: ${{ success() }}
+        uses: actions/github-script@v7
+        env:
+          ISSUE_TITLE: Team calendar refresh failed
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const labelName = "automation-alert";
+            const title = process.env.ISSUE_TITLE;
+
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: "open",
+              labels: labelName,
+              per_page: 100,
+            });
+            const matches = openIssues.filter((issue) => issue.title === title);
+
+            for (const issue of matches) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issue.number,
+                body: "The latest team calendar refresh succeeded, so this alert is being closed automatically.",
+              });
+              await github.rest.issues.update({
+                owner,
+                repo,
+                issue_number: issue.number,
+                state: "closed",
+              });
+            }

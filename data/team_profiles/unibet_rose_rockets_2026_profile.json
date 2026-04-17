@@ -1,0 +1,30 @@
+{
+  "team_slug": "unibet-rose-rockets-2026",
+  "planning_year": 2026,
+  "team_name": "Unibet Rose Rockets",
+  "strength_weights": {
+    "one_day": 0.3,
+    "stage_hunter": 0.15,
+    "gc": 0.1,
+    "time_trial": 0.05,
+    "all_round": 0.15,
+    "sprint_bonus": 0.25
+  },
+  "team_fit_floor": 0.7,
+  "team_fit_range": 0.3,
+  "execution_rules": {
+    "1.1": 0.4,
+    "1.Pro": 0.3,
+    "1.UWT": 0.18,
+    "2.1": 0.3,
+    "2.Pro": 0.25,
+    "2.UWT": 0.18
+  },
+  "participation_rules": {
+    "completed": 1.0,
+    "program_confirmed": 0.95,
+    "observed_startlist": 0.95,
+    "calendar_seed": 0.7,
+    "overlap_penalty": 0.8
+  }
+}
