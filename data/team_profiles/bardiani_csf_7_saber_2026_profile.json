@@ -1,0 +1,36 @@
+{
+  "archetype_key": "balanced_opportunist",
+  "archetype_label": "Balanced Opportunist",
+  "archetype_description": "No single dominant specialty, with a broad point-seeking profile across multiple race shapes.",
+  "profile_confidence": "low",
+  "profile_rationale": [
+    "The saved 2026 mix shows both stage-race opportunities and meaningful one-day conversion lanes.",
+    "The profile does not read as a pure GC or pure sprint structure from the current artifact set.",
+    "Keep this as a flexible planning default until a sharper analyst-set weight mix is authored."
+  ],
+  "profile_version": "v2_optimizer",
+  "strength_weights": {
+    "one_day": 0.15289,
+    "stage_hunter": 0.164625,
+    "gc": 0.164365,
+    "time_trial": 0.132318,
+    "all_round": 0.197672,
+    "sprint_bonus": 0.18813
+  },
+  "weight_fit_method": "projected_quadratic_fit_v1",
+  "weight_fit_summary": {
+    "known_race_count": 27,
+    "actual_points_total": 395.0,
+    "predicted_points_total": 1051.328,
+    "season_gap": 656.328,
+    "mae": 31.209,
+    "rmse": 43.796,
+    "objective": 0.023113,
+    "baseline_mae": 32.832,
+    "baseline_rmse": 45.344,
+    "baseline_season_gap": 705.364,
+    "prior_source": "archetype:balanced_opportunist",
+    "effective_prior_strength": 0.3,
+    "effective_concentration_strength": 0.05
+  }
+}

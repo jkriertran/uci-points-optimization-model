@@ -1,0 +1,36 @@
+{
+  "archetype_key": "stage_hunter",
+  "archetype_label": "Stage Hunter",
+  "archetype_description": "More dangerous in stage-level opportunities than full GC campaigns.",
+  "profile_confidence": "low",
+  "profile_rationale": [
+    "The saved 2026 mix leans more toward stage-race entries and opportunistic point grabs than a stable one-day specialty.",
+    "The current evidence is thinner than for some larger teams, so this should be treated as a planning default.",
+    "Keep the profile editable as more team-specific evidence accumulates."
+  ],
+  "profile_version": "v2_optimizer",
+  "strength_weights": {
+    "one_day": 0.138067,
+    "stage_hunter": 0.24364,
+    "gc": 0.124013,
+    "time_trial": 0.107903,
+    "all_round": 0.213875,
+    "sprint_bonus": 0.172503
+  },
+  "weight_fit_method": "projected_quadratic_fit_v1",
+  "weight_fit_summary": {
+    "known_race_count": 21,
+    "actual_points_total": 321.0,
+    "predicted_points_total": 898.869,
+    "season_gap": 577.869,
+    "mae": 40.012,
+    "rmse": 53.034,
+    "objective": 0.024939,
+    "baseline_mae": 41.475,
+    "baseline_rmse": 54.574,
+    "baseline_season_gap": 613.159,
+    "prior_source": "archetype:stage_hunter",
+    "effective_prior_strength": 0.342857,
+    "effective_concentration_strength": 0.05
+  }
+}

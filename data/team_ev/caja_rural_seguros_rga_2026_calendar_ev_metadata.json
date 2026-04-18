@@ -1,0 +1,95 @@
+{
+  "artifact_row_count": 66,
+  "as_of_date": "2026-04-17",
+  "expected_points_formula": "base_opportunity_points * team_fit_multiplier * participation_confidence * execution_multiplier",
+  "opportunity_model": {
+    "rationale": {
+      "avg_points_efficiency": "Highest weight because the model should favor races that have historically turned field quality into points efficiently.",
+      "avg_stage_top10_points": "Adds stage-race scoring depth without letting stage volume dominate the entire ranking.",
+      "avg_top10_points": "Rewards broad scoring opportunity instead of only winner upside.",
+      "avg_winner_points": "Keeps a smaller reward for races with real ceiling if the team lands a big result.",
+      "field_softness_score": "Rewards races whose historical top end has looked softer for the points on offer."
+    },
+    "weights": {
+      "avg_points_efficiency": 0.5,
+      "avg_stage_top10_points": 0.1,
+      "avg_top10_points": 0.15,
+      "avg_winner_points": 0.1,
+      "field_softness_score": 0.15
+    }
+  },
+  "pcs_team_slug": "caja-rural-seguros-rga-2026",
+  "planning_year": 2026,
+  "team_name": "Caja Rural - Seguros RGA",
+  "team_profile": {
+    "archetype_description": "No single dominant specialty, with a broad point-seeking profile across multiple race shapes.",
+    "archetype_key": "balanced_opportunist",
+    "archetype_label": "Balanced Opportunist",
+    "execution_rule_rationale": "Execution multipliers are conservative realization haircuts by race category. Bigger races keep a lower multiplier because historical opportunity does not fully translate into team-level realized points.",
+    "execution_rules": {
+      "1.1": 0.4,
+      "1.Pro": 0.3,
+      "1.UWT": 0.18,
+      "2.1": 0.3,
+      "2.Pro": 0.25,
+      "2.UWT": 0.18
+    },
+    "participation_rule_rationale": {
+      "calendar_seed": "The planning calendar alone is a weaker signal, so future starts get a haircut.",
+      "completed": "Completed races get full participation confidence because the team actually started.",
+      "observed_startlist": "Observed startlists are nearly as strong as a program-confirmed entry.",
+      "overlap_penalty": "When races overlap, confidence is capped because a team cannot fully commit to both.",
+      "program_confirmed": "A live team program listing is strong evidence, but still below a completed race."
+    },
+    "participation_rules": {
+      "calendar_seed": 0.7,
+      "completed": 1.0,
+      "observed_startlist": 0.95,
+      "overlap_penalty": 0.8,
+      "program_confirmed": 0.95
+    },
+    "profile_confidence": "medium",
+    "profile_rationale": [
+      "The current saved results show credible scoring across one-day and stage-race contexts.",
+      "The profile looks more rounded than a single-lane sprint or GC identity.",
+      "This default should stay flexible until a more opinionated analyst override is written."
+    ],
+    "profile_version": "v2_optimizer",
+    "strength_weight_rationale": {
+      "all_round": "How much the profile should reward balanced, all-round stage-race opportunity.",
+      "gc": "How much the profile should care about GC-heavy stage-race opportunity.",
+      "one_day": "How much the team profile should care about classic-style one-day signals.",
+      "sprint_bonus": "Extra boost for sprint-sensitive opportunities when the roster is built to exploit them.",
+      "stage_hunter": "How much the profile should value stage-hunting or sprinter-friendly stage-race signals.",
+      "time_trial": "How much time-trial signals should influence team fit."
+    },
+    "strength_weights": {
+      "all_round": 0.191394,
+      "gc": 0.145766,
+      "one_day": 0.193096,
+      "sprint_bonus": 0.177414,
+      "stage_hunter": 0.147556,
+      "time_trial": 0.144774
+    },
+    "team_fit_floor": 0.7,
+    "team_fit_range": 0.3,
+    "team_fit_rationale": "The multiplier is bounded as floor + range * team_fit_score, which keeps team fit as an adjustment rather than letting it overwhelm the historical opportunity anchor.",
+    "weight_fit_method": "projected_quadratic_fit_v1",
+    "weight_fit_summary": {
+      "actual_points_total": 1006.0,
+      "baseline_mae": 42.717,
+      "baseline_rmse": 53.87,
+      "baseline_season_gap": 1348.787,
+      "effective_concentration_strength": 0.05,
+      "effective_prior_strength": 0.3,
+      "known_race_count": 43.0,
+      "mae": 41.061,
+      "objective": 0.027949,
+      "predicted_points_total": 2269.365,
+      "prior_source": "archetype:balanced_opportunist",
+      "rmse": 52.133,
+      "season_gap": 1263.365
+    }
+  },
+  "team_slug": "caja-rural-seguros-rga"
+}

@@ -26,6 +26,12 @@
 | `avg_top10_field_form` | Average historical top-10 field-form proxy. |
 | `base_opportunity_index` | Normalized historical opportunity score. |
 | `base_opportunity_points` | Points-space base opportunity anchor. |
+| `one_day_signal` | Historical one-day fit signal used inside the team-fit layer. |
+| `stage_hunter_signal` | Historical stage-hunter fit signal used inside the team-fit layer. |
+| `gc_signal` | Historical GC fit signal used inside the team-fit layer. |
+| `time_trial_signal` | Historical time-trial fit signal used inside the team-fit layer. |
+| `all_round_signal` | Historical all-round fit signal used inside the team-fit layer. |
+| `sprint_bonus_signal` | Historical sprint-sensitive fit signal used inside the team-fit layer. |
 | `specialty_fit_score` | Team-fit score from non-sprint dimensions. |
 | `sprint_fit_bonus` | Explicit sprint-sensitive team-fit add-on. |
 | `team_fit_score` | Combined normalized team-fit score. |

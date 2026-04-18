@@ -1,0 +1,36 @@
+{
+  "archetype_key": "classic_sprint_opportunist",
+  "archetype_label": "Classics + Sprint Opportunist",
+  "archetype_description": "Strong in one-day races and sprint-accessible opportunities, with limited GC emphasis.",
+  "profile_confidence": "high",
+  "profile_rationale": [
+    "The saved 2026 results include meaningful one-day conversion and sprint-accessible scoring lanes.",
+    "The local artifact mix points much more clearly to a classics-and-finishing-speed profile than a GC-centric one.",
+    "This custom mix lets TotalEnergies lean harder into the races it currently looks best built to exploit."
+  ],
+  "profile_version": "v2_optimizer",
+  "strength_weights": {
+    "one_day": 0.260192,
+    "stage_hunter": 0.12194,
+    "gc": 0.11122,
+    "time_trial": 0.100862,
+    "all_round": 0.169169,
+    "sprint_bonus": 0.236617
+  },
+  "weight_fit_method": "projected_quadratic_fit_v1",
+  "weight_fit_summary": {
+    "known_race_count": 47,
+    "actual_points_total": 1362.0,
+    "predicted_points_total": 2132.411,
+    "season_gap": 770.411,
+    "mae": 28.101,
+    "rmse": 37.049,
+    "objective": 0.028181,
+    "baseline_mae": 28.725,
+    "baseline_rmse": 37.767,
+    "baseline_season_gap": 824.67,
+    "prior_source": "archetype:classic_sprint_opportunist",
+    "effective_prior_strength": 0.3,
+    "effective_concentration_strength": 0.05
+  }
+}

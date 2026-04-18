@@ -1,0 +1,36 @@
+{
+  "archetype_key": "sprint_first",
+  "archetype_label": "Sprint-First Team",
+  "archetype_description": "Sprint-accessible races are the primary scoring lane.",
+  "profile_confidence": "low",
+  "profile_rationale": [
+    "The current results and opportunity mix suggest the cleanest fast-finishing lane is sprint-accessible racing.",
+    "The saved artifact set does not show a sustained GC-led profile.",
+    "Confidence remains low and should be revisited if a stronger stage-hunting signal emerges."
+  ],
+  "profile_version": "v2_optimizer",
+  "strength_weights": {
+    "one_day": 0.188415,
+    "stage_hunter": 0.111645,
+    "gc": 0.093675,
+    "time_trial": 0.127593,
+    "all_round": 0.125055,
+    "sprint_bonus": 0.353616
+  },
+  "weight_fit_method": "projected_quadratic_fit_v1",
+  "weight_fit_summary": {
+    "known_race_count": 17,
+    "actual_points_total": 284.0,
+    "predicted_points_total": 744.043,
+    "season_gap": 460.043,
+    "mae": 35.963,
+    "rmse": 52.04,
+    "objective": 0.034664,
+    "baseline_mae": 36.754,
+    "baseline_rmse": 53.599,
+    "baseline_season_gap": 475.661,
+    "prior_source": "archetype:sprint_first",
+    "effective_prior_strength": 0.423529,
+    "effective_concentration_strength": 0.052941
+  }
+}

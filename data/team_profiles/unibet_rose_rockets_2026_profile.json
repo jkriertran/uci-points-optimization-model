@@ -3,13 +3,23 @@
   "pcs_team_slug": "unibet-rose-rockets-2026",
   "planning_year": 2026,
   "team_name": "Unibet Rose Rockets",
+  "archetype_key": "classic_sprint_opportunist",
+  "archetype_label": "Classics + Sprint Opportunist",
+  "archetype_description": "This profile favors one-day races and sprint-accessible opportunities, with some stage-hunting value but only limited GC emphasis.",
+  "profile_confidence": "medium",
+  "profile_rationale": [
+    "The team profile leans toward one-day scoring opportunities.",
+    "Sprint-accessible races remain an important conversion lane.",
+    "GC-oriented stage-race upside is present, but not central."
+  ],
+  "profile_version": "v2_optimizer",
   "strength_weights": {
-    "one_day": 0.3,
-    "stage_hunter": 0.15,
-    "gc": 0.1,
-    "time_trial": 0.05,
-    "all_round": 0.15,
-    "sprint_bonus": 0.25
+    "one_day": 0.297622,
+    "stage_hunter": 0.092469,
+    "gc": 0.082596,
+    "time_trial": 0.050036,
+    "all_round": 0.19957,
+    "sprint_bonus": 0.277706
   },
   "team_fit_floor": 0.7,
   "team_fit_range": 0.3,
@@ -27,5 +37,21 @@
     "observed_startlist": 0.95,
     "calendar_seed": 0.7,
     "overlap_penalty": 0.8
+  },
+  "weight_fit_method": "projected_quadratic_fit_v1",
+  "weight_fit_summary": {
+    "known_race_count": 46,
+    "actual_points_total": 1915.0,
+    "predicted_points_total": 1777.719,
+    "season_gap": -137.281,
+    "mae": 35.55,
+    "rmse": 50.736,
+    "objective": 0.034262,
+    "baseline_mae": 35.401,
+    "baseline_rmse": 50.715,
+    "baseline_season_gap": -154.845,
+    "prior_source": "archetype:classic_sprint_opportunist",
+    "effective_prior_strength": 0.3,
+    "effective_concentration_strength": 0.05
   }
 }
