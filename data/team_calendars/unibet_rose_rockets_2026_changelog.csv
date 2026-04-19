@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-unibet-rose-rockets,2026,2026-04-18T10:05:34.049398+00:00,status_changed,77,Brabantse Pijl,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
-unibet-rose-rockets,2026,2026-04-18T10:05:34.049398+00:00,status_changed,15075,Classic Grand Besançon Doubs,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+unibet-rose-rockets,2026,2026-04-19T10:05:04.429908+00:00,status_changed,1285,Tour du Jura,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
