@@ -28,6 +28,9 @@ The recommendation layer is **category-aware**. If a race changes class across y
 - includes a walk-forward backtest that calibrates weights on prior years and checks them against future race editions
 - includes a `ProTeam Risk Monitor` tab that shows how concentrated counted UCI team points are across ProTeam riders
 - includes a `Team Calendar EV` tab that loads saved multi-team team-season EV artifacts from disk
+- includes archetype-aware team profiles plus optimizer-backed strength weights for tracked ProTeams
+- includes a UI-only deterministic roster-scenario overlay for saved team-season EV artifacts
+- includes a `Data Sources` tab for inspecting the live data currently driving each workspace
 
 If you want a presentation-ready explanation of the model, see `MODEL_STUDY_GUIDE.md`.
 Planned future work is tracked in `ROADMAP.md`.
@@ -39,9 +42,12 @@ Planned future work is tracked in `ROADMAP.md`.
 ├── app.py
 ├── config/
 │   ├── roster_scenario_presets.json
+│   ├── team_archetypes.json
 │   ├── team_calendar_race_aliases.csv
 │   └── tracked_proteams_2026.csv
 ├── data/
+│   ├── proteam_risk_current_snapshot.csv
+│   ├── proteam_risk_cycle_2026_2028_snapshot.csv
 │   ├── race_editions_snapshot.csv
 │   ├── team_calendars/
 │   ├── team_ev/
@@ -50,16 +56,25 @@ Planned future work is tracked in `ROADMAP.md`.
 ├── requirements.txt
 ├── scripts/
 │   ├── build_all_proteam_calendar_ev.py
+│   ├── build_proteam_risk_snapshot.py
 │   ├── build_snapshot.py
 │   ├── build_team_calendar_ev.py
-│   └── build_team_calendar_snapshots.py
+│   ├── build_team_calendar_snapshots.py
+│   └── fit_team_profile_weights.py
 ├── tests/
+│   ├── test_app_team_calendar_ev.py
 │   ├── test_calendar_ev.py
+│   ├── test_data.py
 │   ├── test_fc_client.py
 │   ├── test_model.py
 │   ├── test_pcs_client.py
 │   ├── test_proteam_risk.py
-│   └── test_team_calendar.py
+│   ├── test_roster_scenarios.py
+│   ├── test_team_calendar.py
+│   ├── test_team_calendar_artifacts.py
+│   ├── test_team_calendar_client.py
+│   ├── test_team_profile_optimizer.py
+│   └── test_team_profiles.py
 └── uci_points_model/
     ├── __init__.py
     ├── backtest.py
@@ -71,7 +86,11 @@ Planned future work is tracked in `ROADMAP.md`.
     ├── proteam_risk.py
     ├── roster_scenarios.py
     ├── team_calendar.py
-    └── team_calendar_artifacts.py
+    ├── team_calendar_artifacts.py
+    ├── team_calendar_client.py
+    ├── team_identity.py
+    ├── team_profile_optimizer.py
+    └── team_profiles.py
 ```
 
 ## Local run
@@ -115,6 +134,16 @@ that refreshes those two files on a daily schedule. It is intentionally `latest 
 the fixed snapshot filenames are overwritten in place rather than archived by date.
 If the scheduled refresh fails, the workflow opens or updates a GitHub issue so the failure is visible without opening the app.
 
+## App workspaces
+
+The Streamlit app is organized around five workspaces:
+
+- `Recommended Targets`: race-level historical opportunity ranking with the current planning calendar overlay
+- `Backtest & Calibration`: walk-forward evaluation plus default-versus-calibrated weight comparison
+- `ProTeam Risk Monitor`: concentration analysis on counted team points
+- `Team Calendar EV`: saved team-season EV artifacts, explainability, profile transparency, and roster scenarios
+- `Data Sources`: the raw datasets currently driving the active analysis
+
 ## Team Calendar EV pipeline
 
 The repo also includes a saved-artifact `Team Calendar EV` workflow for tracked `2026` ProTeams.
@@ -122,10 +151,19 @@ The repo also includes a saved-artifact `Team Calendar EV` workflow for tracked 
 The operating model is:
 
 - `config/tracked_proteams_2026.csv` is the manifest of tracked teams
+- `config/team_archetypes.json` is the catalog of reusable team profile archetypes
 - `data/team_profiles/default_proteam_2026_profile.json` provides the default ProTeam assumptions
 - `data/team_profiles/<team_slug>_2026_profile.json` can override the default for specific teams
 - `scripts/build_all_proteam_calendar_ev.py` refreshes the full tracked-team set
+- `scripts/fit_team_profile_weights.py` refits team strength weights from saved EV artifacts and writes them back into the team profiles
 - `app.py` stays file-driven and discovers every saved team-season artifact automatically from `data/team_ev/`
+
+Each team profile can carry:
+
+- archetype metadata and rationale
+- bounded team-fit assumptions
+- participation and execution rules
+- optimizer diagnostics such as `weight_fit_method` and `weight_fit_summary`
 
 Each tracked team-season produces:
 
@@ -140,6 +178,12 @@ Refresh all tracked teams with:
 
 ```bash
 python scripts/build_all_proteam_calendar_ev.py --manifest-path config/tracked_proteams_2026.csv
+```
+
+Refit optimizer-backed team profile weights from the saved EV artifacts with:
+
+```bash
+python scripts/fit_team_profile_weights.py --manifest-path config/tracked_proteams_2026.csv
 ```
 
 Refresh one saved team-season with the existing single-team CLI:
@@ -159,6 +203,7 @@ python scripts/build_team_calendar_ev.py \
 ```
 
 The scheduled refresh job lives at `.github/workflows/refresh_team_calendars.yml` and now runs the manifest-driven batch build instead of a single hard-coded team.
+The app reads the saved EV artifact freshness from the summary/metadata files and also shows the underlying calendar `scraped_at_utc` timestamp so stale EV builds are easier to spot.
 
 ## Streamlit deployment
 
@@ -206,7 +251,10 @@ That module:
 - discovers saved team-season EV artifacts from `data/team_ev/`
 - shows one-row KPI summaries plus race-level detail
 - loads saved metadata to explain the EV weights and team-profile assumptions
+- shows a `Team Identity` block for archetype-aware profile context
+- includes a non-persistent `Team Profile Sandbox` for team-fit what-if analysis
 - includes a UI-only deterministic roster-scenario overlay with `baseline_saved`, `depth_constrained`, and `best_available` presets
+- shows both the saved EV `as of` date and the underlying team calendar `scraped_at_utc`, with a warning when they drift
 - does not rebuild EV live in the UI
 
 ## Modeling notes
@@ -216,6 +264,8 @@ That module:
 - Race-category changes are handled explicitly, so a historical `1.1` version and a later `1.Pro` version are not blended into one uninterrupted target history.
 - The app now includes a lightweight beta route-profile x specialty-fit overlay, but it is inferred from event structure rather than full GPX or gradient data.
 - The ProTeam monitor is a concentration-risk dashboard, not a rider-performance model.
+- Team profiles are archetype-aware planning defaults, not rider-level forecasts.
+- Optimizer-backed team weights are fit from saved EV rows with known actual points and regularized toward the current profile or archetype prior.
 - The roster-scenario overlay is deterministic and UI-only. It reuses saved Team Calendar EV artifacts, keeps `base_opportunity_points` and `execution_multiplier` fixed, and changes only team-fit plus participation assumptions.
 - The model still does not do true team-specific roster optimization, probable lineups, or internal role planning.
 - The startlist-strength proxy comes from FirstCycling's extended startlist stats (`Starts`, `Wins`, `Podium`, `Top 10`), not from private team power files or internal rankings.
