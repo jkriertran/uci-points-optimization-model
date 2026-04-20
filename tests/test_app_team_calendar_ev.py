@@ -46,6 +46,229 @@ def test_normalize_team_profile_weights_returns_relative_emphasis() -> None:
     assert normalized["stage_hunter"] == normalized["all_round"]
 
 
+def test_team_calendar_ev_view_mode_labels_use_reader_first_copy() -> None:
+    assert app_module._team_calendar_ev_view_mode_labels() == [  # noqa: SLF001
+        "Active schedule",
+        "Full saved calendar",
+        "Completed races only",
+    ]
+
+
+def test_filtered_team_calendar_ev_active_schedule_excludes_cancelled() -> None:
+    calendar_ev_df = pd.DataFrame(
+        [
+            {"race_name": "Open", "status": "scheduled"},
+            {"race_name": "Done", "status": "completed"},
+            {"race_name": "Off", "status": "cancelled"},
+        ]
+    )
+
+    filtered_df = app_module._filtered_team_calendar_ev(calendar_ev_df, "Active schedule")  # noqa: SLF001
+
+    assert filtered_df["race_name"].tolist() == ["Open", "Done"]
+
+
+def test_team_calendar_ev_primary_metrics_demote_secondary_facts() -> None:
+    summary_row = {
+        "total_expected_points": 100.0,
+        "completed_expected_points": 50.0,
+        "remaining_expected_points": 50.0,
+        "actual_points_known": 48.0,
+        "ev_gap_known": -2.0,
+        "race_count": 10,
+    }
+
+    primary_metrics = app_module._team_calendar_ev_primary_metrics(summary_row)  # noqa: SLF001
+    secondary_facts = app_module._team_calendar_ev_secondary_facts(summary_row)  # noqa: SLF001
+
+    assert primary_metrics == [
+        ("Total expected", "100.0"),
+        ("Actual points known", "48.0"),
+        ("Remaining expected", "50.0"),
+        ("EV gap known", "-2.0"),
+    ]
+    assert secondary_facts == ["Completed expected: 50.0", "Race count: 10"]
+
+
+def test_team_calendar_ev_detail_columns_split_reader_from_analyst_view() -> None:
+    calendar_ev_df = pd.DataFrame(
+        [
+            {
+                "race_name": "Race One",
+                "category": "1.1",
+                "start_date": "2026-04-17",
+                "status": "completed",
+                "base_opportunity_points": 40.0,
+                "team_fit_multiplier": 0.85,
+                "participation_confidence": 0.95,
+                "execution_multiplier": 0.4,
+                "expected_points": 12.9,
+                "actual_points": 10.0,
+                "ev_gap": -2.9,
+                "source": "team_program_live",
+                "overlap_group": "",
+                "notes": "Held back by weather.",
+            }
+        ]
+    )
+
+    reader_columns = app_module._team_calendar_ev_reader_detail_columns(calendar_ev_df)  # noqa: SLF001
+    analyst_columns = app_module._team_calendar_ev_analyst_detail_columns(calendar_ev_df)  # noqa: SLF001
+
+    assert reader_columns == [
+        "race_name",
+        "category",
+        "start_date",
+        "status",
+        "expected_points",
+        "actual_points",
+        "ev_gap",
+        "notes",
+    ]
+    assert analyst_columns == [
+        "race_name",
+        "category",
+        "start_date",
+        "status",
+        "base_opportunity_points",
+        "team_fit_multiplier",
+        "participation_confidence",
+        "execution_multiplier",
+        "expected_points",
+        "actual_points",
+        "ev_gap",
+        "source",
+        "overlap_group",
+        "notes",
+    ]
+
+
+def test_team_calendar_ev_guided_detail_frame_adds_plain_language_reads() -> None:
+    calendar_ev_df = pd.DataFrame(
+        [
+            {
+                "race_name": "Race One",
+                "category": "1.1",
+                "start_date": "2026-04-17",
+                "status": "scheduled",
+                "team_fit_multiplier": 0.97,
+                "participation_confidence": 0.92,
+                "execution_multiplier": 0.38,
+                "expected_points": 12.9,
+                "actual_points": 10.0,
+                "ev_gap": -2.9,
+                "notes": "Held back by weather.",
+            },
+            {
+                "race_name": "Race Two",
+                "category": "2.Pro",
+                "start_date": "2026-04-18",
+                "status": "completed",
+                "team_fit_multiplier": 0.73,
+                "participation_confidence": 1.0,
+                "execution_multiplier": 0.22,
+                "expected_points": 8.4,
+                "actual_points": 11.0,
+                "ev_gap": 2.6,
+                "notes": "",
+            },
+        ]
+    )
+
+    guided_df = app_module._team_calendar_ev_guided_detail_frame(calendar_ev_df)  # noqa: SLF001
+
+    assert guided_df.columns.tolist() == [
+        "Race",
+        "Category",
+        "Date",
+        "Status",
+        "Team fit read",
+        "Start confidence",
+        "Execution read",
+        "Expected pts",
+        "Actual pts",
+        "EV gap",
+        "Notes",
+    ]
+    assert guided_df.iloc[0]["Team fit read"] == "Strong fit (0.97)"
+    assert guided_df.iloc[0]["Start confidence"] == "Likely (0.92)"
+    assert guided_df.iloc[0]["Execution read"] == "Favorable conversion (0.38)"
+    assert guided_df.iloc[1]["Team fit read"] == "Weak fit (0.73)"
+    assert guided_df.iloc[1]["Start confidence"] == "Started (1.00)"
+    assert guided_df.iloc[1]["Execution read"] == "Difficult conversion (0.22)"
+
+
+def test_load_team_calendar_ev_metadata_falls_back_to_saved_profile(monkeypatch, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
+    team_ev_dir = Path("data/team_ev")
+    team_profiles_dir = Path("data/team_profiles")
+    team_calendars_dir = Path("data/team_calendars")
+    team_results_dir = Path("data/team_results")
+    team_ev_dir.mkdir(parents=True)
+    team_profiles_dir.mkdir(parents=True)
+    team_calendars_dir.mkdir(parents=True)
+    team_results_dir.mkdir(parents=True)
+
+    _write_team_ev_artifacts(
+        artifact_stem="unibet_rose_rockets_2026",
+        team_slug="unibet-rose-rockets",
+        team_name="Unibet Rose Rockets",
+        planning_year=2026,
+    )
+    (team_ev_dir / "unibet_rose_rockets_2026_calendar_ev_metadata.json").write_text(
+        """
+{
+  "team_slug": "unibet-rose-rockets",
+  "planning_year": 2026,
+  "team_name": "Unibet Rose Rockets",
+  "team_profile": {
+    "strength_weights": {
+      "one_day": 0.3
+    },
+    "execution_rules": {
+      "1.1": 0.4
+    }
+  }
+}
+""".strip()
+        + "\n"
+    )
+    (team_profiles_dir / "unibet_rose_rockets_2026_profile.json").write_text(
+        """
+{
+  "team_slug": "unibet-rose-rockets",
+  "planning_year": 2026,
+  "team_name": "Unibet Rose Rockets",
+  "archetype_label": "Classics + Sprint Opportunist",
+  "archetype_description": "One-day and sprint-accessible profile.",
+  "profile_confidence": "medium",
+  "profile_rationale": ["Sprint-accessible races remain important."],
+  "strength_weights": {
+    "one_day": 0.28,
+    "stage_hunter": 0.12
+  },
+  "participation_rules": {
+    "completed": 1.0
+  }
+}
+""".strip()
+        + "\n"
+    )
+
+    app_module.discover_team_calendar_ev_datasets.clear()
+    app_module.load_saved_team_profile.clear()
+    app_module.load_team_calendar_ev_metadata.clear()
+
+    metadata = app_module.load_team_calendar_ev_metadata("unibet-rose-rockets", 2026)
+
+    assert metadata["team_profile"]["archetype_label"] == "Classics + Sprint Opportunist"
+    assert metadata["team_profile"]["archetype_description"] == "One-day and sprint-accessible profile."
+    assert metadata["team_profile"]["execution_rules"] == {"1.1": 0.4}
+    assert metadata["team_profile"]["participation_rules"] == {"completed": 1.0}
+    assert metadata["team_profile"]["strength_weights"]["one_day"] == 0.3
+    assert metadata["team_profile"]["strength_weights"]["stage_hunter"] == 0.12
+
+
 def test_build_team_profile_sandbox_frame_recomputes_expected_points() -> None:
     race_df = pd.DataFrame(
         [
