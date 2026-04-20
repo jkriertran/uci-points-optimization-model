@@ -1,6 +1,6 @@
 {
   "artifact_row_count": 16,
-  "as_of_date": "2026-04-17",
+  "as_of_date": "2026-04-20",
   "expected_points_formula": "base_opportunity_points * team_fit_multiplier * participation_confidence * execution_multiplier",
   "opportunity_model": {
     "rationale": {
@@ -20,6 +20,9 @@
   },
   "pcs_team_slug": "team-novo-nordisk-2026",
   "planning_year": 2026,
+  "roster_scenario_formula": "base_opportunity_points * scenario_team_fit_multiplier * scenario_participation_confidence * execution_multiplier",
+  "roster_scenario_preset_version": "deterministic-ui-v1",
+  "roster_scenario_scope": "ui_only_saved_team_ev_overlay",
   "team_name": "Team Novo Nordisk",
   "team_profile": {
     "archetype_description": "No single dominant specialty, with a broad point-seeking profile across multiple race shapes.",

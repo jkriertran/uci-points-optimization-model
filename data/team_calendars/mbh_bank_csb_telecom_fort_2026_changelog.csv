@@ -1,1 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+mbh-bank-csb-telecom-fort,2026,2026-04-20T11:00:58.873624+00:00,race_added,798,Giro della Provincia Biella,,completed,team_calendar_refresh,matched_via=token_overlap
+mbh-bank-csb-telecom-fort,2026,2026-04-20T11:00:58.873624+00:00,status_changed,139,Tour of Hainan,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
