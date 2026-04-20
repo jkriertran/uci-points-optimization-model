@@ -14,11 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEAM_SLUG: unibet-rose-rockets
-      PCS_TEAM_SLUG: unibet-rose-rockets-2026
-      PLANNING_YEAR: "2026"
-      ARTIFACT_STEM: unibet_rose_rockets_2026
-      TEAM_PROFILE_PATH: data/team_profiles/unibet_rose_rockets_2026_profile.json
+      MANIFEST_PATH: config/tracked_proteams_2026.csv
 
     steps:
       - name: Check out repository
@@ -34,55 +30,26 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Refresh team calendar snapshot
+      - name: Refresh tracked team calendar outputs
+        id: refresh
         run: |
-          python scripts/build_team_calendar_snapshots.py \
-            --team-slug "$TEAM_SLUG" \
-            --pcs-team-slug "$PCS_TEAM_SLUG" \
-            --planning-year "$PLANNING_YEAR" \
-            --calendar-output "data/team_calendars/${ARTIFACT_STEM}_latest.csv" \
-            --changelog-output "data/team_calendars/${ARTIFACT_STEM}_changelog.csv"
-
-      - name: Refresh team calendar EV outputs
-        run: |
-          python scripts/build_team_calendar_ev.py \
-            --team-slug "$TEAM_SLUG" \
-            --pcs-team-slug "$PCS_TEAM_SLUG" \
-            --planning-year "$PLANNING_YEAR" \
-            --team-profile-path "$TEAM_PROFILE_PATH" \
-            --calendar-path "data/team_calendars/${ARTIFACT_STEM}_latest.csv" \
-            --actual-points-path "data/team_results/${ARTIFACT_STEM}_actual_points.csv" \
-            --ev-output-path "data/team_ev/${ARTIFACT_STEM}_calendar_ev.csv" \
-            --summary-output-path "data/team_ev/${ARTIFACT_STEM}_calendar_ev_summary.csv" \
-            --readme-path "data/team_ev/README.md" \
-            --dictionary-path "data/team_ev/data_dictionary.md"
+          set +e
+          python scripts/build_all_proteam_calendar_ev.py --manifest-path "$MANIFEST_PATH" 2>&1 | tee /tmp/team_calendar_batch.log
+          status=${PIPESTATUS[0]}
+          failed_team_slugs=$(grep '^FAILED_TEAM_SLUGS=' /tmp/team_calendar_batch.log | tail -n 1 | cut -d= -f2-)
+          echo "failed_team_slugs=$failed_team_slugs" >> "$GITHUB_OUTPUT"
+          exit $status
 
       - name: Commit updated calendar outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- \
-            data/team_calendars/${ARTIFACT_STEM}_latest.csv \
-            data/team_calendars/${ARTIFACT_STEM}_changelog.csv \
-            data/team_results/${ARTIFACT_STEM}_actual_points.csv \
-            data/team_ev/${ARTIFACT_STEM}_calendar_ev.csv \
-            data/team_ev/${ARTIFACT_STEM}_calendar_ev_summary.csv \
-            data/team_ev/${ARTIFACT_STEM}_calendar_ev_metadata.json \
-            data/team_ev/README.md \
-            data/team_ev/data_dictionary.md; then
+          if git diff --quiet -- data/team_calendars data/team_results data/team_ev; then
             echo "No team calendar output changes to commit."
             exit 0
           fi
-          git add \
-            data/team_calendars/${ARTIFACT_STEM}_latest.csv \
-            data/team_calendars/${ARTIFACT_STEM}_changelog.csv \
-            data/team_results/${ARTIFACT_STEM}_actual_points.csv \
-            data/team_ev/${ARTIFACT_STEM}_calendar_ev.csv \
-            data/team_ev/${ARTIFACT_STEM}_calendar_ev_summary.csv \
-            data/team_ev/${ARTIFACT_STEM}_calendar_ev_metadata.json \
-            data/team_ev/README.md \
-            data/team_ev/data_dictionary.md
-          git commit -m "Refresh ${TEAM_SLUG} ${PLANNING_YEAR} team calendar outputs"
+          git add data/team_calendars data/team_results data/team_ev
+          git commit -m "Refresh tracked team calendar outputs"
           git push
 
       - name: Open or update refresh failure alert
@@ -91,14 +58,18 @@ jobs:
         env:
           ISSUE_TITLE: Team calendar refresh failed
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          FAILED_TEAM_SLUGS: ${{ steps.refresh.outputs.failed_team_slugs }}
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const labelName = "automation-alert";
             const title = process.env.ISSUE_TITLE;
+            const failedTeamSlugs = process.env.FAILED_TEAM_SLUGS || "";
             const body = [
               `@${owner} the scheduled team calendar refresh failed.`,
+              "",
+              failedTeamSlugs ? `Failed teams: ${failedTeamSlugs}` : "Failed teams: unavailable",
               "",
               `Workflow: ${context.workflow}`,
               `Event: ${context.eventName}`,

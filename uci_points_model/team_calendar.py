@@ -12,6 +12,7 @@ from .team_calendar_client import (
     TeamProgramEntry,
     load_team_program_rows,
 )
+from .team_identity import canonicalize_team_slug
 
 PLANNING_CALENDAR_PATH = Path(__file__).resolve().parent.parent / "data" / "planning_calendar_2026.csv"
 TEAM_CALENDAR_ALIAS_PATH = Path(__file__).resolve().parent.parent / "config" / "team_calendar_race_aliases.csv"
@@ -206,6 +207,12 @@ def load_team_calendar_aliases(alias_path: str | Path | None = None) -> pd.DataF
     alias_df["normalized_source_race_name"] = alias_df["source_race_name"].map(normalize_race_name)
     alias_df["planning_year"] = pd.to_numeric(alias_df["planning_year"], errors="coerce").astype("Int64")
     alias_df["race_id"] = pd.to_numeric(alias_df["race_id"], errors="coerce").astype("Int64")
+    alias_df["team_slug"] = alias_df.apply(
+        lambda row: canonicalize_team_slug(row["team_slug"], int(row["planning_year"]))
+        if str(row.get("team_slug") or "").strip() and pd.notna(row.get("planning_year"))
+        else str(row.get("team_slug") or "").strip(),
+        axis=1,
+    )
     return alias_df
 
 
@@ -228,27 +235,31 @@ def build_live_team_calendar(
     program_path: str | None = None,
     planning_calendar_path: str | Path | None = None,
     alias_path: str | Path | None = None,
+    team_name: str | None = None,
+    scraped_at_utc: str | None = None,
     as_of_date: str | date | None = None,
 ) -> pd.DataFrame:
     pcs_client = client or ProCyclingStatsTeamCalendarClient()
     pcs_lookup_slug = pcs_team_slug or team_slug
     if program_path:
         source_rows_df = load_team_program_rows(program_path)
-        team_name = team_name_from_snapshot(pcs_lookup_slug)
+        effective_team_name = team_name or team_name_from_snapshot(pcs_lookup_slug)
         source_label = "team_program_file"
     else:
-        team_name, entries = pcs_client.get_team_program_entries(pcs_lookup_slug)
+        live_team_name, entries = pcs_client.get_team_program_entries(pcs_lookup_slug)
         source_rows_df = program_entries_to_frame(entries)
+        effective_team_name = team_name or live_team_name
         source_label = "team_program_live"
 
     return build_team_calendar_from_source_rows(
         source_rows_df=source_rows_df,
         team_slug=team_slug,
         planning_year=planning_year,
-        team_name=team_name,
+        team_name=effective_team_name,
         source_label=source_label,
         planning_calendar_path=planning_calendar_path,
         alias_path=alias_path,
+        scraped_at_utc=scraped_at_utc,
         as_of_date=as_of_date,
     )
 

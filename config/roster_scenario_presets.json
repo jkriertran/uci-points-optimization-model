@@ -1,0 +1,44 @@
+{
+  "preset_version": "deterministic-ui-v1",
+  "roster_scenario_scope": "ui_only_saved_team_ev_overlay",
+  "presets": [
+    {
+      "key": "baseline_saved",
+      "label": "Baseline Saved",
+      "description": "Identity view that preserves the saved Team Calendar EV team-fit and participation assumptions.",
+      "profile_overrides": {}
+    },
+    {
+      "key": "depth_constrained",
+      "label": "Depth Constrained",
+      "description": "Conservative overlay for thinner roster depth: lower fit bounds and softer participation confidence for future race commitments.",
+      "profile_overrides": {
+        "team_fit_floor": 0.62,
+        "team_fit_range": 0.22,
+        "participation_rules": {
+          "completed": 1.0,
+          "program_confirmed": 0.82,
+          "observed_startlist": 0.88,
+          "calendar_seed": 0.55,
+          "overlap_penalty": 0.65
+        }
+      }
+    },
+    {
+      "key": "best_available",
+      "label": "Best Available",
+      "description": "Optimistic overlay that assumes the strongest suitable roster is available for the selected program and rewards fit-sensitive races more aggressively.",
+      "profile_overrides": {
+        "team_fit_floor": 0.65,
+        "team_fit_range": 0.35,
+        "participation_rules": {
+          "completed": 1.0,
+          "program_confirmed": 0.98,
+          "observed_startlist": 0.99,
+          "calendar_seed": 0.78,
+          "overlap_penalty": 0.86
+        }
+      }
+    }
+  ]
+}

@@ -14,6 +14,7 @@ from .team_calendar_client import (
     ProCyclingStatsTeamCalendarClient,
     build_team_in_race_points_url,
 )
+from .team_identity import canonicalize_team_slug
 
 RACE_EDITIONS_PATH = Path(__file__).resolve().parent.parent / "data" / "race_editions_snapshot.csv"
 
@@ -55,6 +56,14 @@ DEFAULT_EV_WEIGHTS = {
     "avg_stage_top10_points": 0.10,
     "field_softness_score": 0.15,
 }
+TEAM_PROFILE_SIGNAL_KEYS = [
+    "one_day",
+    "stage_hunter",
+    "gc",
+    "time_trial",
+    "all_round",
+    "sprint_bonus",
+]
 
 DEFAULT_EXECUTION_RULES = {
     "1.1": 0.40,
@@ -104,14 +113,6 @@ def normalize_team_profile(team_profile: dict) -> dict:
 
     normalized["pcs_team_slug"] = pcs_team_slug or normalized["team_slug"]
     return normalized
-
-
-def canonicalize_team_slug(team_slug: str, planning_year: int) -> str:
-    cleaned = str(team_slug or "").strip()
-    suffix = f"-{int(planning_year)}"
-    if cleaned.endswith(suffix):
-        return cleaned[: -len(suffix)]
-    return cleaned
 
 
 def build_historical_target_summary(
@@ -280,6 +281,41 @@ def attach_actual_points(calendar_ev_df: pd.DataFrame, actual_points_df: pd.Data
     return merged_df
 
 
+def calculate_team_fit_components(calendar_ev_df: pd.DataFrame, team_profile: dict) -> pd.DataFrame:
+    result_df = calendar_ev_df.copy()
+    weights = team_profile.get("strength_weights", {})
+    non_sprint_keys = ["one_day", "stage_hunter", "gc", "time_trial", "all_round"]
+
+    def _numeric_signal(column_name: str) -> pd.Series:
+        if column_name in result_df.columns:
+            return pd.to_numeric(result_df[column_name], errors="coerce").fillna(0.0)
+        return pd.Series([0.0] * len(result_df), index=result_df.index, dtype="Float64")
+
+    non_sprint_weight_total = sum(float(weights.get(key, 0.0)) for key in non_sprint_keys) or 1.0
+    specialty_fit_score = sum(
+        float(weights.get(key, 0.0)) * _numeric_signal(f"{key}_signal")
+        for key in non_sprint_keys
+    ) / non_sprint_weight_total
+
+    total_weight = sum(float(value) for value in weights.values()) or 1.0
+    sprint_weight_share = float(weights.get("sprint_bonus", 0.0)) / total_weight
+    sprint_fit_bonus = sprint_weight_share * _numeric_signal("sprint_bonus_signal")
+    result_df["specialty_fit_score"] = specialty_fit_score.clip(0, 1).astype("Float64")
+    result_df["sprint_fit_bonus"] = sprint_fit_bonus.clip(0, 1).astype("Float64")
+    result_df["team_fit_score"] = (
+        (1 - sprint_weight_share) * result_df["specialty_fit_score"] + result_df["sprint_fit_bonus"]
+    ).clip(0, 1)
+    result_df["team_fit_multiplier"] = (
+        float(team_profile.get("team_fit_floor", 0.70))
+        + float(team_profile.get("team_fit_range", 0.30)) * result_df["team_fit_score"]
+    ).clip(lower=0, upper=1)
+    return result_df
+
+
+def calculate_participation_confidence(calendar_ev_df: pd.DataFrame, team_profile: dict) -> pd.Series:
+    return _derive_participation_confidence(calendar_ev_df, team_profile)
+
+
 def build_team_calendar_ev(
     team_slug: str,
     planning_year: int,
@@ -369,6 +405,12 @@ def build_team_calendar_ev(
         "avg_top10_field_form",
         "base_opportunity_index",
         "base_opportunity_points",
+        "one_day_signal",
+        "stage_hunter_signal",
+        "gc_signal",
+        "time_trial_signal",
+        "all_round_signal",
+        "sprint_bonus_signal",
         "specialty_fit_score",
         "sprint_fit_bonus",
         "team_fit_score",
@@ -489,27 +531,7 @@ def _build_actual_points_row(
 
 
 def _build_team_fit_components(merged_df: pd.DataFrame, team_profile: dict) -> pd.DataFrame:
-    weights = team_profile.get("strength_weights", {})
-    non_sprint_keys = ["one_day", "stage_hunter", "gc", "time_trial", "all_round"]
-    non_sprint_weight_total = sum(float(weights.get(key, 0.0)) for key in non_sprint_keys) or 1.0
-    specialty_fit_score = sum(
-        float(weights.get(key, 0.0)) * pd.to_numeric(merged_df[f"{key}_signal"], errors="coerce").fillna(0.0)
-        for key in non_sprint_keys
-    ) / non_sprint_weight_total
-
-    total_weight = sum(float(value) for value in weights.values()) or 1.0
-    sprint_weight_share = float(weights.get("sprint_bonus", 0.0)) / total_weight
-    sprint_fit_bonus = sprint_weight_share * pd.to_numeric(merged_df["sprint_bonus_signal"], errors="coerce").fillna(0.0)
-    merged_df["specialty_fit_score"] = specialty_fit_score.clip(0, 1).astype("Float64")
-    merged_df["sprint_fit_bonus"] = sprint_fit_bonus.clip(0, 1).astype("Float64")
-    merged_df["team_fit_score"] = (
-        (1 - sprint_weight_share) * merged_df["specialty_fit_score"] + merged_df["sprint_fit_bonus"]
-    ).clip(0, 1)
-    merged_df["team_fit_multiplier"] = (
-        float(team_profile.get("team_fit_floor", 0.70))
-        + float(team_profile.get("team_fit_range", 0.30)) * merged_df["team_fit_score"]
-    ).clip(lower=0, upper=1)
-    return merged_df
+    return calculate_team_fit_components(merged_df, team_profile)
 
 
 def _derive_participation_confidence(calendar_ev_df: pd.DataFrame, team_profile: dict) -> pd.Series:

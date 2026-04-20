@@ -163,6 +163,103 @@ def test_team_profile_identity_context_reads_archetype_metadata() -> None:
     assert context["profile_rationale"] == ["Sprint-accessible races remain an important conversion lane."]
 
 
+def test_team_calendar_ev_freshness_context_flags_drift_when_calendar_is_newer() -> None:
+    context = app_module._team_calendar_ev_freshness_context(  # noqa: SLF001
+        {"as_of_date": "2026-04-17"},
+        {"as_of_date": "2026-04-17"},
+        pd.DataFrame([{"scraped_at_utc": "2026-04-18T00:28:20+00:00"}]),
+    )
+
+    assert context["ev_as_of"] == "2026-04-17"
+    assert context["calendar_scraped_at"] == "2026-04-18T00:28:20+00:00"
+    assert context["has_drift"] is True
+    assert "older than the underlying team calendar snapshot" in context["warning_message"]
+
+
+def test_team_calendar_ev_freshness_context_treats_same_day_as_in_sync() -> None:
+    context = app_module._team_calendar_ev_freshness_context(  # noqa: SLF001
+        {"as_of_date": "2026-04-18"},
+        {"as_of_date": "2026-04-18"},
+        pd.DataFrame([{"scraped_at_utc": "2026-04-18T14:22:00+00:00"}]),
+    )
+
+    assert context["has_drift"] is False
+    assert context["warning_message"] == ""
+
+
+def test_has_roster_scenario_inputs_requires_expected_columns() -> None:
+    race_df = pd.DataFrame(
+        [
+            {
+                "base_opportunity_points": 40.0,
+                "team_fit_score": 0.5,
+                "team_fit_multiplier": 0.85,
+                "participation_confidence": 0.95,
+                "execution_multiplier": 0.4,
+                "expected_points": 12.9,
+                "status": "scheduled",
+                "source": "team_program_live",
+                "overlap_group": "",
+                "one_day_signal": 1.0,
+                "stage_hunter_signal": 0.0,
+                "gc_signal": 0.0,
+                "time_trial_signal": 0.0,
+                "all_round_signal": 0.2,
+                "sprint_bonus_signal": 0.5,
+            }
+        ]
+    )
+
+    assert app_module._has_roster_scenario_inputs(race_df)  # noqa: SLF001
+    assert not app_module._has_roster_scenario_inputs(race_df.drop(columns=["source"]))  # noqa: SLF001
+
+
+def test_build_roster_scenario_assumption_frame_lists_fit_and_participation_rules() -> None:
+    frame = app_module._build_roster_scenario_assumption_frame(  # noqa: SLF001
+        {
+            "team_fit_floor": 0.7,
+            "team_fit_range": 0.3,
+            "participation_rules": {
+                "completed": 1.0,
+                "program_confirmed": 0.95,
+                "observed_startlist": 0.95,
+                "calendar_seed": 0.7,
+                "overlap_penalty": 0.8,
+            },
+            "strength_weights": {
+                "one_day": 0.30,
+                "stage_hunter": 0.15,
+                "gc": 0.10,
+                "time_trial": 0.05,
+                "all_round": 0.15,
+                "sprint_bonus": 0.25,
+            },
+        },
+        {
+            "team_fit_floor": 0.62,
+            "team_fit_range": 0.22,
+            "participation_rules": {
+                "completed": 1.0,
+                "program_confirmed": 0.82,
+                "observed_startlist": 0.88,
+                "calendar_seed": 0.55,
+                "overlap_penalty": 0.65,
+            },
+            "strength_weights": {
+                "one_day": 0.30,
+                "stage_hunter": 0.15,
+                "gc": 0.10,
+                "time_trial": 0.05,
+                "all_round": 0.15,
+                "sprint_bonus": 0.25,
+            },
+        },
+    )
+
+    assert frame["Setting"].tolist()[:2] == ["Team-fit floor", "Team-fit range"]
+    assert "Participation: calendar seed" in frame["Setting"].tolist()
+
+
 def _write_team_ev_artifacts(*, artifact_stem: str, team_slug: str, team_name: str, planning_year: int) -> None:
     pd.DataFrame(
         [

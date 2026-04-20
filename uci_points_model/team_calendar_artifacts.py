@@ -16,6 +16,11 @@ from .calendar_ev import (
     normalize_team_profile,
     summarize_team_calendar_ev,
 )
+from .roster_scenarios import (
+    ROSTER_SCENARIO_FORMULA,
+    ROSTER_SCENARIO_SCOPE,
+    get_roster_scenario_preset_version,
+)
 from .team_calendar import CHANGELOG_COLUMNS, build_live_team_calendar, build_schedule_changelog, derive_calendar_status
 from .team_identity import build_team_artifact_stem, canonicalize_team_slug
 from .team_profiles import load_team_archetypes, validate_team_profile
@@ -488,6 +493,20 @@ def build_shared_team_ev_data_dictionary() -> str:
     lines.extend(f"| `{field}` | {description} |" for field, description in race_level_rows)
     lines.extend(["", "## Summary File", "", "| Field | Description |", "| --- | --- |"])
     lines.extend(f"| `{field}` | {description} |" for field, description in summary_rows)
+    lines.extend(
+        [
+            "",
+            "## UI-Only Roster Scenario Overlay",
+            "",
+            "The Streamlit `Team Calendar EV` workspace can recompute a non-persistent roster scenario overlay directly from the saved race-level EV artifact.",
+            "",
+            f"- Scope: `{ROSTER_SCENARIO_SCOPE}`",
+            f"- Formula: `{ROSTER_SCENARIO_FORMULA}`",
+            f"- Preset catalog version: `{get_roster_scenario_preset_version()}`",
+            "- Saved artifact fields stay unchanged; the overlay adds scenario columns only inside the app and in the optional scenario download.",
+            "- The first version keeps `base_opportunity_points` and `execution_multiplier` fixed to the saved artifact and changes only team-fit plus participation assumptions.",
+        ]
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -530,6 +549,9 @@ def build_team_calendar_ev_metadata(
         },
         "pcs_team_slug": team.pcs_team_slug,
         "planning_year": int(team.planning_year),
+        "roster_scenario_formula": ROSTER_SCENARIO_FORMULA,
+        "roster_scenario_preset_version": get_roster_scenario_preset_version(),
+        "roster_scenario_scope": ROSTER_SCENARIO_SCOPE,
         "team_name": team.team_name,
         "team_profile": {
             "archetype_description": str(team_profile.get("archetype_description") or "").strip(),

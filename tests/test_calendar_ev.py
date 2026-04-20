@@ -166,6 +166,48 @@ def test_team_fit_multiplier_is_bounded() -> None:
     assert multiplier <= 1.0
 
 
+def test_calculate_team_fit_components_uses_signal_columns() -> None:
+    race_df = pd.DataFrame(
+        [
+            {
+                "one_day_signal": 1.0,
+                "stage_hunter_signal": 0.2,
+                "gc_signal": 0.0,
+                "time_trial_signal": 0.1,
+                "all_round_signal": 0.4,
+                "sprint_bonus_signal": 0.8,
+            }
+        ]
+    )
+
+    result_df = module.calculate_team_fit_components(race_df, TEAM_PROFILE)
+
+    row = result_df.iloc[0]
+    assert float(row["specialty_fit_score"]) > 0.0
+    assert float(row["sprint_fit_bonus"]) > 0.0
+    assert float(row["team_fit_multiplier"]) >= 0.7
+    assert float(row["team_fit_multiplier"]) <= 1.0
+
+
+def test_build_team_calendar_ev_preserves_team_signal_columns() -> None:
+    calendar_df = build_calendar_rows().iloc[[0]].copy()
+    historical_df = build_historical_rows()
+
+    result_df = module.build_team_calendar_ev(
+        team_slug="unibet-rose-rockets",
+        planning_year=2026,
+        historical_summary=historical_df,
+        team_calendar=calendar_df,
+        team_profile=TEAM_PROFILE,
+        actual_points_df=pd.DataFrame(),
+    )
+
+    row = result_df.iloc[0]
+    assert float(row["one_day_signal"]) == 1.0
+    assert float(row["all_round_signal"]) == 0.5
+    assert float(row["sprint_bonus_signal"]) == 0.7
+
+
 def test_stage_races_use_stage_aware_history_fields(tmp_path) -> None:
     snapshot_df = pd.DataFrame(
         [

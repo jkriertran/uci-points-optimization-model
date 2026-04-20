@@ -181,6 +181,9 @@ def test_build_team_calendar_ev_artifacts_and_write_outputs(monkeypatch, tmp_pat
     assert bundle.metadata["team_profile"]["profile_confidence"] == "low"
     assert bundle.metadata["team_profile"]["weight_fit_method"] == "projected_quadratic_fit_v1"
     assert bundle.metadata["team_profile"]["weight_fit_summary"]["known_race_count"] == 8
+    assert bundle.metadata["roster_scenario_scope"] == "ui_only_saved_team_ev_overlay"
+    assert bundle.metadata["roster_scenario_formula"]
+    assert bundle.metadata["roster_scenario_preset_version"]
 
     module.write_team_calendar_ev_artifacts(bundle, write_changelog=True, write_shared_docs=True)
 
@@ -234,6 +237,7 @@ def test_build_team_calendar_ev_artifacts_metadata_is_stable(monkeypatch, tmp_pa
     assert bundle_one.metadata == bundle_two.metadata
     assert bundle_one.metadata["team_profile"]["archetype_description"]
     assert bundle_one.metadata["team_profile"]["strength_weight_rationale"]["one_day"]
+    assert "UI-Only Roster Scenario Overlay" in bundle_one.dictionary_text
 
 
 def test_build_team_calendar_ev_artifacts_can_reuse_saved_actual_points(monkeypatch, tmp_path) -> None:
