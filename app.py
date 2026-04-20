@@ -9,6 +9,7 @@ import plotly.express as px
 import streamlit as st
 
 from uci_points_model.backtest import calibrate_weights
+from uci_points_model.calendar_ev import TEAM_PROFILE_SIGNAL_KEYS, calculate_team_fit_components
 from uci_points_model.data import build_dataset, ensure_dataset_schema, load_calendar, load_snapshot
 from uci_points_model.fc_client import PLANNING_CALENDAR_CATEGORIES, TARGET_CATEGORIES
 from uci_points_model.model import (
@@ -27,6 +28,15 @@ from uci_points_model.proteam_risk import (
     prepare_proteam_detail,
     summarize_proteam_risk,
 )
+from uci_points_model.roster_scenarios import (
+    ROSTER_SCENARIO_FORMULA,
+    ROSTER_SCENARIO_REQUIRED_COLUMNS,
+    ROSTER_SCENARIO_SCOPE,
+    build_roster_scenario_result,
+    get_roster_scenario_preset_version,
+    list_roster_scenario_presets,
+)
+from uci_points_model.team_profiles import describe_team_profile
 
 SNAPSHOT_PATH = Path("data/race_editions_snapshot.csv")
 PROTEAM_SCOPE_LABELS = {
@@ -41,8 +51,17 @@ DATASET_SCHEMA_VERSION = "stage-breakdown-v1"
 PENDING_WEIGHT_STATE_KEY = "pending_weight_state"
 CALIBRATION_RESULT_VERSION = "category-aware-v1"
 TEAM_EV_DIR = Path("data/team_ev")
+DEFAULT_TEAM_PROFILE_PATH = Path("data/team_profiles/default_proteam_2026_profile.json")
 TEAM_EV_DATASET_LABEL_KEY = "team_calendar_ev_dataset_label"
 CATEGORY_DISPLAY_ORDER = ["2.UWT", "1.UWT", "2.Pro", "1.Pro", "2.1", "1.1", "2.2", "1.2"]
+TEAM_PROFILE_AXIS_LABELS = {
+    "one_day": "One-day / classics",
+    "stage_hunter": "Stage hunter / sprinter",
+    "gc": "GC / climbing",
+    "time_trial": "Time trial",
+    "all_round": "All-round stage depth",
+    "sprint_bonus": "Sprint bonus",
+}
 WORKSPACE_OPTIONS = [
     "Recommended Targets",
     "Edition Diagnostics",
@@ -103,6 +122,13 @@ def load_local_csv(path: str) -> pd.DataFrame:
 @st.cache_data(show_spinner=False)
 def load_local_json(path: str) -> dict[str, object]:
     return json.loads(Path(path).read_text())
+
+
+@st.cache_data(show_spinner=False)
+def load_default_team_profile() -> dict[str, object]:
+    if not DEFAULT_TEAM_PROFILE_PATH.exists():
+        return {}
+    return load_local_json(str(DEFAULT_TEAM_PROFILE_PATH))
 
 
 @st.cache_data(show_spinner=False)
@@ -202,6 +228,18 @@ def load_team_calendar_ev_metadata(team_slug: str, planning_year: int) -> dict[s
         return {}
 
 
+@st.cache_data(show_spinner=False)
+def load_team_calendar_snapshot(team_slug: str, planning_year: int) -> pd.DataFrame:
+    dataset_row = _select_team_calendar_dataset(team_slug, planning_year)
+    calendar_path = str(dataset_row.get("calendar_path") or "").strip()
+    if not calendar_path:
+        return pd.DataFrame()
+    try:
+        return pd.read_csv(calendar_path, low_memory=False)
+    except Exception:  # noqa: BLE001
+        return pd.DataFrame()
+
+
 def get_active_team_calendar_ev_dataset_row() -> pd.Series | None:
     datasets = discover_team_calendar_ev_datasets()
     if datasets.empty:
@@ -243,6 +281,57 @@ def _ordered_category_summary(category_df: pd.DataFrame) -> pd.DataFrame:
     category_rank = {category: index for index, category in enumerate(category_order)}
     summary_df["category_rank"] = summary_df["category"].map(category_rank).fillna(len(category_order))
     return summary_df.sort_values(["category_rank", "category"]).drop(columns=["category_rank"]).reset_index(drop=True)
+
+
+def _normalized_iso_date(value: object) -> str:
+    if value is None:
+        return ""
+    text = str(value).strip()
+    if not text:
+        return ""
+    try:
+        return pd.Timestamp(text).date().isoformat()
+    except Exception:  # noqa: BLE001
+        return text
+
+
+def _team_calendar_ev_freshness_context(
+    metadata: dict[str, object],
+    summary_row: pd.Series | dict[str, object],
+    calendar_snapshot_df: pd.DataFrame,
+) -> dict[str, object]:
+    summary_mapping = dict(summary_row)
+    ev_as_of = str(metadata.get("as_of_date") or summary_mapping.get("as_of_date") or "").strip()
+
+    calendar_scraped_at = ""
+    if not calendar_snapshot_df.empty and "scraped_at_utc" in calendar_snapshot_df.columns:
+        scraped_series = pd.to_datetime(calendar_snapshot_df["scraped_at_utc"], errors="coerce", utc=True).dropna()
+        if not scraped_series.empty:
+            calendar_scraped_at = scraped_series.max().isoformat()
+
+    ev_as_of_date = _normalized_iso_date(ev_as_of)
+    calendar_scraped_date = _normalized_iso_date(calendar_scraped_at)
+    has_drift = bool(ev_as_of_date and calendar_scraped_date and ev_as_of_date != calendar_scraped_date)
+
+    warning_message = ""
+    if has_drift:
+        if calendar_scraped_date > ev_as_of_date:
+            warning_message = (
+                "The saved Team Calendar EV artifact is older than the underlying team calendar snapshot. "
+                "Refresh the Team Calendar EV build to bring the EV summary back in sync."
+            )
+        else:
+            warning_message = (
+                "The saved Team Calendar EV artifact and the underlying team calendar snapshot report different "
+                "freshness dates. Refresh the Team Calendar EV build to bring them back in sync."
+            )
+
+    return {
+        "ev_as_of": ev_as_of,
+        "calendar_scraped_at": calendar_scraped_at,
+        "has_drift": has_drift,
+        "warning_message": warning_message,
+    }
 
 
 def _sensitive_data_source_fields(items: list[str]) -> list[str]:
@@ -410,6 +499,499 @@ def render_team_calendar_ev_weight_explainer(metadata: dict[str, object]) -> Non
         )
 
 
+def _team_profile_identity_context(metadata: dict[str, object]) -> dict[str, object]:
+    team_profile = dict(metadata.get("team_profile", {}))
+    if not team_profile:
+        return {}
+
+    description = describe_team_profile(team_profile)
+    return {
+        "team_name": str(metadata.get("team_name") or metadata.get("team_slug") or "").strip(),
+        "archetype_label": str(description.get("archetype_label") or "").strip(),
+        "archetype_description": str(description.get("archetype_description") or "").strip(),
+        "profile_confidence": str(description.get("profile_confidence") or "").strip(),
+        "profile_rationale": list(description.get("profile_rationale", [])),
+    }
+
+
+def render_team_profile_identity_block(metadata: dict[str, object]) -> None:
+    context = _team_profile_identity_context(metadata)
+    if not context:
+        return
+
+    st.markdown("**Team Identity**")
+    left_column, right_column = st.columns([3, 1])
+    with left_column:
+        if context["team_name"]:
+            st.caption(f"Saved profile context for `{context['team_name']}`.")
+        st.markdown(f"`{context['archetype_label']}`")
+        st.write(context["archetype_description"])
+    with right_column:
+        confidence = str(context.get("profile_confidence") or "").strip()
+        if confidence:
+            st.metric("Profile confidence", confidence.title())
+
+    st.caption("These are analyst-set planning defaults, not rider-level forecasts.")
+    st.caption(
+        "The team profile does not change how many points a race is worth in general. It changes how suitable that race looks for the selected team."
+    )
+    rationale = list(context.get("profile_rationale", []))
+    if rationale:
+        with st.expander("Why this default profile?", expanded=False):
+            st.markdown("\n".join(f"- {reason}" for reason in rationale))
+
+
+def _normalize_team_profile_weights(weights: dict[str, float]) -> dict[str, float]:
+    normalized = {
+        axis: max(0.0, float(weights.get(axis, 0.0)))
+        for axis in TEAM_PROFILE_SIGNAL_KEYS
+    }
+    total = sum(normalized.values())
+    if total <= 0:
+        equal_weight = 1.0 / len(TEAM_PROFILE_SIGNAL_KEYS)
+        return {axis: equal_weight for axis in TEAM_PROFILE_SIGNAL_KEYS}
+    return {axis: value / total for axis, value in normalized.items()}
+
+
+def _team_profile_state_prefix(team_slug: str, planning_year: int) -> str:
+    return f"team_profile_sandbox_{team_slug}_{planning_year}"
+
+
+def _apply_team_profile_preset(prefix: str, weights: dict[str, float], team_fit_floor: float, team_fit_range: float) -> None:
+    normalized_weights = _normalize_team_profile_weights(weights)
+    for axis, value in normalized_weights.items():
+        st.session_state[f"{prefix}_{axis}"] = float(value)
+    st.session_state[f"{prefix}_team_fit_floor"] = float(team_fit_floor)
+    st.session_state[f"{prefix}_team_fit_range"] = float(team_fit_range)
+    st.session_state[f"{prefix}_initialized"] = True
+
+
+def _ensure_team_profile_sandbox_state(
+    prefix: str,
+    saved_profile: dict[str, object],
+) -> None:
+    normalized_weights = _normalize_team_profile_weights(dict(saved_profile.get("strength_weights", {})))
+    missing_keys: list[tuple[str, float]] = []
+    for axis, value in normalized_weights.items():
+        state_key = f"{prefix}_{axis}"
+        if state_key not in st.session_state:
+            missing_keys.append((state_key, float(value)))
+
+    floor_key = f"{prefix}_team_fit_floor"
+    range_key = f"{prefix}_team_fit_range"
+    if floor_key not in st.session_state:
+        missing_keys.append((floor_key, float(saved_profile.get("team_fit_floor", 0.70))))
+    if range_key not in st.session_state:
+        missing_keys.append((range_key, float(saved_profile.get("team_fit_range", 0.30))))
+
+    if not st.session_state.get(f"{prefix}_initialized") or missing_keys:
+        for state_key, value in missing_keys:
+            st.session_state[state_key] = value
+        if not st.session_state.get(f"{prefix}_initialized") and not missing_keys:
+            _apply_team_profile_preset(
+                prefix,
+                normalized_weights,
+                float(saved_profile.get("team_fit_floor", 0.70)),
+                float(saved_profile.get("team_fit_range", 0.30)),
+            )
+        else:
+            st.session_state[f"{prefix}_initialized"] = True
+
+
+def _team_profile_status_label(saved_profile: dict[str, object], default_profile: dict[str, object]) -> str:
+    if not default_profile:
+        return "Saved"
+    saved_weights = _normalize_team_profile_weights(dict(saved_profile.get("strength_weights", {})))
+    default_weights = _normalize_team_profile_weights(dict(default_profile.get("strength_weights", {})))
+    saved_floor = float(saved_profile.get("team_fit_floor", 0.70))
+    default_floor = float(default_profile.get("team_fit_floor", 0.70))
+    saved_range = float(saved_profile.get("team_fit_range", 0.30))
+    default_range = float(default_profile.get("team_fit_range", 0.30))
+    same_weights = all(abs(saved_weights[axis] - default_weights[axis]) < 1e-9 for axis in TEAM_PROFILE_SIGNAL_KEYS)
+    same_fit = abs(saved_floor - default_floor) < 1e-9 and abs(saved_range - default_range) < 1e-9
+    return "Default-like" if same_weights and same_fit else "Custom"
+
+
+def _has_team_profile_sandbox_inputs(race_df: pd.DataFrame) -> bool:
+    required_columns = {
+        "base_opportunity_points",
+        "participation_confidence",
+        "execution_multiplier",
+        "expected_points",
+        "team_fit_score",
+        "team_fit_multiplier",
+        *{f"{axis}_signal" for axis in TEAM_PROFILE_SIGNAL_KEYS},
+    }
+    return required_columns.issubset(set(race_df.columns))
+
+
+def _has_roster_scenario_inputs(race_df: pd.DataFrame) -> bool:
+    return set(ROSTER_SCENARIO_REQUIRED_COLUMNS).issubset(set(race_df.columns))
+
+
+def _build_team_profile_sandbox_frame(race_df: pd.DataFrame, sandbox_profile: dict[str, object]) -> pd.DataFrame:
+    scenario_df = race_df.copy()
+    scenario_df["saved_expected_points"] = pd.to_numeric(scenario_df["expected_points"], errors="coerce").fillna(0.0)
+    scenario_df["saved_team_fit_score"] = pd.to_numeric(scenario_df["team_fit_score"], errors="coerce")
+    scenario_df["saved_team_fit_multiplier"] = pd.to_numeric(scenario_df["team_fit_multiplier"], errors="coerce")
+    scenario_df = calculate_team_fit_components(scenario_df, sandbox_profile)
+    scenario_df["sandbox_expected_points"] = (
+        pd.to_numeric(scenario_df["base_opportunity_points"], errors="coerce").fillna(0.0)
+        * pd.to_numeric(scenario_df["team_fit_multiplier"], errors="coerce").fillna(1.0)
+        * pd.to_numeric(scenario_df["participation_confidence"], errors="coerce").fillna(0.0)
+        * pd.to_numeric(scenario_df["execution_multiplier"], errors="coerce").fillna(0.0)
+    )
+    scenario_df["expected_points_delta"] = scenario_df["sandbox_expected_points"] - scenario_df["saved_expected_points"]
+    scenario_df = scenario_df.rename(
+        columns={
+            "specialty_fit_score": "sandbox_specialty_fit_score",
+            "sprint_fit_bonus": "sandbox_sprint_fit_bonus",
+            "team_fit_score": "sandbox_team_fit_score",
+            "team_fit_multiplier": "sandbox_team_fit_multiplier",
+        }
+    )
+    return scenario_df
+
+
+def _build_roster_scenario_assumption_frame(
+    saved_profile: dict[str, object],
+    scenario_profile: dict[str, object],
+) -> pd.DataFrame:
+    rows: list[dict[str, object]] = [
+        {
+            "Setting": "Team-fit floor",
+            "Saved profile": float(saved_profile.get("team_fit_floor", 0.70)),
+            "Scenario": float(scenario_profile.get("team_fit_floor", 0.70)),
+        },
+        {
+            "Setting": "Team-fit range",
+            "Saved profile": float(saved_profile.get("team_fit_range", 0.30)),
+            "Scenario": float(scenario_profile.get("team_fit_range", 0.30)),
+        },
+    ]
+
+    saved_rules = dict(saved_profile.get("participation_rules", {}))
+    scenario_rules = dict(scenario_profile.get("participation_rules", {}))
+    for rule_key, label in [
+        ("completed", "Participation: completed"),
+        ("program_confirmed", "Participation: program confirmed"),
+        ("observed_startlist", "Participation: observed startlist"),
+        ("calendar_seed", "Participation: calendar seed"),
+        ("overlap_penalty", "Participation: overlap penalty"),
+    ]:
+        rows.append(
+            {
+                "Setting": label,
+                "Saved profile": float(saved_rules.get(rule_key, 0.0)),
+                "Scenario": float(scenario_rules.get(rule_key, 0.0)),
+            }
+        )
+
+    saved_weights = _normalize_team_profile_weights(dict(saved_profile.get("strength_weights", {})))
+    scenario_weights = _normalize_team_profile_weights(dict(scenario_profile.get("strength_weights", {})))
+    for axis in TEAM_PROFILE_SIGNAL_KEYS:
+        if abs(saved_weights[axis] - scenario_weights[axis]) < 1e-9:
+            continue
+        rows.append(
+            {
+                "Setting": f"Weight: {TEAM_PROFILE_AXIS_LABELS[axis]}",
+                "Saved profile": saved_weights[axis],
+                "Scenario": scenario_weights[axis],
+            }
+        )
+
+    return pd.DataFrame(rows)
+
+
+def render_team_profile_sandbox(
+    race_df: pd.DataFrame,
+    metadata: dict[str, object],
+    team_slug: str,
+    planning_year: int,
+    view_mode: str,
+) -> None:
+    team_profile = dict(metadata.get("team_profile", {}))
+    strength_weights = dict(team_profile.get("strength_weights", {}))
+    if not team_profile or not strength_weights:
+        return
+
+    default_profile = load_default_team_profile()
+    default_strength_weights = dict(default_profile.get("strength_weights", {}))
+    saved_weights = _normalize_team_profile_weights(strength_weights)
+    default_weights = _normalize_team_profile_weights(default_strength_weights or strength_weights)
+    saved_profile_status = _team_profile_status_label(team_profile, default_profile)
+
+    st.markdown("**Team Profile Transparency**")
+    st.caption(
+        f"Saved profile type: `{saved_profile_status}`. The KPI row and charts above stay tied to the saved artifact. "
+        "The sandbox below is a non-persistent what-if view for this workspace only."
+    )
+
+    with st.expander("Team Profile Sandbox", expanded=False):
+        st.markdown(
+            """
+            Use this to stress-test how the team-specific fit layer changes the saved EV view.
+
+            - `Historical opportunity` stays fixed.
+            - `Participation confidence` and `execution multipliers` stay fixed.
+            - Only the `team_fit` layer is being changed here.
+            """
+        )
+        if not _has_team_profile_sandbox_inputs(race_df):
+            st.info(
+                "This saved artifact does not include the raw team-fit signal columns needed for the sandbox yet. "
+                "Refresh the team artifact to enable live team-profile what-if analysis."
+            )
+            return
+
+        prefix = _team_profile_state_prefix(team_slug, planning_year)
+        _ensure_team_profile_sandbox_state(prefix, team_profile)
+
+        action_left, action_mid, action_right = st.columns([1, 1, 2])
+        with action_left:
+            if st.button("Load saved profile", key=f"{prefix}_load_saved"):
+                _apply_team_profile_preset(
+                    prefix,
+                    saved_weights,
+                    float(team_profile.get("team_fit_floor", 0.70)),
+                    float(team_profile.get("team_fit_range", 0.30)),
+                )
+                st.rerun()
+        with action_mid:
+            if st.button("Load default profile", key=f"{prefix}_load_default"):
+                _apply_team_profile_preset(
+                    prefix,
+                    default_weights,
+                    float(default_profile.get("team_fit_floor", 0.70)),
+                    float(default_profile.get("team_fit_range", 0.30)),
+                )
+                st.rerun()
+        with action_right:
+            st.caption("Sandbox sliders are normalized to relative emphasis, just like the main race-opportunity controls.")
+
+        slider_columns = st.columns(2)
+        for index, axis in enumerate(TEAM_PROFILE_SIGNAL_KEYS):
+            with slider_columns[index % 2]:
+                st.slider(
+                    TEAM_PROFILE_AXIS_LABELS[axis],
+                    min_value=0.0,
+                    max_value=1.0,
+                    value=float(st.session_state[f"{prefix}_{axis}"]),
+                    step=0.05,
+                    key=f"{prefix}_{axis}",
+                )
+
+        with st.expander("Advanced fit bounds", expanded=False):
+            st.slider(
+                "Team-fit floor",
+                min_value=0.0,
+                max_value=1.0,
+                value=float(st.session_state[f"{prefix}_team_fit_floor"]),
+                step=0.05,
+                key=f"{prefix}_team_fit_floor",
+                help="Minimum team-fit multiplier when the fit score is weakest.",
+            )
+            st.slider(
+                "Team-fit range",
+                min_value=0.0,
+                max_value=1.0,
+                value=float(st.session_state[f"{prefix}_team_fit_range"]),
+                step=0.05,
+                key=f"{prefix}_team_fit_range",
+                help="How much team fit is allowed to move the multiplier above the floor.",
+            )
+
+        sandbox_weights = _normalize_team_profile_weights(
+            {axis: float(st.session_state[f"{prefix}_{axis}"]) for axis in TEAM_PROFILE_SIGNAL_KEYS}
+        )
+        sandbox_profile = dict(team_profile)
+        sandbox_profile["strength_weights"] = sandbox_weights
+        sandbox_profile["team_fit_floor"] = float(st.session_state[f"{prefix}_team_fit_floor"])
+        sandbox_profile["team_fit_range"] = float(st.session_state[f"{prefix}_team_fit_range"])
+        scenario_df = _build_team_profile_sandbox_frame(race_df, sandbox_profile)
+
+        comparison_frame = pd.DataFrame(
+            [
+                {
+                    "Axis": TEAM_PROFILE_AXIS_LABELS[axis],
+                    "Default profile": default_weights[axis],
+                    "Saved artifact": saved_weights[axis],
+                    "Sandbox": sandbox_weights[axis],
+                }
+                for axis in TEAM_PROFILE_SIGNAL_KEYS
+            ]
+        )
+        st.dataframe(comparison_frame.round(3), use_container_width=True, hide_index=True)
+
+        saved_total_expected = float(scenario_df["saved_expected_points"].sum())
+        sandbox_total_expected = float(scenario_df["sandbox_expected_points"].sum())
+        delta_total_expected = sandbox_total_expected - saved_total_expected
+        metric_left, metric_mid, metric_right = st.columns(3)
+        metric_left.metric("Saved expected", f"{saved_total_expected:.1f}")
+        metric_mid.metric("Sandbox expected", f"{sandbox_total_expected:.1f}")
+        metric_right.metric("Sandbox delta", f"{delta_total_expected:+.1f}")
+        st.caption(f"Sandbox totals follow the current `{view_mode}` filter, not the full saved season summary row above.")
+
+        movers_df = (
+            scenario_df.assign(delta_abs=lambda df: df["expected_points_delta"].abs())
+            .sort_values(["delta_abs", "sandbox_expected_points"], ascending=[False, False])
+            .head(10)
+        )
+        mover_columns = [
+            "race_name",
+            "route_profile",
+            "saved_team_fit_score",
+            "sandbox_team_fit_score",
+            "saved_team_fit_multiplier",
+            "sandbox_team_fit_multiplier",
+            "saved_expected_points",
+            "sandbox_expected_points",
+            "expected_points_delta",
+        ]
+        st.markdown("**Biggest race moves under the sandbox profile**")
+        st.dataframe(
+            movers_df[mover_columns].round(
+                {
+                    "saved_team_fit_score": 3,
+                    "sandbox_team_fit_score": 3,
+                    "saved_team_fit_multiplier": 3,
+                    "sandbox_team_fit_multiplier": 3,
+                    "saved_expected_points": 1,
+                    "sandbox_expected_points": 1,
+                    "expected_points_delta": 1,
+                }
+            ),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        sandbox_profile_preview = {
+            "archetype_description": str(team_profile.get("archetype_description") or ""),
+            "archetype_key": str(team_profile.get("archetype_key") or ""),
+            "archetype_label": str(team_profile.get("archetype_label") or ""),
+            "profile_confidence": str(team_profile.get("profile_confidence") or ""),
+            "profile_rationale": list(team_profile.get("profile_rationale", [])),
+            "team_slug": str(metadata.get("team_slug") or team_slug),
+            "team_name": str(metadata.get("team_name") or team_slug),
+            "planning_year": int(metadata.get("planning_year") or planning_year),
+            "strength_weights": sandbox_weights,
+            "team_fit_floor": float(sandbox_profile["team_fit_floor"]),
+            "team_fit_range": float(sandbox_profile["team_fit_range"]),
+            "execution_rules": dict(team_profile.get("execution_rules", {})),
+            "participation_rules": dict(team_profile.get("participation_rules", {})),
+        }
+        st.download_button(
+            "Download sandbox profile JSON",
+            data=(json.dumps(sandbox_profile_preview, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+            file_name=f"{team_slug}_{planning_year}_sandbox_profile.json",
+            mime="application/json",
+        )
+
+
+def render_roster_scenario_overlay(
+    race_df: pd.DataFrame,
+    metadata: dict[str, object],
+    team_slug: str,
+    planning_year: int,
+    view_mode: str,
+) -> None:
+    team_profile = dict(metadata.get("team_profile", {}))
+    if not team_profile:
+        return
+
+    st.markdown("**Roster Scenario Overlay**")
+    st.caption(
+        "This is a UI-only deterministic what-if layer built from the saved Team Calendar EV artifact. "
+        "It does not rebuild history or write new scenario artifacts."
+    )
+
+    if not _has_roster_scenario_inputs(race_df):
+        st.info(
+            "This saved artifact does not include the full set of columns needed for the roster scenario overlay yet. "
+            "Refresh the Team Calendar EV artifact to enable deterministic roster scenarios."
+        )
+        return
+
+    presets = list_roster_scenario_presets()
+    preset_keys = [preset.key for preset in presets]
+    preset_lookup = {preset.key: preset for preset in presets}
+    selected_preset_key = st.selectbox(
+        "Roster scenario",
+        options=preset_keys,
+        index=0,
+        format_func=lambda key: preset_lookup[key].label,
+        key=f"roster_scenario_{team_slug}_{planning_year}",
+    )
+    scenario_result = build_roster_scenario_result(race_df, team_profile, selected_preset_key)
+    preset = scenario_result.preset
+    scenario_profile = scenario_result.scenario_profile
+    scenario_df = scenario_result.scenario_df
+
+    scenario_formula = str(metadata.get("roster_scenario_formula") or ROSTER_SCENARIO_FORMULA).strip()
+    scenario_scope = str(metadata.get("roster_scenario_scope") or ROSTER_SCENARIO_SCOPE).strip()
+    preset_version = str(metadata.get("roster_scenario_preset_version") or get_roster_scenario_preset_version()).strip()
+    st.caption(preset.description)
+    st.caption(
+        f"Scope `{scenario_scope}`. Preset catalog `{preset_version}`. "
+        f"The scenario formula is `{scenario_formula}`."
+    )
+
+    metric_left, metric_mid, metric_right, metric_far = st.columns(4)
+    saved_total_expected = float(scenario_df["saved_expected_points"].sum())
+    scenario_total_expected = float(scenario_df["scenario_expected_points"].sum())
+    delta_total_expected = scenario_total_expected - saved_total_expected
+    changed_race_count = int((scenario_df["expected_points_delta"].abs() > 1e-9).sum())
+    metric_left.metric("Saved expected", f"{saved_total_expected:.1f}")
+    metric_mid.metric("Scenario expected", f"{scenario_total_expected:.1f}")
+    metric_right.metric("Scenario delta", f"{delta_total_expected:+.1f}")
+    metric_far.metric("Races moved", changed_race_count)
+    st.caption(f"Scenario totals follow the current `{view_mode}` filter, not the full saved season summary row above.")
+
+    assumption_frame = _build_roster_scenario_assumption_frame(team_profile, scenario_profile)
+    st.dataframe(assumption_frame.round(3), use_container_width=True, hide_index=True)
+
+    movers_df = (
+        scenario_df.assign(delta_abs=lambda df: df["expected_points_delta"].abs())
+        .sort_values(["delta_abs", "scenario_expected_points"], ascending=[False, False])
+        .head(10)
+    )
+    mover_columns = [
+        "race_name",
+        "route_profile",
+        "saved_team_fit_multiplier",
+        "scenario_team_fit_multiplier",
+        "saved_participation_confidence",
+        "scenario_participation_confidence",
+        "saved_expected_points",
+        "scenario_expected_points",
+        "expected_points_delta",
+    ]
+    available_mover_columns = [column for column in mover_columns if column in movers_df.columns]
+    st.markdown("**Biggest race moves under the selected roster scenario**")
+    st.dataframe(
+        movers_df[available_mover_columns].round(
+            {
+                "saved_team_fit_multiplier": 3,
+                "scenario_team_fit_multiplier": 3,
+                "saved_participation_confidence": 3,
+                "scenario_participation_confidence": 3,
+                "saved_expected_points": 1,
+                "scenario_expected_points": 1,
+                "expected_points_delta": 1,
+            }
+        ),
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    st.download_button(
+        "Download scenario-adjusted CSV",
+        data=scenario_df.to_csv(index=False).encode("utf-8"),
+        file_name=f"{team_slug}_{planning_year}_{preset.key}_scenario.csv",
+        mime="text/csv",
+    )
+
+
 def render_team_calendar_ev_workspace() -> None:
     st.subheader("Team Calendar EV")
     datasets = discover_team_calendar_ev_datasets()
@@ -444,21 +1026,30 @@ def render_team_calendar_ev_workspace() -> None:
     race_df = load_team_calendar_ev(team_slug, planning_year)
     summary_df = load_team_calendar_ev_summary(team_slug, planning_year)
     metadata = load_team_calendar_ev_metadata(team_slug, planning_year)
+    calendar_snapshot_df = load_team_calendar_snapshot(team_slug, planning_year)
 
     if race_df.empty or summary_df.empty:
         st.warning("The selected Team Calendar EV artifact is missing required race-level or summary data.")
         return
 
     summary_row = summary_df.iloc[0]
-    as_of_date = str(metadata.get("as_of_date") or summary_row.get("as_of_date") or "")
+    freshness_context = _team_calendar_ev_freshness_context(metadata, summary_row, calendar_snapshot_df)
+    as_of_date = str(freshness_context["ev_as_of"] or "")
     with selector_right:
-        st.markdown("**As of**")
-        st.caption(as_of_date or "Not available")
+        st.markdown("**Freshness**")
+        st.caption(f"EV artifact as of: `{as_of_date or 'Not available'}`")
+        st.caption(
+            "Calendar scraped: "
+            f"`{str(freshness_context['calendar_scraped_at'] or 'Not available')}`"
+        )
 
     filtered_df = _filtered_team_calendar_ev(race_df, view_mode)
     if filtered_df.empty:
         st.info("No races matched the current Team Calendar EV view.")
         return
+
+    if freshness_context["has_drift"]:
+        st.warning(str(freshness_context["warning_message"]))
 
     st.caption(
         f"KPI row reflects the saved `{planning_year}` team-season snapshot. Most charts and tables follow the "
@@ -473,6 +1064,9 @@ def render_team_calendar_ev_workspace() -> None:
     metric_farthest.metric("EV gap known", f"{float(summary_row['ev_gap_known']):+.1f}")
     metric_extra.metric("Race count", int(summary_row["race_count"]))
     st.caption("Weight details for this EV model live in the `How the model works: idea, methods, and math` expander above.")
+    render_team_profile_identity_block(metadata)
+    render_roster_scenario_overlay(filtered_df, metadata, team_slug, planning_year, view_mode)
+    render_team_profile_sandbox(filtered_df, metadata, team_slug, planning_year, view_mode)
 
     completed_missing_ev = filtered_df.loc[
         (filtered_df["status"] == "completed")

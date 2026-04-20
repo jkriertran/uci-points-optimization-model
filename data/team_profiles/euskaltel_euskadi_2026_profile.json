@@ -1,0 +1,36 @@
+{
+  "archetype_key": "stage_hunter",
+  "archetype_label": "Stage Hunter",
+  "archetype_description": "More dangerous in stage-level opportunities than full GC campaigns.",
+  "profile_confidence": "medium",
+  "profile_rationale": [
+    "The saved artifact mix tilts toward stage-race opportunities with selective one-day support.",
+    "The current results do not point to a dominant sprint-first or GC-heavy structure.",
+    "A stage-hunting identity is the cleanest planning shorthand for Version 1."
+  ],
+  "profile_version": "v2_optimizer",
+  "strength_weights": {
+    "one_day": 0.17826,
+    "stage_hunter": 0.218002,
+    "gc": 0.105701,
+    "time_trial": 0.110108,
+    "all_round": 0.196785,
+    "sprint_bonus": 0.191145
+  },
+  "weight_fit_method": "projected_quadratic_fit_v1",
+  "weight_fit_summary": {
+    "known_race_count": 29,
+    "actual_points_total": 594.0,
+    "predicted_points_total": 1415.252,
+    "season_gap": 821.252,
+    "mae": 42.041,
+    "rmse": 52.833,
+    "objective": 0.029996,
+    "baseline_mae": 43.2,
+    "baseline_rmse": 54.267,
+    "baseline_season_gap": 869.588,
+    "prior_source": "archetype:stage_hunter",
+    "effective_prior_strength": 0.3,
+    "effective_concentration_strength": 0.05
+  }
+}

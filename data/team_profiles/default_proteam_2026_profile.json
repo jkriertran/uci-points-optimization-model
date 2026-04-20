@@ -1,0 +1,41 @@
+{
+  "team_slug": "",
+  "pcs_team_slug": "",
+  "planning_year": 2026,
+  "team_name": "Default 2026 ProTeam",
+  "archetype_key": "balanced_opportunist",
+  "archetype_label": "Balanced Opportunist",
+  "archetype_description": "No single dominant specialty, with a broad point-seeking profile across multiple race shapes.",
+  "profile_confidence": "low",
+  "profile_rationale": [
+    "This is the generic baseline when a team-specific override has not been authored yet.",
+    "The weight mix stays balanced so the default profile does not overstate a specialty lane.",
+    "Use this as a planning placeholder until analyst-set team context is available."
+  ],
+  "profile_version": "v1",
+  "strength_weights": {
+    "one_day": 0.1666666667,
+    "stage_hunter": 0.1666666667,
+    "gc": 0.1666666667,
+    "time_trial": 0.1666666667,
+    "all_round": 0.1666666667,
+    "sprint_bonus": 0.1666666665
+  },
+  "team_fit_floor": 0.7,
+  "team_fit_range": 0.3,
+  "execution_rules": {
+    "1.1": 0.4,
+    "1.Pro": 0.3,
+    "1.UWT": 0.18,
+    "2.1": 0.3,
+    "2.Pro": 0.25,
+    "2.UWT": 0.18
+  },
+  "participation_rules": {
+    "completed": 1.0,
+    "program_confirmed": 0.95,
+    "observed_startlist": 0.95,
+    "calendar_seed": 0.7,
+    "overlap_penalty": 0.8
+  }
+}

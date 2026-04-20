@@ -1,0 +1,36 @@
+{
+  "archetype_key": "balanced_opportunist",
+  "archetype_label": "Balanced Opportunist",
+  "archetype_description": "No single dominant specialty, with a broad point-seeking profile across multiple race shapes.",
+  "profile_confidence": "low",
+  "profile_rationale": [
+    "The current local artifact set does not provide a strong enough signal to assign a narrower archetype with confidence.",
+    "A balanced planning default is safer than overstating a sprint, classics, or GC lane.",
+    "This profile should be one of the first candidates for manual analyst refinement."
+  ],
+  "profile_version": "v2_optimizer",
+  "strength_weights": {
+    "one_day": 0.15868,
+    "stage_hunter": 0.177026,
+    "gc": 0.175731,
+    "time_trial": 0.154787,
+    "all_round": 0.16398,
+    "sprint_bonus": 0.169796
+  },
+  "weight_fit_method": "projected_quadratic_fit_v1",
+  "weight_fit_summary": {
+    "known_race_count": 9,
+    "actual_points_total": 26.0,
+    "predicted_points_total": 544.862,
+    "season_gap": 518.862,
+    "mae": 57.651,
+    "rmse": 76.318,
+    "objective": 0.032525,
+    "baseline_mae": 59.867,
+    "baseline_rmse": 78.822,
+    "baseline_season_gap": 538.802,
+    "prior_source": "archetype:balanced_opportunist",
+    "effective_prior_strength": 0.8,
+    "effective_concentration_strength": 0.1
+  }
+}

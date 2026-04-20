@@ -1,0 +1,93 @@
+{
+  "balanced_opportunist": {
+    "color": "#475569",
+    "description": "No single dominant specialty, with a broad point-seeking profile across multiple race shapes.",
+    "label": "Balanced Opportunist",
+    "strength_weight_prior": {
+      "one_day": 0.18,
+      "stage_hunter": 0.15,
+      "gc": 0.15,
+      "time_trial": 0.05,
+      "all_round": 0.22,
+      "sprint_bonus": 0.25
+    }
+  },
+  "classic_specialist": {
+    "color": "#0f766e",
+    "description": "Built mainly for one-day racing and selective classics.",
+    "label": "Pure Classics Specialist",
+    "strength_weight_prior": {
+      "one_day": 0.42,
+      "stage_hunter": 0.07,
+      "gc": 0.07,
+      "time_trial": 0.04,
+      "all_round": 0.18,
+      "sprint_bonus": 0.22
+    }
+  },
+  "classic_sprint_opportunist": {
+    "color": "#2563eb",
+    "description": "Strong in one-day races and sprint-accessible opportunities, with limited GC emphasis.",
+    "label": "Classics + Sprint Opportunist",
+    "strength_weight_prior": {
+      "one_day": 0.3,
+      "stage_hunter": 0.1,
+      "gc": 0.08,
+      "time_trial": 0.04,
+      "all_round": 0.18,
+      "sprint_bonus": 0.3
+    }
+  },
+  "gc_development": {
+    "color": "#b45309",
+    "description": "More aligned with stage-race structure and general classification ambitions.",
+    "label": "GC Development Team",
+    "strength_weight_prior": {
+      "one_day": 0.1,
+      "stage_hunter": 0.12,
+      "gc": 0.28,
+      "time_trial": 0.06,
+      "all_round": 0.27,
+      "sprint_bonus": 0.17
+    }
+  },
+  "sprint_first": {
+    "color": "#dc2626",
+    "description": "Sprint-accessible races are the primary scoring lane.",
+    "label": "Sprint-First Team",
+    "strength_weight_prior": {
+      "one_day": 0.14,
+      "stage_hunter": 0.09,
+      "gc": 0.06,
+      "time_trial": 0.03,
+      "all_round": 0.13,
+      "sprint_bonus": 0.55
+    }
+  },
+  "stage_hunter": {
+    "color": "#16a34a",
+    "description": "More dangerous in stage-level opportunities than full GC campaigns.",
+    "label": "Stage Hunter",
+    "strength_weight_prior": {
+      "one_day": 0.13,
+      "stage_hunter": 0.31,
+      "gc": 0.09,
+      "time_trial": 0.04,
+      "all_round": 0.24,
+      "sprint_bonus": 0.19
+    }
+  },
+  "time_trial_edge": {
+    "color": "#7c3aed",
+    "description": "Has an outsized edge in TT-shaped scoring opportunities.",
+    "label": "Time Trial Edge",
+    "strength_weight_prior": {
+      "one_day": 0.12,
+      "stage_hunter": 0.09,
+      "gc": 0.17,
+      "time_trial": 0.28,
+      "all_round": 0.18,
+      "sprint_bonus": 0.16
+    }
+  }
+}

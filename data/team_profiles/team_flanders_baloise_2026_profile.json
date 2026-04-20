@@ -1,0 +1,36 @@
+{
+  "archetype_key": "classic_specialist",
+  "archetype_label": "Pure Classics Specialist",
+  "archetype_description": "Built mainly for one-day racing and selective classics.",
+  "profile_confidence": "medium",
+  "profile_rationale": [
+    "The clearest saved 2026 signal comes from classics-style one-day races.",
+    "The current results fit a one-day emphasis better than a sprint-only or GC-led identity.",
+    "This gives the app a sharper shorthand for a classics-oriented planning profile."
+  ],
+  "profile_version": "v2_optimizer",
+  "strength_weights": {
+    "one_day": 0.233614,
+    "stage_hunter": 0.146584,
+    "gc": 0.144755,
+    "time_trial": 0.140396,
+    "all_round": 0.170412,
+    "sprint_bonus": 0.164239
+  },
+  "weight_fit_method": "projected_quadratic_fit_v1",
+  "weight_fit_summary": {
+    "known_race_count": 30,
+    "actual_points_total": 404.0,
+    "predicted_points_total": 1100.479,
+    "season_gap": 696.479,
+    "mae": 25.842,
+    "rmse": 33.263,
+    "objective": 0.025322,
+    "baseline_mae": 27.411,
+    "baseline_rmse": 35.132,
+    "baseline_season_gap": 753.848,
+    "prior_source": "archetype:classic_specialist",
+    "effective_prior_strength": 0.3,
+    "effective_concentration_strength": 0.05
+  }
+}

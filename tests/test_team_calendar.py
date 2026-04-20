@@ -61,6 +61,18 @@ def test_match_observed_races_uses_alias_map() -> None:
     assert row["matched_via"] == "alias"
 
 
+def test_load_team_calendar_aliases_canonicalizes_legacy_team_slug(tmp_path) -> None:
+    alias_path = tmp_path / "team_calendar_race_aliases.csv"
+    alias_path.write_text(
+        "team_slug,planning_year,source_race_name,canonical_race_name,race_id\n"
+        "unibet-rose-rockets-2026,2026,Grand Prix Cycliste la Marseillaise,GP la Marseillaise,97\n"
+    )
+
+    alias_df = module.load_team_calendar_aliases(alias_path)
+
+    assert alias_df["team_slug"].tolist() == ["unibet-rose-rockets"]
+
+
 def test_overlap_flagging_and_changelog_track_changes() -> None:
     latest_df = pd.DataFrame(
         [

@@ -11,7 +11,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from uci_points_model.team_calendar import build_live_team_calendar, build_schedule_changelog
-from uci_points_model.calendar_ev import canonicalize_team_slug
+from uci_points_model.team_identity import canonicalize_team_slug
 
 
 def parse_args() -> argparse.Namespace:

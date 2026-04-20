@@ -27,6 +27,7 @@ The recommendation layer is **category-aware**. If a race changes class across y
 - aggregates repeated editions into a shortlist of races worth targeting next season
 - includes a walk-forward backtest that calibrates weights on prior years and checks them against future race editions
 - includes a `ProTeam Risk Monitor` tab that shows how concentrated counted UCI team points are across ProTeam riders
+- includes a `Team Calendar EV` tab that loads saved multi-team team-season EV artifacts from disk
 
 If you want a presentation-ready explanation of the model, see `MODEL_STUDY_GUIDE.md`.
 Planned future work is tracked in `ROADMAP.md`.
@@ -36,24 +37,41 @@ Planned future work is tracked in `ROADMAP.md`.
 ```text
 .
 ├── app.py
+├── config/
+│   ├── roster_scenario_presets.json
+│   ├── team_calendar_race_aliases.csv
+│   └── tracked_proteams_2026.csv
 ├── data/
-│   └── race_editions_snapshot.csv
+│   ├── race_editions_snapshot.csv
+│   ├── team_calendars/
+│   ├── team_ev/
+│   ├── team_profiles/
+│   └── team_results/
 ├── requirements.txt
 ├── scripts/
-│   └── build_snapshot.py
+│   ├── build_all_proteam_calendar_ev.py
+│   ├── build_snapshot.py
+│   ├── build_team_calendar_ev.py
+│   └── build_team_calendar_snapshots.py
 ├── tests/
+│   ├── test_calendar_ev.py
 │   ├── test_fc_client.py
 │   ├── test_model.py
 │   ├── test_pcs_client.py
-│   └── test_proteam_risk.py
+│   ├── test_proteam_risk.py
+│   └── test_team_calendar.py
 └── uci_points_model/
     ├── __init__.py
     ├── backtest.py
+    ├── calendar_ev.py
     ├── data.py
     ├── fc_client.py
     ├── model.py
     ├── pcs_client.py
-    └── proteam_risk.py
+    ├── proteam_risk.py
+    ├── roster_scenarios.py
+    ├── team_calendar.py
+    └── team_calendar_artifacts.py
 ```
 
 ## Local run
@@ -97,6 +115,51 @@ that refreshes those two files on a daily schedule. It is intentionally `latest 
 the fixed snapshot filenames are overwritten in place rather than archived by date.
 If the scheduled refresh fails, the workflow opens or updates a GitHub issue so the failure is visible without opening the app.
 
+## Team Calendar EV pipeline
+
+The repo also includes a saved-artifact `Team Calendar EV` workflow for tracked `2026` ProTeams.
+
+The operating model is:
+
+- `config/tracked_proteams_2026.csv` is the manifest of tracked teams
+- `data/team_profiles/default_proteam_2026_profile.json` provides the default ProTeam assumptions
+- `data/team_profiles/<team_slug>_2026_profile.json` can override the default for specific teams
+- `scripts/build_all_proteam_calendar_ev.py` refreshes the full tracked-team set
+- `app.py` stays file-driven and discovers every saved team-season artifact automatically from `data/team_ev/`
+
+Each tracked team-season produces:
+
+- `data/team_calendars/<team_slug>_<year>_latest.csv`
+- `data/team_calendars/<team_slug>_<year>_changelog.csv`
+- `data/team_results/<team_slug>_<year>_actual_points.csv`
+- `data/team_ev/<team_slug>_<year>_calendar_ev.csv`
+- `data/team_ev/<team_slug>_<year>_calendar_ev_summary.csv`
+- `data/team_ev/<team_slug>_<year>_calendar_ev_metadata.json`
+
+Refresh all tracked teams with:
+
+```bash
+python scripts/build_all_proteam_calendar_ev.py --manifest-path config/tracked_proteams_2026.csv
+```
+
+Refresh one saved team-season with the existing single-team CLI:
+
+```bash
+python scripts/build_team_calendar_ev.py \
+  --team-slug unibet-rose-rockets \
+  --pcs-team-slug unibet-rose-rockets-2026 \
+  --planning-year 2026 \
+  --team-profile-path data/team_profiles/unibet_rose_rockets_2026_profile.json \
+  --calendar-path data/team_calendars/unibet_rose_rockets_2026_latest.csv \
+  --actual-points-path data/team_results/unibet_rose_rockets_2026_actual_points.csv \
+  --ev-output-path data/team_ev/unibet_rose_rockets_2026_calendar_ev.csv \
+  --summary-output-path data/team_ev/unibet_rose_rockets_2026_calendar_ev_summary.csv \
+  --readme-path data/team_ev/README.md \
+  --dictionary-path data/team_ev/data_dictionary.md
+```
+
+The scheduled refresh job lives at `.github/workflows/refresh_team_calendars.yml` and now runs the manifest-driven batch build instead of a single hard-coded team.
+
 ## Streamlit deployment
 
 This repo is ready for Streamlit Community Cloud:
@@ -134,6 +197,18 @@ It is designed to answer:
 
 "How dependent is a ProTeam on one rider, or a tiny rider core, for its counted UCI points?"
 
+## Team Calendar EV workspace
+
+The app also includes a `Team Calendar EV` tab.
+
+That module:
+
+- discovers saved team-season EV artifacts from `data/team_ev/`
+- shows one-row KPI summaries plus race-level detail
+- loads saved metadata to explain the EV weights and team-profile assumptions
+- includes a UI-only deterministic roster-scenario overlay with `baseline_saved`, `depth_constrained`, and `best_available` presets
+- does not rebuild EV live in the UI
+
 ## Modeling notes
 
 - One-day races are the cleanest use case.
@@ -141,5 +216,6 @@ It is designed to answer:
 - Race-category changes are handled explicitly, so a historical `1.1` version and a later `1.Pro` version are not blended into one uninterrupted target history.
 - The app now includes a lightweight beta route-profile x specialty-fit overlay, but it is inferred from event structure rather than full GPX or gradient data.
 - The ProTeam monitor is a concentration-risk dashboard, not a rider-performance model.
+- The roster-scenario overlay is deterministic and UI-only. It reuses saved Team Calendar EV artifacts, keeps `base_opportunity_points` and `execution_multiplier` fixed, and changes only team-fit plus participation assumptions.
 - The model still does not do true team-specific roster optimization, probable lineups, or internal role planning.
 - The startlist-strength proxy comes from FirstCycling's extended startlist stats (`Starts`, `Wins`, `Podium`, `Top 10`), not from private team power files or internal rankings.
