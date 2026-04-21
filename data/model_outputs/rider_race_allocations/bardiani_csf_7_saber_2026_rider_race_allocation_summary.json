@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 27.132767,
+  "mean_selected_breakout_probability": 0.160003,
+  "mean_selected_specialty_match_score": 0.567232,
+  "pairings_scored": 1265,
+  "planning_year": 2026,
+  "race_count": 55,
+  "race_leader_assignments": 55,
+  "rider_count": 23,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 385,
+  "team_name": "Bardiani CSF 7 Saber",
+  "team_slug": "bardiani-csf-7-saber",
+  "top_race_leader_rider": "ZANONCELLO Enrico",
+  "top_race_name": "Classica Camp de Morvedre",
+  "top_riders_per_race": 3
+}

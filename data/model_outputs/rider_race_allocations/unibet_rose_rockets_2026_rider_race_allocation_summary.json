@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 23.80722,
+  "mean_selected_breakout_probability": 0.392576,
+  "mean_selected_specialty_match_score": 0.519975,
+  "pairings_scored": 2370,
+  "planning_year": 2026,
+  "race_count": 79,
+  "race_leader_assignments": 79,
+  "rider_count": 30,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 553,
+  "team_name": "Unibet Rose Rockets",
+  "team_slug": "unibet-rose-rockets",
+  "top_race_leader_rider": "GROENEWEGEN Dylan",
+  "top_race_name": "Classica Camp de Morvedre",
+  "top_riders_per_race": 3
+}

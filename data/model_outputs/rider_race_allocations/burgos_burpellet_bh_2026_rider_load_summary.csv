@@ -1,0 +1,12 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+burgos-burpellet-bh,Burgos Burpellet BH,2026,BURNETT Josh,oneday,banker,46,30,1227.829627,0.182212,0.542435,Tour of Hainan,2026-04-15,2.Pro,66.070701
+burgos-burpellet-bh,Burgos Burpellet BH,2026,DÍAZ José Manuel,fallback,banker,46,16,1274.195215,0.24675,0.376928,Tour of Hainan,2026-04-15,2.Pro,83.642218
+burgos-burpellet-bh,Burgos Burpellet BH,2026,FAGÚNDEZ Eric Antonio,oneday,unclassified,45,0,1109.683116,0.160646,0.545418,Tour of Hainan,2026-04-15,2.Pro,62.065961
+burgos-burpellet-bh,Burgos Burpellet BH,2026,QUARTUCCI Lorenzo,hills,unclassified,46,0,1108.507003,0.178998,0.438719,Tour of Hainan,2026-04-15,2.Pro,68.260246
+burgos-burpellet-bh,Burgos Burpellet BH,2026,CAVIA Daniel,oneday,unclassified,37,0,709.846715,0.152056,0.575484,Clasica de Almeria,2026-02-15,1.Pro,38.914289
+burgos-burpellet-bh,Burgos Burpellet BH,2026,HERRADA Jesús,gc,unclassified,16,0,619.009591,0.179798,0.44146,Tour of Hainan,2026-04-15,2.Pro,69.150149
+burgos-burpellet-bh,Burgos Burpellet BH,2026,CHUMIL Sergio Geovani,fallback,unclassified,15,0,544.001764,0.142514,0.48883,Tour of Hainan,2026-04-15,2.Pro,61.255703
+burgos-burpellet-bh,Burgos Burpellet BH,2026,DE LA CALLE Hugo,oneday,low_conversion_depth,30,0,493.790055,0.121412,0.620223,Clasica de Almeria,2026-02-15,1.Pro,32.300815
+burgos-burpellet-bh,Burgos Burpellet BH,2026,KOYAMA Tomoya,oneday,low_conversion_depth,30,0,461.074315,0.115739,0.620223,Clasica de Almeria,2026-02-15,1.Pro,30.168069
+burgos-burpellet-bh,Burgos Burpellet BH,2026,MACÍAS César,sprint,low_conversion_depth,8,0,361.564889,0.134106,0.527258,Tour of Hainan,2026-04-15,2.Pro,66.840908
+burgos-burpellet-bh,Burgos Burpellet BH,2026,ALLENO Clément,gc,low_conversion_depth,3,0,149.969602,0.127927,0.548804,Tour of Türkiye,2026-04-26,2.Pro,54.381597

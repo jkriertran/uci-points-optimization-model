@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -12,7 +11,7 @@ from .team_calendar import TEAM_CALENDAR_COLUMNS
 from .team_calendar import derive_calendar_status
 from .team_calendar_client import (
     ProCyclingStatsTeamCalendarClient,
-    build_team_in_race_points_url,
+    build_team_season_points_per_rider_url,
 )
 from .team_identity import canonicalize_team_slug
 
@@ -77,6 +76,8 @@ DEFAULT_EXECUTION_RULES = {
 CATEGORY_HISTORY_FALLBACKS = {
     "1.UWT": "1.Pro",
     "2.UWT": "2.Pro",
+    "1.2": "1.1",
+    "2.2": "2.1",
 }
 
 
@@ -223,39 +224,19 @@ def build_actual_points_table(
     checked_at = checked_at_utc or datetime.now(timezone.utc).isoformat()
     comparison_date = _resolve_as_of_date(as_of_date)
 
-    rows: list[dict[str, object]] = []
-    if client is not None or len(calendar_df) <= 1 or max_workers <= 1:
-        pcs_client = client or ProCyclingStatsTeamCalendarClient()
-        rows = [
-            _build_actual_points_row(
-                row._asdict(),
-                team_slug=team_slug,
-                planning_year=planning_year,
-                pcs_team_slug=pcs_team_slug or team_slug,
-                checked_at_utc=checked_at,
-                comparison_date=comparison_date,
-                client=pcs_client,
-            )
-            for row in calendar_df.itertuples(index=False)
-        ]
-    else:
-        worker_count = min(max_workers, len(calendar_df))
-        with ThreadPoolExecutor(max_workers=worker_count) as pool:
-            future_map = {
-                pool.submit(
-                    _build_actual_points_row,
-                    row._asdict(),
-                    team_slug=team_slug,
-                    planning_year=planning_year,
-                    pcs_team_slug=pcs_team_slug or team_slug,
-                    checked_at_utc=checked_at,
-                    comparison_date=comparison_date,
-                    client=None,
-                ): row
-                for row in calendar_df.itertuples(index=False)
-            }
-            for future in as_completed(future_map):
-                rows.append(future.result())
+    pcs_client = client or ProCyclingStatsTeamCalendarClient()
+    rows: list[dict[str, object]] = [
+        _build_actual_points_row(
+            row._asdict(),
+            team_slug=team_slug,
+            planning_year=planning_year,
+            pcs_team_slug=pcs_team_slug or team_slug,
+            checked_at_utc=checked_at,
+            comparison_date=comparison_date,
+            client=pcs_client,
+        )
+        for row in calendar_df.itertuples(index=False)
+    ]
 
     actual_points_df = pd.DataFrame(rows, columns=ACTUAL_POINTS_COLUMNS)
     actual_points_df["race_id"] = pd.to_numeric(actual_points_df["race_id"], errors="coerce").astype("Int64")
@@ -485,14 +466,18 @@ def _build_actual_points_row(
     race_slug = str(row.get("pcs_race_slug") or "").strip()
     status = str(row.get("status") or derive_calendar_status(row.get("end_date"), comparison_date))
     team_name = str(row.get("team_name") or "")
-    source_url = build_team_in_race_points_url(pcs_team_slug, race_slug) if race_slug else ""
+    source_url = build_team_season_points_per_rider_url(pcs_team_slug) if race_slug else ""
     actual_points: float | None
     rider_count = pd.NA
     notes = ""
 
     if race_slug:
         try:
-            race_points = pcs_client.get_team_race_points(pcs_team_slug, race_slug)
+            race_points = pcs_client.get_team_race_uci_points(
+                pcs_team_slug,
+                race_slug,
+                season_year=planning_year,
+            )
             source_url = race_points.source_url
             if race_points.has_rows:
                 actual_points = float(race_points.actual_points)
@@ -500,14 +485,14 @@ def _build_actual_points_row(
             elif status == "completed":
                 actual_points = 0.0
                 rider_count = 0
-                notes = "points_page_empty_after_race"
+                notes = "uci_points_missing_after_race"
             else:
                 actual_points = None
                 rider_count = pd.NA
         except Exception as exc:  # noqa: BLE001
             actual_points = None
             rider_count = pd.NA
-            notes = f"points_page_error={type(exc).__name__}"
+            notes = f"uci_points_error={type(exc).__name__}"
     else:
         actual_points = None
         notes = "missing_race_slug"

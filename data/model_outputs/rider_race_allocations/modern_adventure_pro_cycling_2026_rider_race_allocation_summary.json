@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 22.793411,
+  "mean_selected_breakout_probability": 0.139547,
+  "mean_selected_specialty_match_score": 0.427781,
+  "pairings_scored": 546,
+  "planning_year": 2026,
+  "race_count": 26,
+  "race_leader_assignments": 26,
+  "rider_count": 21,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 182,
+  "team_name": "Modern Adventure Pro Cycling",
+  "team_slug": "modern-adventure-pro-cycling",
+  "top_race_leader_rider": "CARPENTER Robin",
+  "top_race_name": "AlUla Tour",
+  "top_riders_per_race": 3
+}

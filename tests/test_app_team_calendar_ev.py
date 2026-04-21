@@ -90,6 +90,88 @@ def test_team_calendar_ev_primary_metrics_demote_secondary_facts() -> None:
     assert secondary_facts == ["Completed expected: 50.0", "Race count: 10"]
 
 
+def test_team_calendar_ev_primary_metrics_use_counted_snapshot_when_available(monkeypatch) -> None:
+    summary_row = {
+        "total_expected_points": 100.0,
+        "completed_expected_points": 50.0,
+        "remaining_expected_points": 50.0,
+        "actual_points_known": 2882.0,
+        "ev_gap_known": -2.0,
+        "race_count": 10,
+    }
+    metadata = {"pcs_team_slug": "unibet-rose-rockets-2026"}
+
+    monkeypatch.setattr(
+        app_module,
+        "load_proteam_risk_snapshot",
+        lambda scope: pd.DataFrame(
+            [
+                {
+                    "team_slug": "unibet-rose-rockets-2026",
+                    "team_total_points": 2864.0,
+                }
+            ]
+        ),
+    )
+
+    primary_metrics = app_module._team_calendar_ev_primary_metrics(summary_row, metadata)  # noqa: SLF001
+    secondary_facts = app_module._team_calendar_ev_secondary_facts(summary_row, metadata)  # noqa: SLF001
+
+    assert primary_metrics == [
+        ("Total expected", "100.0"),
+        ("Actual points known", "2864.0"),
+        ("Remaining expected", "50.0"),
+        ("EV gap known", "-2.0"),
+    ]
+    assert secondary_facts == [
+        "All UCI points tracked: 2882.0",
+        "Non-counted UCI points: 18.0",
+        "Completed expected: 50.0",
+        "Race count: 10",
+    ]
+
+
+def test_team_calendar_ev_secondary_facts_handle_counted_points_above_tracked_total(monkeypatch) -> None:
+    summary_row = {
+        "total_expected_points": 100.0,
+        "completed_expected_points": 50.0,
+        "remaining_expected_points": 50.0,
+        "actual_points_known": 48.0,
+        "ev_gap_known": -2.0,
+        "race_count": 10,
+    }
+    metadata = {"pcs_team_slug": "alpha-team-2026"}
+
+    monkeypatch.setattr(
+        app_module,
+        "load_proteam_risk_snapshot",
+        lambda scope: pd.DataFrame(
+            [
+                {
+                    "team_slug": "alpha-team-2026",
+                    "team_total_points": 60.0,
+                }
+            ]
+        ),
+    )
+
+    primary_metrics = app_module._team_calendar_ev_primary_metrics(summary_row, metadata)  # noqa: SLF001
+    secondary_facts = app_module._team_calendar_ev_secondary_facts(summary_row, metadata)  # noqa: SLF001
+
+    assert primary_metrics == [
+        ("Total expected", "100.0"),
+        ("Actual points known", "60.0"),
+        ("Remaining expected", "50.0"),
+        ("EV gap known", "-2.0"),
+    ]
+    assert secondary_facts == [
+        "All UCI points tracked: 48.0",
+        "Counted points outside tracked set: 12.0",
+        "Completed expected: 50.0",
+        "Race count: 10",
+    ]
+
+
 def test_team_calendar_ev_detail_columns_split_reader_from_analyst_view() -> None:
     calendar_ev_df = pd.DataFrame(
         [
@@ -483,6 +565,266 @@ def test_build_roster_scenario_assumption_frame_lists_fit_and_participation_rule
     assert "Participation: calendar seed" in frame["Setting"].tolist()
 
 
+def test_preferred_rider_threshold_model_name_uses_backtest_winner(monkeypatch, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
+    _write_rider_threshold_artifacts()
+
+    app_module.load_rider_threshold_summary.clear()
+    app_module.load_rider_threshold_backtest_summary.clear()
+
+    assert app_module._preferred_rider_threshold_model_name() == "baseline_points_scoring_role"  # noqa: SLF001
+
+
+def test_preferred_top5_proteam_model_name_uses_backtest_winner(monkeypatch, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
+    _write_top5_proteam_artifacts()
+
+    app_module.load_top5_proteam_summary.clear()
+    app_module.load_top5_proteam_backtest_summary.clear()
+
+    assert app_module._preferred_top5_proteam_model_name() == "baseline_n_riders_150"  # noqa: SLF001
+
+
+def test_team_top5_proteam_row_filters_active_team_and_season(monkeypatch, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
+    _write_top5_proteam_artifacts()
+
+    app_module.load_team_season_top5_scores.clear()
+    app_module.load_top5_proteam_summary.clear()
+    app_module.load_top5_proteam_backtest_summary.clear()
+
+    score_row = app_module._team_top5_proteam_row("alpha-team", 2026)  # noqa: SLF001
+
+    assert score_row is not None
+    assert str(score_row["team_base_slug"]) == "alpha-team"
+    assert int(score_row["season"]) == 2026
+    assert float(score_row["predicted_next_top5_probability"]) == 0.64
+    assert str(score_row["model_name"]) == "baseline_n_riders_150"
+
+
+def test_team_continuity_history_frame_keeps_observed_links_and_current_cycle_inference(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    _write_top5_proteam_artifacts()
+
+    app_module.load_team_season_panel.clear()
+    app_module.load_team_season_top5_scores.clear()
+    app_module.load_top5_proteam_summary.clear()
+    app_module.load_top5_proteam_backtest_summary.clear()
+
+    continuity_df = app_module._team_continuity_history_frame("alpha-team", 2026)  # noqa: SLF001
+
+    assert continuity_df["season"].tolist() == [2024, 2025, 2026]
+    assert continuity_df["team_name"].tolist() == ["Alpha Legacy", "Alpha Team", "Alpha Team"]
+    assert continuity_df.loc[continuity_df["season"] == 2024, "next_team_name"].iloc[0] == "Alpha Team"
+    assert continuity_df.loc[continuity_df["season"] == 2024, "continuity_source"].iloc[0] == "pcs_prev_link"
+    assert continuity_df.loc[continuity_df["season"] == 2024, "next_proteam_rank"].iloc[0] == 4
+    assert continuity_df.loc[continuity_df["season"] == 2025, "next_team_name"].iloc[0] == "Alpha Team"
+    assert continuity_df.loc[continuity_df["season"] == 2025, "next_proteam_rank"].iloc[0] == 3
+    assert (
+        continuity_df.loc[continuity_df["season"] == 2025, "continuity_source"].iloc[0]
+        == "base_slug_inferred_current_cycle"
+    )
+    assert pd.isna(continuity_df.loc[continuity_df["season"] == 2025, "next_top5_proteam"].iloc[0])
+    assert continuity_df.loc[continuity_df["season"] == 2026, "continuity_status"].iloc[0] == "current_team_season"
+
+
+def test_team_continuity_history_frame_uses_alias_for_current_cycle_rename(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    model_inputs_dir = Path("data/model_inputs")
+    model_outputs_dir = Path("data/model_outputs")
+    model_inputs_dir.mkdir(parents=True, exist_ok=True)
+    model_outputs_dir.mkdir(parents=True, exist_ok=True)
+
+    pd.DataFrame(
+        [
+            {
+                "season": 2025,
+                "team_name": "Q36.5 Pro Cycling Team",
+                "team_slug": "q365-pro-cycling-team-2025",
+                "team_base_slug": "q365-pro-cycling-team",
+                "proteam_rank": 4,
+                "n_riders_150_plus": 5,
+                "top5_share": 0.61,
+                "next_season": pd.NA,
+                "next_team_name": "",
+                "next_team_slug": "",
+                "next_proteam_rank": pd.NA,
+                "next_top5_proteam": pd.NA,
+                "continuity_source": "",
+                "has_observed_next_season": False,
+            },
+            {
+                "season": 2026,
+                "team_name": "Pinarello Q36.5 Pro Cycling Team",
+                "team_slug": "pinarello-q365-pro-cycling-team-2026",
+                "team_base_slug": "pinarello-q365-pro-cycling-team",
+                "proteam_rank": 2,
+                "n_riders_150_plus": 4,
+                "top5_share": 0.79,
+                "next_season": pd.NA,
+                "next_team_name": "",
+                "next_team_slug": "",
+                "next_proteam_rank": pd.NA,
+                "next_top5_proteam": pd.NA,
+                "continuity_source": "",
+                "has_observed_next_season": False,
+            },
+        ]
+    ).to_csv(model_inputs_dir / "team_season_panel.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "season": 2026,
+                "team_name": "Pinarello Q36.5 Pro Cycling Team",
+                "team_slug": "pinarello-q365-pro-cycling-team-2026",
+                "team_base_slug": "pinarello-q365-pro-cycling-team",
+                "proteam_rank": 2,
+                "n_riders_150_plus": 4,
+                "top5_share": 0.79,
+                "predicted_next_top5_probability": 0.18,
+                "predicted_next_top5_label": 0,
+                "model_name": "baseline_n_riders_150",
+                "evaluation_split": "full_fit_team_panel",
+            }
+        ]
+    ).to_csv(model_outputs_dir / "team_season_top5_scores.csv", index=False)
+    (model_outputs_dir / "top5_proteam_baseline_summary.json").write_text('{"anchor_model_name":"baseline_n_riders_150"}\n')
+    (model_outputs_dir / "top5_proteam_backtest_summary.json").write_text('{"winning_model_name":"baseline_n_riders_150"}\n')
+
+    app_module.load_team_season_panel.clear()
+    app_module.load_team_season_top5_scores.clear()
+    app_module.load_top5_proteam_summary.clear()
+    app_module.load_top5_proteam_backtest_summary.clear()
+
+    continuity_df = app_module._team_continuity_history_frame("pinarello-q365-pro-cycling-team", 2026)  # noqa: SLF001
+
+    assert continuity_df["season"].tolist() == [2025, 2026]
+    assert continuity_df.loc[continuity_df["season"] == 2025, "team_name"].iloc[0] == "Q36.5 Pro Cycling Team"
+    assert continuity_df.loc[continuity_df["season"] == 2025, "next_team_name"].iloc[0] == "Pinarello Q36.5 Pro Cycling Team"
+    assert continuity_df.loc[continuity_df["season"] == 2025, "next_proteam_rank"].iloc[0] == 2
+    assert (
+        continuity_df.loc[continuity_df["season"] == 2025, "continuity_source"].iloc[0]
+        == "identity_alias_inferred_current_cycle"
+    )
+
+
+def test_team_continuity_history_frame_uses_linked_panel_rank_for_observed_next_rank(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    model_inputs_dir = Path("data/model_inputs")
+    model_outputs_dir = Path("data/model_outputs")
+    model_inputs_dir.mkdir(parents=True, exist_ok=True)
+    model_outputs_dir.mkdir(parents=True, exist_ok=True)
+
+    pd.DataFrame(
+        [
+            {
+                "season": 2024,
+                "team_name": "Alpha Legacy",
+                "team_slug": "alpha-legacy-2024",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 6,
+                "n_riders_150_plus": 3,
+                "top5_share": 0.41,
+                "next_season": 2025,
+                "next_team_name": "Alpha Team",
+                "next_team_slug": "alpha-team-2025",
+                "next_proteam_rank": 99,
+                "next_top5_proteam": 1,
+                "continuity_source": "pcs_prev_link",
+                "has_observed_next_season": True,
+            },
+            {
+                "season": 2025,
+                "team_name": "Alpha Team",
+                "team_slug": "alpha-team-2025",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 4,
+                "n_riders_150_plus": 5,
+                "top5_share": 0.49,
+                "next_season": pd.NA,
+                "next_team_name": "",
+                "next_team_slug": "",
+                "next_proteam_rank": pd.NA,
+                "next_top5_proteam": pd.NA,
+                "continuity_source": "",
+                "has_observed_next_season": False,
+            },
+        ]
+    ).to_csv(model_inputs_dir / "team_season_panel.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "season": 2025,
+                "team_name": "Alpha Team",
+                "team_slug": "alpha-team-2025",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 4,
+                "n_riders_150_plus": 5,
+                "top5_share": 0.49,
+                "predicted_next_top5_probability": 0.58,
+                "predicted_next_top5_label": 1,
+                "model_name": "baseline_n_riders_150",
+                "evaluation_split": "full_fit_team_panel",
+            }
+        ]
+    ).to_csv(model_outputs_dir / "team_season_top5_scores.csv", index=False)
+    (model_outputs_dir / "top5_proteam_baseline_summary.json").write_text('{"anchor_model_name":"baseline_n_riders_150"}\n')
+    (model_outputs_dir / "top5_proteam_backtest_summary.json").write_text('{"winning_model_name":"baseline_n_riders_150"}\n')
+
+    app_module.load_team_season_panel.clear()
+    app_module.load_team_season_top5_scores.clear()
+    app_module.load_top5_proteam_summary.clear()
+    app_module.load_top5_proteam_backtest_summary.clear()
+
+    continuity_df = app_module._team_continuity_history_frame("alpha-team", 2025)  # noqa: SLF001
+
+    assert continuity_df["season"].tolist() == [2024, 2025]
+    assert continuity_df.loc[continuity_df["season"] == 2024, "next_proteam_rank"].iloc[0] == 4
+
+
+def test_team_rider_threshold_outlook_frame_filters_active_team_and_season(monkeypatch, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
+    _write_rider_threshold_artifacts()
+
+    app_module.load_rider_season_threshold_scores.clear()
+    app_module.load_rider_threshold_summary.clear()
+    app_module.load_rider_threshold_backtest_summary.clear()
+
+    outlook_df = app_module._team_rider_threshold_outlook_frame("alpha-team", 2026)  # noqa: SLF001
+
+    assert outlook_df["rider_name"].tolist() == ["Rider Alpha", "Rider Beta"]
+    assert outlook_df["predicted_rider_reaches_150_probability"].tolist() == [0.71, 0.42]
+    assert (outlook_df["team_base_slug"] == "alpha-team").all()
+    assert (outlook_df["season"] == 2026).all()
+
+
+def test_team_rider_race_plan_frame_filters_team_and_view_mode(monkeypatch, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
+    _write_rider_race_allocation_artifacts()
+
+    app_module.load_rider_race_allocation_summary.clear()
+    app_module.load_rider_race_plan.clear()
+    app_module.load_rider_load_summary.clear()
+    app_module.load_rider_race_allocations.clear()
+
+    active_df = app_module._team_rider_race_plan_frame("alpha-team", 2026, "Active schedule")  # noqa: SLF001
+    completed_df = app_module._team_rider_race_plan_frame("alpha-team", 2026, "Completed races only")  # noqa: SLF001
+
+    assert active_df["race_name"].tolist() == ["Alpha Classic", "Alpha Tour"]
+    assert completed_df["race_name"].tolist() == ["Alpha Classic"]
+    assert (active_df["race_leader_rider"] == "Rider Alpha").all()
+    assert (active_df["status"] != "cancelled").all()
+
+
 def _write_team_ev_artifacts(*, artifact_stem: str, team_slug: str, team_name: str, planning_year: int) -> None:
     pd.DataFrame(
         [
@@ -515,3 +857,349 @@ def _write_team_ev_artifacts(*, artifact_stem: str, team_slug: str, team_name: s
     ).to_csv(Path("data/team_ev") / f"{artifact_stem}_calendar_ev.csv", index=False)
     pd.DataFrame([{"team_slug": team_slug}]).to_csv(Path("data/team_calendars") / f"{artifact_stem}_latest.csv", index=False)
     pd.DataFrame([{"team_slug": team_slug}]).to_csv(Path("data/team_results") / f"{artifact_stem}_actual_points.csv", index=False)
+
+
+def _write_rider_threshold_artifacts() -> None:
+    model_outputs_dir = Path("data/model_outputs")
+    model_outputs_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(
+        [
+            {
+                "model_name": "baseline_points_scoring_role",
+                "evaluation_split": "full_fit_panel",
+                "season": 2026,
+                "team_base_slug": "alpha-team",
+                "rider_name": "Rider Alpha",
+                "predicted_rider_reaches_150_probability": 0.71,
+            },
+            {
+                "model_name": "baseline_points_scoring_role",
+                "evaluation_split": "full_fit_panel",
+                "season": 2026,
+                "team_base_slug": "alpha-team",
+                "rider_name": "Rider Beta",
+                "predicted_rider_reaches_150_probability": 0.42,
+            },
+            {
+                "model_name": "baseline_points_scoring_role",
+                "evaluation_split": "full_fit_panel",
+                "season": 2026,
+                "team_base_slug": "beta-team",
+                "rider_name": "Rider Gamma",
+                "predicted_rider_reaches_150_probability": 0.88,
+            },
+            {
+                "model_name": "baseline_prior_points",
+                "evaluation_split": "full_fit_panel",
+                "season": 2026,
+                "team_base_slug": "alpha-team",
+                "rider_name": "Legacy Rider",
+                "predicted_rider_reaches_150_probability": 0.99,
+            },
+        ]
+    ).to_csv(model_outputs_dir / "rider_season_threshold_scores.csv", index=False)
+    (model_outputs_dir / "rider_threshold_baseline_summary.json").write_text(
+        """
+{
+  "anchor_model_name": "baseline_prior_points"
+}
+""".strip()
+        + "\n"
+    )
+    (model_outputs_dir / "rider_threshold_backtest_summary.json").write_text(
+        """
+{
+  "winning_model_name": "baseline_points_scoring_role"
+}
+""".strip()
+        + "\n"
+    )
+
+
+def _write_top5_proteam_artifacts() -> None:
+    model_inputs_dir = Path("data/model_inputs")
+    model_outputs_dir = Path("data/model_outputs")
+    model_inputs_dir.mkdir(parents=True, exist_ok=True)
+    model_outputs_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(
+        [
+            {
+                "season": 2024,
+                "team_name": "Alpha Legacy",
+                "team_slug": "alpha-legacy-2024",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 6,
+                "n_riders_150_plus": 3,
+                "top5_share": 0.41,
+                "next_season": 2025,
+                "next_team_name": "Alpha Team",
+                "next_team_slug": "alpha-team-2025",
+                "next_proteam_rank": 4,
+                "next_top5_proteam": 1,
+                "continuity_source": "pcs_prev_link",
+                "has_observed_next_season": True,
+            },
+            {
+                "season": 2025,
+                "team_name": "Alpha Team",
+                "team_slug": "alpha-team-2025",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 4,
+                "n_riders_150_plus": 5,
+                "top5_share": 0.49,
+                "next_season": pd.NA,
+                "next_team_name": "",
+                "next_team_slug": "",
+                "next_proteam_rank": pd.NA,
+                "next_top5_proteam": pd.NA,
+                "continuity_source": "",
+                "has_observed_next_season": False,
+            },
+            {
+                "season": 2026,
+                "team_name": "Alpha Team",
+                "team_slug": "alpha-team-2026",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 3,
+                "n_riders_150_plus": 6,
+                "top5_share": 0.53,
+                "next_season": pd.NA,
+                "next_team_name": "",
+                "next_team_slug": "",
+                "next_proteam_rank": pd.NA,
+                "next_top5_proteam": pd.NA,
+                "continuity_source": "",
+                "has_observed_next_season": False,
+            },
+            {
+                "season": 2026,
+                "team_name": "Beta Team",
+                "team_slug": "beta-team-2026",
+                "team_base_slug": "beta-team",
+                "proteam_rank": 1,
+                "n_riders_150_plus": 8,
+                "top5_share": 0.66,
+                "next_season": pd.NA,
+                "next_team_name": "",
+                "next_team_slug": "",
+                "next_proteam_rank": pd.NA,
+                "next_top5_proteam": pd.NA,
+                "continuity_source": "",
+                "has_observed_next_season": False,
+            },
+        ]
+    ).to_csv(model_inputs_dir / "team_season_panel.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "prior_season": 2024,
+                "next_season": 2025,
+                "prior_team_name": "Alpha Legacy",
+                "prior_team_slug": "alpha-legacy-2024",
+                "team_base_slug": "alpha-team",
+                "next_team_slug": "alpha-team-2025",
+                "next_team_name": "Alpha Team",
+                "continuity_source": "pcs_prev_link",
+                "n_riders_150_plus": 3,
+                "top5_share": 0.41,
+                "next_top5_proteam": 1,
+            }
+        ]
+    ).to_csv(model_inputs_dir / "top5_proteam_training_table.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "season": 2025,
+                "team_name": "Alpha Team",
+                "team_slug": "alpha-team-2025",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 4,
+                "n_riders_150_plus": 5,
+                "top5_share": 0.49,
+                "predicted_next_top5_probability": 0.58,
+                "predicted_next_top5_label": 1,
+                "model_name": "baseline_n_riders_150",
+                "evaluation_split": "full_fit_team_panel",
+            },
+            {
+                "season": 2026,
+                "team_name": "Alpha Team",
+                "team_slug": "alpha-team-2026",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 3,
+                "n_riders_150_plus": 6,
+                "top5_share": 0.53,
+                "predicted_next_top5_probability": 0.64,
+                "predicted_next_top5_label": 1,
+                "model_name": "baseline_n_riders_150",
+                "evaluation_split": "full_fit_team_panel",
+            },
+            {
+                "season": 2026,
+                "team_name": "Alpha Team",
+                "team_slug": "alpha-team-2026",
+                "team_base_slug": "alpha-team",
+                "proteam_rank": 3,
+                "n_riders_150_plus": 6,
+                "top5_share": 0.53,
+                "predicted_next_top5_probability": 0.21,
+                "predicted_next_top5_label": 0,
+                "model_name": "baseline_depth_concentration",
+                "evaluation_split": "full_fit_team_panel",
+            },
+            {
+                "season": 2026,
+                "team_name": "Beta Team",
+                "team_slug": "beta-team-2026",
+                "team_base_slug": "beta-team",
+                "proteam_rank": 1,
+                "n_riders_150_plus": 8,
+                "top5_share": 0.66,
+                "predicted_next_top5_probability": 0.88,
+                "predicted_next_top5_label": 1,
+                "model_name": "baseline_n_riders_150",
+                "evaluation_split": "full_fit_team_panel",
+            },
+        ]
+    ).to_csv(model_outputs_dir / "team_season_top5_scores.csv", index=False)
+    (model_outputs_dir / "top5_proteam_baseline_summary.json").write_text(
+        """
+{
+  "anchor_model_name": "baseline_depth_concentration"
+}
+""".strip()
+        + "\n"
+    )
+    (model_outputs_dir / "top5_proteam_backtest_summary.json").write_text(
+        """
+{
+  "winning_model_name": "baseline_n_riders_150"
+}
+""".strip()
+        + "\n"
+    )
+    pd.DataFrame(
+        [
+            {
+                "model_name": "baseline_n_riders_150",
+                "backtest_top_k_capture": 0.77,
+            }
+        ]
+    ).to_csv(model_outputs_dir / "top5_proteam_backtest_benchmark.csv", index=False)
+
+
+def _write_rider_race_allocation_artifacts() -> None:
+    allocation_dir = Path("data/model_outputs/rider_race_allocations")
+    allocation_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(
+        [
+            {
+                "team_slug": "alpha-team",
+                "team_name": "Alpha Team",
+                "planning_year": 2026,
+                "race_id": 1,
+                "race_name": "Alpha Classic",
+                "category": "1.1",
+                "start_date": "2026-03-01",
+                "status": "completed",
+                "race_leader_rider": "Rider Alpha",
+                "race_leader_specialty": "oneday",
+                "top_recommended_riders": "Rider Alpha | Rider Beta",
+                "selected_breakout_probability_mean": 0.64,
+                "selected_specialty_match_mean": 0.71,
+                "selected_allocation_score_total": 82.0,
+            },
+            {
+                "team_slug": "alpha-team",
+                "team_name": "Alpha Team",
+                "planning_year": 2026,
+                "race_id": 2,
+                "race_name": "Alpha Tour",
+                "category": "2.1",
+                "start_date": "2026-04-01",
+                "status": "scheduled",
+                "race_leader_rider": "Rider Alpha",
+                "race_leader_specialty": "gc",
+                "top_recommended_riders": "Rider Alpha | Rider Gamma",
+                "selected_breakout_probability_mean": 0.58,
+                "selected_specialty_match_mean": 0.69,
+                "selected_allocation_score_total": 77.5,
+            },
+            {
+                "team_slug": "alpha-team",
+                "team_name": "Alpha Team",
+                "planning_year": 2026,
+                "race_id": 3,
+                "race_name": "Alpha Cancelled",
+                "category": "1.2",
+                "start_date": "2026-05-01",
+                "status": "cancelled",
+                "race_leader_rider": "Rider Delta",
+                "race_leader_specialty": "sprint",
+                "top_recommended_riders": "Rider Delta | Rider Epsilon",
+                "selected_breakout_probability_mean": 0.41,
+                "selected_specialty_match_mean": 0.52,
+                "selected_allocation_score_total": 34.0,
+            }
+        ]
+    ).to_csv(allocation_dir / "alpha_team_2026_rider_race_plan.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "team_slug": "beta-team",
+                "team_name": "Beta Team",
+                "planning_year": 2026,
+                "race_id": 4,
+                "race_name": "Beta Race",
+                "category": "1.1",
+                "start_date": "2026-03-15",
+                "status": "scheduled",
+                "race_leader_rider": "Rider Beta",
+                "race_leader_specialty": "oneday",
+                "top_recommended_riders": "Rider Beta | Rider Zeta",
+                "selected_breakout_probability_mean": 0.74,
+                "selected_specialty_match_mean": 0.76,
+                "selected_allocation_score_total": 88.0,
+            }
+        ]
+    ).to_csv(allocation_dir / "beta_team_2026_rider_race_plan.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "team_slug": "alpha-team",
+                "team_name": "Alpha Team",
+                "planning_year": 2026,
+                "rider_name": "Rider Alpha",
+                "specialty_primary": "oneday",
+                "recommended_race_count": 2,
+                "race_leader_assignments": 2,
+                "best_race_name": "Alpha Classic",
+                "allocation_score_total": 120.0,
+            }
+        ]
+    ).to_csv(allocation_dir / "alpha_team_2026_rider_load_summary.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "team_slug": "alpha-team",
+                "team_name": "Alpha Team",
+                "planning_year": 2026,
+                "race_name": "Alpha Classic",
+                "rider_name": "Rider Alpha",
+                "allocation_score": 44.0,
+            }
+        ]
+    ).to_csv(allocation_dir / "alpha_team_2026_rider_race_allocations.csv", index=False)
+    (allocation_dir / "alpha_team_2026_rider_race_allocation_summary.json").write_text(
+        """
+{
+  "team_slug": "alpha-team",
+  "planning_year": 2026,
+  "rider_model_name": "baseline_prior_points",
+  "race_count": 3,
+  "rider_count": 5,
+  "selected_pairings": 14
+}
+""".strip()
+        + "\n"
+    )

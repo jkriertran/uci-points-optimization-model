@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 28.207899,
+  "mean_selected_breakout_probability": 0.359874,
+  "mean_selected_specialty_match_score": 0.560016,
+  "pairings_scored": 1680,
+  "planning_year": 2026,
+  "race_count": 56,
+  "race_leader_assignments": 56,
+  "rider_count": 30,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 392,
+  "team_name": "Pinarello Q36.5 Pro Cycling Team",
+  "team_slug": "pinarello-q365-pro-cycling-team",
+  "top_race_leader_rider": "PIDCOCK Thomas",
+  "top_race_name": "AlUla Tour",
+  "top_riders_per_race": 3
+}

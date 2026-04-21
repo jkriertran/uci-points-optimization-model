@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 31.246169,
+  "mean_selected_breakout_probability": 0.511134,
+  "mean_selected_specialty_match_score": 0.527174,
+  "pairings_scored": 2460,
+  "planning_year": 2026,
+  "race_count": 82,
+  "race_leader_assignments": 82,
+  "rider_count": 30,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 574,
+  "team_name": "Cofidis",
+  "team_slug": "cofidis",
+  "top_race_leader_rider": "IZAGIRRE Ion",
+  "top_race_name": "Classica Camp de Morvedre",
+  "top_riders_per_race": 3
+}

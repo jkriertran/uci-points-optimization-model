@@ -53,6 +53,22 @@ CALIBRATION_RESULT_VERSION = "category-aware-v1"
 TEAM_EV_DIR = Path("data/team_ev")
 TEAM_PROFILE_DIR = Path("data/team_profiles")
 DEFAULT_TEAM_PROFILE_PATH = Path("data/team_profiles/default_proteam_2026_profile.json")
+RIDER_SEASON_PANEL_PATH = Path("data/model_inputs/rider_season_panel.csv")
+TEAM_SEASON_PANEL_PATH = Path("data/model_inputs/team_season_panel.csv")
+TOP5_TRAINING_TABLE_PATH = Path("data/model_inputs/top5_proteam_training_table.csv")
+TOP5_PROTEAM_SUMMARY_PATH = Path("data/model_outputs/top5_proteam_baseline_summary.json")
+TOP5_PROTEAM_PANEL_SCORES_PATH = Path("data/model_outputs/team_season_top5_scores.csv")
+TOP5_PROTEAM_BACKTEST_SUMMARY_PATH = Path("data/model_outputs/top5_proteam_backtest_summary.json")
+TOP5_PROTEAM_BACKTEST_BENCHMARK_PATH = Path("data/model_outputs/top5_proteam_backtest_benchmark.csv")
+RIDER_THRESHOLD_SUMMARY_PATH = Path("data/model_outputs/rider_threshold_baseline_summary.json")
+RIDER_THRESHOLD_PREDICTIONS_PATH = Path("data/model_outputs/rider_threshold_training_predictions.csv")
+RIDER_THRESHOLD_PANEL_SCORES_PATH = Path("data/model_outputs/rider_season_threshold_scores.csv")
+RIDER_THRESHOLD_BACKTEST_SUMMARY_PATH = Path("data/model_outputs/rider_threshold_backtest_summary.json")
+RIDER_THRESHOLD_BACKTEST_BENCHMARK_PATH = Path("data/model_outputs/rider_threshold_backtest_benchmark.csv")
+RIDER_THRESHOLD_BACKTEST_FOLDS_PATH = Path("data/model_outputs/rider_threshold_backtest_folds.csv")
+RIDER_THRESHOLD_BACKTEST_PREDICTIONS_PATH = Path("data/model_outputs/rider_threshold_backtest_predictions.csv")
+RIDER_THRESHOLD_BACKTEST_REPORT_PATH = Path("data/model_outputs/rider_threshold_backtest_report.md")
+RIDER_RACE_ALLOCATION_ROOT = Path("data/model_outputs/rider_race_allocations")
 TEAM_EV_DATASET_LABEL_KEY = "team_calendar_ev_dataset_label"
 TEAM_EV_VIEW_MODE_OPTIONS = ["Active schedule", "Full saved calendar", "Completed races only"]
 TEAM_EV_PRIMARY_METRIC_SPECS = (
@@ -128,6 +144,12 @@ TEAM_EV_BUILD_COMMAND = """python scripts/build_team_calendar_ev.py \\
   --summary-output-path data/team_ev/<team_slug>_<year>_calendar_ev_summary.csv \\
   --readme-path data/team_ev/README.md \\
   --dictionary-path data/team_ev/data_dictionary.md"""
+CURRENT_CYCLE_CONTINUITY_BASE_ALIASES: dict[str, tuple[str, ...]] = {
+    "bardiani-csf-7-saber": ("vf-group-bardiani-csf-faizane",),
+    "pinarello-q365-pro-cycling-team": ("q365-pro-cycling-team",),
+    "solution-tech-nippo-rali": ("team-solution-tech-vini-fantini",),
+    "unibet-rose-rockets": ("unibet-tietema-rockets",),
+}
 
 
 @st.cache_data(show_spinner=False, ttl=60 * 60 * 24)
@@ -306,6 +328,136 @@ def load_team_calendar_snapshot(team_slug: str, planning_year: int) -> pd.DataFr
         return pd.DataFrame()
 
 
+@st.cache_data(show_spinner=False)
+def load_team_season_panel() -> pd.DataFrame:
+    if not TEAM_SEASON_PANEL_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(TEAM_SEASON_PANEL_PATH, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_top5_proteam_training_table() -> pd.DataFrame:
+    if not TOP5_TRAINING_TABLE_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(TOP5_TRAINING_TABLE_PATH, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_top5_proteam_summary() -> dict[str, object]:
+    if not TOP5_PROTEAM_SUMMARY_PATH.exists():
+        return {}
+    return load_local_json(str(TOP5_PROTEAM_SUMMARY_PATH))
+
+
+@st.cache_data(show_spinner=False)
+def load_top5_proteam_backtest_summary() -> dict[str, object]:
+    if not TOP5_PROTEAM_BACKTEST_SUMMARY_PATH.exists():
+        return {}
+    return load_local_json(str(TOP5_PROTEAM_BACKTEST_SUMMARY_PATH))
+
+
+@st.cache_data(show_spinner=False)
+def load_top5_proteam_backtest_benchmark() -> pd.DataFrame:
+    if not TOP5_PROTEAM_BACKTEST_BENCHMARK_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(TOP5_PROTEAM_BACKTEST_BENCHMARK_PATH, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_team_season_top5_scores() -> pd.DataFrame:
+    if not TOP5_PROTEAM_PANEL_SCORES_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(TOP5_PROTEAM_PANEL_SCORES_PATH, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_season_panel() -> pd.DataFrame:
+    if not RIDER_SEASON_PANEL_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(RIDER_SEASON_PANEL_PATH, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_threshold_summary() -> dict[str, object]:
+    if not RIDER_THRESHOLD_SUMMARY_PATH.exists():
+        return {}
+    return load_local_json(str(RIDER_THRESHOLD_SUMMARY_PATH))
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_threshold_backtest_summary() -> dict[str, object]:
+    if not RIDER_THRESHOLD_BACKTEST_SUMMARY_PATH.exists():
+        return {}
+    return load_local_json(str(RIDER_THRESHOLD_BACKTEST_SUMMARY_PATH))
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_threshold_training_predictions() -> pd.DataFrame:
+    if not RIDER_THRESHOLD_PREDICTIONS_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(RIDER_THRESHOLD_PREDICTIONS_PATH, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_season_threshold_scores() -> pd.DataFrame:
+    if not RIDER_THRESHOLD_PANEL_SCORES_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(RIDER_THRESHOLD_PANEL_SCORES_PATH, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_threshold_backtest_benchmark() -> pd.DataFrame:
+    if not RIDER_THRESHOLD_BACKTEST_BENCHMARK_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(RIDER_THRESHOLD_BACKTEST_BENCHMARK_PATH, low_memory=False)
+
+
+def _rider_race_allocation_artifact_stem(team_slug: str, planning_year: int) -> str:
+    return f"{str(team_slug).replace('-', '_')}_{int(planning_year)}"
+
+
+def _rider_race_allocation_paths(team_slug: str, planning_year: int) -> dict[str, Path]:
+    artifact_stem = _rider_race_allocation_artifact_stem(team_slug, planning_year)
+    return {
+        "summary": RIDER_RACE_ALLOCATION_ROOT / f"{artifact_stem}_rider_race_allocation_summary.json",
+        "race_plan": RIDER_RACE_ALLOCATION_ROOT / f"{artifact_stem}_rider_race_plan.csv",
+        "rider_load": RIDER_RACE_ALLOCATION_ROOT / f"{artifact_stem}_rider_load_summary.csv",
+        "allocations": RIDER_RACE_ALLOCATION_ROOT / f"{artifact_stem}_rider_race_allocations.csv",
+    }
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_race_allocation_summary(team_slug: str, planning_year: int) -> dict[str, object]:
+    summary_path = _rider_race_allocation_paths(team_slug, planning_year)["summary"]
+    if not summary_path.exists():
+        return {}
+    return load_local_json(str(summary_path))
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_race_plan(team_slug: str, planning_year: int) -> pd.DataFrame:
+    race_plan_path = _rider_race_allocation_paths(team_slug, planning_year)["race_plan"]
+    if not race_plan_path.exists():
+        return pd.DataFrame()
+    return pd.read_csv(race_plan_path, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_load_summary(team_slug: str, planning_year: int) -> pd.DataFrame:
+    rider_load_path = _rider_race_allocation_paths(team_slug, planning_year)["rider_load"]
+    if not rider_load_path.exists():
+        return pd.DataFrame()
+    return pd.read_csv(rider_load_path, low_memory=False)
+
+
+@st.cache_data(show_spinner=False)
+def load_rider_race_allocations(team_slug: str, planning_year: int) -> pd.DataFrame:
+    allocations_path = _rider_race_allocation_paths(team_slug, planning_year)["allocations"]
+    if not allocations_path.exists():
+        return pd.DataFrame()
+    return pd.read_csv(allocations_path, low_memory=False)
+
+
 def get_active_team_calendar_ev_dataset_row() -> pd.Series | None:
     datasets = discover_team_calendar_ev_datasets()
     if datasets.empty:
@@ -316,6 +468,673 @@ def get_active_team_calendar_ev_dataset_row() -> pd.Series | None:
     if matches.empty:
         return datasets.iloc[0]
     return matches.iloc[0]
+
+
+def _preferred_top5_proteam_model_name() -> str:
+    backtest_summary = load_top5_proteam_backtest_summary()
+    winning_model_name = str(backtest_summary.get("winning_model_name") or "").strip()
+    if winning_model_name:
+        return winning_model_name
+
+    baseline_summary = load_top5_proteam_summary()
+    anchor_model_name = str(baseline_summary.get("anchor_model_name") or "").strip()
+    if anchor_model_name:
+        return anchor_model_name
+
+    return "baseline_n_riders_150"
+
+
+def _team_top5_proteam_row(team_slug: str, planning_year: int) -> pd.Series | None:
+    scores_df = load_team_season_top5_scores()
+    if scores_df.empty:
+        return None
+
+    working_df = scores_df.copy()
+    working_df["season"] = pd.to_numeric(working_df.get("season"), errors="coerce").astype("Int64")
+    preferred_model = _preferred_top5_proteam_model_name()
+    filtered = working_df.loc[
+        (working_df["model_name"] == preferred_model)
+        & (working_df["evaluation_split"] == "full_fit_team_panel")
+        & (working_df["season"] == int(planning_year))
+        & (working_df.get("team_base_slug", pd.Series("", index=working_df.index)).astype(str) == str(team_slug))
+    ].copy()
+    if filtered.empty:
+        return None
+
+    filtered["predicted_next_top5_probability"] = pd.to_numeric(
+        filtered.get("predicted_next_top5_probability"),
+        errors="coerce",
+    ).fillna(0.0)
+    filtered["proteam_rank"] = pd.to_numeric(filtered.get("proteam_rank"), errors="coerce")
+    filtered["n_riders_150_plus"] = pd.to_numeric(filtered.get("n_riders_150_plus"), errors="coerce")
+    filtered["top5_share"] = pd.to_numeric(filtered.get("top5_share"), errors="coerce")
+    filtered = filtered.sort_values(
+        ["predicted_next_top5_probability", "proteam_rank", "team_name"],
+        ascending=[False, True, True],
+        na_position="last",
+    ).reset_index(drop=True)
+    return filtered.iloc[0]
+
+
+def _preferred_rider_threshold_model_name() -> str:
+    backtest_summary = load_rider_threshold_backtest_summary()
+    winning_model_name = str(backtest_summary.get("winning_model_name") or "").strip()
+    if winning_model_name:
+        return winning_model_name
+
+    baseline_summary = load_rider_threshold_summary()
+    anchor_model_name = str(baseline_summary.get("anchor_model_name") or "").strip()
+    if anchor_model_name:
+        return anchor_model_name
+
+    return "baseline_prior_points"
+
+
+def _team_rider_threshold_outlook_frame(team_slug: str, planning_year: int) -> pd.DataFrame:
+    scores_df = load_rider_season_threshold_scores()
+    if scores_df.empty:
+        return pd.DataFrame()
+
+    working_df = scores_df.copy()
+    working_df["season"] = pd.to_numeric(working_df.get("season"), errors="coerce").astype("Int64")
+    preferred_model = _preferred_rider_threshold_model_name()
+    filtered = working_df.loc[
+        (working_df["model_name"] == preferred_model)
+        & (working_df["evaluation_split"] == "full_fit_panel")
+        & (working_df["season"] == int(planning_year))
+        & (working_df.get("team_base_slug", pd.Series("", index=working_df.index)).astype(str) == str(team_slug))
+    ].copy()
+    if filtered.empty:
+        return filtered
+
+    filtered["predicted_rider_reaches_150_probability"] = pd.to_numeric(
+        filtered["predicted_rider_reaches_150_probability"], errors="coerce"
+    ).fillna(0.0)
+    filtered["uci_points"] = pd.to_numeric(
+        filtered.get("uci_points", pd.Series(0.0, index=filtered.index, dtype=float)),
+        errors="coerce",
+    )
+    filtered["points_per_raceday"] = pd.to_numeric(
+        filtered.get("points_per_raceday", pd.Series(0.0, index=filtered.index, dtype=float)),
+        errors="coerce",
+    )
+    filtered["team_rank_within_roster"] = pd.to_numeric(
+        filtered.get("team_rank_within_roster", pd.Series(pd.NA, index=filtered.index, dtype="Float64")),
+        errors="coerce",
+    )
+    filtered["current_scored_150_flag"] = pd.to_numeric(
+        filtered.get("current_scored_150_flag", pd.Series(0.0, index=filtered.index, dtype=float)),
+        errors="coerce",
+    ).fillna(0).astype(int)
+    return filtered.sort_values(
+        ["predicted_rider_reaches_150_probability", "uci_points", "rider_name"],
+        ascending=[False, False, True],
+    ).reset_index(drop=True)
+
+
+def render_rider_threshold_outlook(team_slug: str, planning_year: int) -> None:
+    outlook_df = _team_rider_threshold_outlook_frame(team_slug, planning_year)
+    if outlook_df.empty:
+        st.caption(
+            "Run `python scripts/fit_rider_threshold_baseline.py` to surface rider breakout probabilities here."
+        )
+        return
+
+    model_name = str(outlook_df["model_name"].iloc[0])
+    breakout_count = float(outlook_df["predicted_rider_reaches_150_probability"].sum())
+    breakout_likely = int((outlook_df["predicted_rider_reaches_150_probability"] >= 0.5).sum())
+    top_probability = float(outlook_df["predicted_rider_reaches_150_probability"].max())
+
+    st.markdown("**Rider breakout outlook**")
+    st.caption(
+        f"File-driven next-season `150+` rider forecast for `{planning_year}` using `{model_name}`. "
+        "These probabilities come from the imported rider history and are meant to complement the team-level EV view."
+    )
+    metric_left, metric_mid, metric_right = st.columns(3)
+    metric_left.metric("Expected 150+ riders", f"{breakout_count:.1f}")
+    metric_mid.metric("Riders >= 50%", breakout_likely)
+    metric_right.metric("Top rider probability", f"{top_probability:.0%}")
+
+    display_columns = [
+        "rider_name",
+        "archetype",
+        "specialty_primary",
+        "uci_points",
+        "points_per_raceday",
+        "team_rank_within_roster",
+        "current_scored_150_flag",
+        "predicted_rider_reaches_150_probability",
+    ]
+    available_columns = [column for column in display_columns if column in outlook_df.columns]
+    display_df = outlook_df[available_columns].head(12).copy()
+    display_df = display_df.rename(
+        columns={
+            "rider_name": "Rider",
+            "archetype": "Archetype",
+            "specialty_primary": "Primary specialty",
+            "uci_points": "Current pts",
+            "points_per_raceday": "Pts/day",
+            "team_rank_within_roster": "Roster rank",
+            "current_scored_150_flag": "Current 150+",
+            "predicted_rider_reaches_150_probability": "Next 150+ prob.",
+        }
+    )
+    st.dataframe(
+        display_df.round({"Current pts": 1, "Pts/day": 2, "Next 150+ prob.": 3}),
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Next 150+ prob.": st.column_config.NumberColumn(
+                "Next 150+ prob.",
+                format="%.3f",
+                help="Predicted probability that this rider reaches 150 UCI points next season.",
+            ),
+            "Current 150+": st.column_config.CheckboxColumn(
+                "Current 150+",
+                help="Whether the rider already cleared 150 UCI points in the current season.",
+            ),
+        },
+    )
+
+
+def _team_continuity_history_frame(team_slug: str, planning_year: int) -> pd.DataFrame:
+    team_panel_df = load_team_season_panel()
+    if team_panel_df.empty:
+        return pd.DataFrame()
+
+    panel = team_panel_df.copy()
+    panel["season"] = pd.to_numeric(panel.get("season"), errors="coerce").astype("Int64")
+    panel["next_season"] = pd.to_numeric(panel.get("next_season"), errors="coerce").astype("Int64")
+    next_rank_lookup = {
+        (
+            int(pd.to_numeric(row.get("season"), errors="coerce")),
+            str(row.get("team_slug") or ""),
+        ): pd.to_numeric(row.get("proteam_rank"), errors="coerce")
+        for _, row in panel.sort_values(["season", "team_name", "team_slug"]).iterrows()
+        if pd.notna(pd.to_numeric(row.get("season"), errors="coerce")) and str(row.get("team_slug") or "")
+    }
+    current_rows = panel.loc[
+        (panel["season"] == int(planning_year))
+        & (panel.get("team_base_slug", pd.Series("", index=panel.index)).astype(str) == str(team_slug))
+    ].copy()
+    if current_rows.empty:
+        return pd.DataFrame()
+
+    current_row = current_rows.sort_values(["team_name", "team_slug"]).iloc[0]
+    score_df = load_team_season_top5_scores()
+    preferred_model = _preferred_top5_proteam_model_name()
+    score_lookup = (
+        score_df.loc[
+            (score_df.get("model_name", pd.Series("", index=score_df.index)).astype(str) == preferred_model)
+            & (score_df.get("evaluation_split", pd.Series("", index=score_df.index)).astype(str) == "full_fit_team_panel")
+        ]
+        .sort_values(["season", "team_name", "team_slug"])
+        .drop_duplicates(subset=["season", "team_slug"], keep="first")
+        .set_index(["season", "team_slug"])
+        if not score_df.empty
+        else pd.DataFrame()
+    )
+
+    transitions = panel.loc[panel.get("has_observed_next_season", pd.Series(False, index=panel.index)).fillna(False)].copy()
+    inferred_current_cycle = _infer_current_cycle_transition(panel, current_row)
+    inferred_transition_row = inferred_current_cycle.iloc[0] if not inferred_current_cycle.empty else None
+    transition_lookup = {
+        (
+            int(pd.to_numeric(row.get("season"), errors="coerce")),
+            str(row.get("team_slug") or ""),
+        ): row
+        for _, row in transitions.sort_values(["season", "team_name", "team_slug"]).iterrows()
+    }
+    if inferred_transition_row is not None:
+        transition_lookup[
+            (
+                int(pd.to_numeric(inferred_transition_row.get("season"), errors="coerce")),
+                str(inferred_transition_row.get("team_slug") or ""),
+            )
+        ] = inferred_transition_row
+
+    chain_rows: list[dict[str, object]] = []
+    current_slug = str(current_row["team_slug"])
+    current_year = int(current_row["season"])
+    visited: set[tuple[int, str]] = set()
+
+    while True:
+        visit_key = (current_year, current_slug)
+        if visit_key in visited:
+            break
+        visited.add(visit_key)
+
+        current_panel_row = panel.loc[
+            (panel["season"] == current_year)
+            & (panel.get("team_slug", pd.Series("", index=panel.index)).astype(str) == current_slug)
+        ]
+        if current_panel_row.empty:
+            break
+        panel_row = transition_lookup.get(visit_key, current_panel_row.iloc[0])
+        continuity_source = str(panel_row.get("continuity_source") or "")
+        continuity_status = "current_team_season"
+        if current_year != int(planning_year):
+            continuity_status = (
+                "historical_inferred_link"
+                if continuity_source in {"base_slug_inferred_current_cycle", "identity_alias_inferred_current_cycle"}
+                else "historical_team_season"
+            )
+        chain_rows.append(
+            _continuity_display_row(
+                panel_row=panel_row,
+                score_lookup=score_lookup,
+                next_rank_lookup=next_rank_lookup,
+                continuity_status=continuity_status,
+            )
+        )
+
+        prior_transition = transitions.loc[
+            (pd.to_numeric(transitions.get("next_season"), errors="coerce") == current_year)
+            & (transitions.get("next_team_slug", pd.Series("", index=transitions.index)).astype(str) == current_slug)
+        ].copy()
+        if prior_transition.empty and inferred_transition_row is not None:
+            inferred_next_season = pd.to_numeric(inferred_transition_row.get("next_season"), errors="coerce")
+            inferred_next_team_slug = str(inferred_transition_row.get("next_team_slug") or "")
+            if pd.notna(inferred_next_season) and int(inferred_next_season) == current_year and inferred_next_team_slug == current_slug:
+                prior_transition = pd.DataFrame([inferred_transition_row])
+        if prior_transition.empty:
+            break
+
+        transition_row = prior_transition.sort_values(["season", "team_name", "team_slug"]).iloc[0]
+        current_slug = str(transition_row["team_slug"])
+        current_year = int(pd.to_numeric(transition_row["season"], errors="coerce"))
+
+    history_df = pd.DataFrame(chain_rows)
+    if history_df.empty:
+        return history_df
+    return history_df.sort_values(["season", "team_name"]).reset_index(drop=True)
+
+
+def _infer_current_cycle_transition(team_panel_df: pd.DataFrame, current_row: pd.Series) -> pd.DataFrame:
+    previous_season = int(pd.to_numeric(current_row.get("season"), errors="coerce")) - 1
+    if previous_season < 0:
+        return pd.DataFrame()
+
+    previous_season_rows = team_panel_df.loc[
+        pd.to_numeric(team_panel_df.get("season"), errors="coerce") == previous_season
+    ].copy()
+    if previous_season_rows.empty:
+        return pd.DataFrame()
+
+    candidates = previous_season_rows.loc[
+        previous_season_rows.get("team_base_slug", pd.Series("", index=previous_season_rows.index)).astype(str)
+        == str(current_row.get("team_base_slug") or "")
+    ].copy()
+    if len(candidates) == 1:
+        return _build_inferred_current_cycle_transition(
+            candidates,
+            current_row=current_row,
+            continuity_source="base_slug_inferred_current_cycle",
+        )
+
+    alias_keys = {
+        str(current_row.get("team_slug") or "").strip(),
+        str(current_row.get("team_base_slug") or "").strip(),
+    }
+    alias_bases: list[str] = []
+    for key in alias_keys:
+        alias_bases.extend(CURRENT_CYCLE_CONTINUITY_BASE_ALIASES.get(key, ()))
+    if alias_bases:
+        alias_candidates = previous_season_rows.loc[
+            previous_season_rows.get("team_base_slug", pd.Series("", index=previous_season_rows.index))
+            .astype(str)
+            .isin(list(dict.fromkeys(base for base in alias_bases if base)))
+        ].copy()
+        if len(alias_candidates) == 1:
+            return _build_inferred_current_cycle_transition(
+                alias_candidates,
+                current_row=current_row,
+                continuity_source="identity_alias_inferred_current_cycle",
+            )
+
+    return pd.DataFrame()
+
+
+def _build_inferred_current_cycle_transition(
+    candidates: pd.DataFrame,
+    *,
+    current_row: pd.Series,
+    continuity_source: str,
+) -> pd.DataFrame:
+    if len(candidates) != 1:
+        return pd.DataFrame()
+
+    inferred = candidates.iloc[[0]].copy()
+    inferred["next_season"] = int(current_row["season"])
+    inferred["next_team_slug"] = str(current_row["team_slug"])
+    inferred["next_team_name"] = str(current_row["team_name"])
+    inferred["next_proteam_rank"] = pd.NA
+    inferred["next_team_points_total"] = pd.NA
+    inferred["next_top3_proteam"] = pd.NA
+    inferred["next_top5_proteam"] = pd.NA
+    inferred["next_top8_proteam"] = pd.NA
+    inferred["continuity_source"] = continuity_source
+    inferred["has_observed_next_season"] = False
+    return inferred
+
+
+def _continuity_display_row(
+    *,
+    panel_row: pd.Series,
+    score_lookup: pd.DataFrame,
+    next_rank_lookup: dict[tuple[int, str], object],
+    continuity_status: str,
+) -> dict[str, object]:
+    predicted_probability = pd.NA
+    predicted_label = pd.NA
+    key = (int(pd.to_numeric(panel_row.get("season"), errors="coerce")), str(panel_row.get("team_slug") or ""))
+    if not score_lookup.empty and key in score_lookup.index:
+        score_row = score_lookup.loc[key]
+        predicted_probability = score_row.get("predicted_next_top5_probability", pd.NA)
+        predicted_label = score_row.get("predicted_next_top5_label", pd.NA)
+
+    next_proteam_rank = pd.to_numeric(panel_row.get("next_proteam_rank"), errors="coerce")
+    next_season = pd.to_numeric(panel_row.get("next_season"), errors="coerce")
+    next_team_slug = str(panel_row.get("next_team_slug") or "")
+    if pd.notna(next_season) and next_team_slug:
+        linked_rank = pd.to_numeric(
+            next_rank_lookup.get((int(next_season), next_team_slug), pd.NA),
+            errors="coerce",
+        )
+        if pd.notna(linked_rank):
+            next_proteam_rank = linked_rank
+
+    return {
+        "season": int(pd.to_numeric(panel_row.get("season"), errors="coerce")),
+        "team_name": str(panel_row.get("team_name") or ""),
+        "team_slug": str(panel_row.get("team_slug") or ""),
+        "proteam_rank": pd.to_numeric(panel_row.get("proteam_rank"), errors="coerce"),
+        "n_riders_150_plus": pd.to_numeric(panel_row.get("n_riders_150_plus"), errors="coerce"),
+        "top5_share": pd.to_numeric(panel_row.get("top5_share"), errors="coerce"),
+        "predicted_next_top5_probability": pd.to_numeric(predicted_probability, errors="coerce"),
+        "predicted_next_top5_label": pd.to_numeric(predicted_label, errors="coerce"),
+        "next_team_name": str(panel_row.get("next_team_name") or ""),
+        "next_team_slug": str(panel_row.get("next_team_slug") or ""),
+        "next_proteam_rank": next_proteam_rank,
+        "next_top5_proteam": pd.to_numeric(panel_row.get("next_top5_proteam"), errors="coerce"),
+        "continuity_source": str(panel_row.get("continuity_source") or ""),
+        "has_observed_next_season": bool(panel_row.get("has_observed_next_season")) if pd.notna(panel_row.get("has_observed_next_season")) else False,
+        "continuity_status": continuity_status,
+    }
+
+
+def render_top5_proteam_continuity(team_slug: str, planning_year: int) -> None:
+    score_row = _team_top5_proteam_row(team_slug, planning_year)
+    continuity_df = _team_continuity_history_frame(team_slug, planning_year)
+    backtest_summary = load_top5_proteam_backtest_summary()
+    backtest_benchmark_df = load_top5_proteam_backtest_benchmark()
+    if score_row is None and continuity_df.empty:
+        st.caption(
+            "Run `python scripts/fit_top5_proteam_baseline.py` and `python scripts/backtest_top5_proteam.py` "
+            "to surface the team continuity and next-season top-5 forecast here."
+        )
+        return
+
+    winning_model_name = str(backtest_summary.get("winning_model_name") or _preferred_top5_proteam_model_name())
+    winning_benchmark = backtest_benchmark_df.loc[
+        backtest_benchmark_df.get("model_name", pd.Series("", index=backtest_benchmark_df.index)).astype(str)
+        == winning_model_name
+    ].copy()
+    current_probability = (
+        float(pd.to_numeric(score_row.get("predicted_next_top5_probability"), errors="coerce"))
+        if score_row is not None and pd.notna(pd.to_numeric(score_row.get("predicted_next_top5_probability"), errors="coerce"))
+        else 0.0
+    )
+    current_rank = (
+        int(pd.to_numeric(score_row.get("proteam_rank"), errors="coerce"))
+        if score_row is not None and pd.notna(pd.to_numeric(score_row.get("proteam_rank"), errors="coerce"))
+        else 0
+    )
+    current_depth = (
+        int(pd.to_numeric(score_row.get("n_riders_150_plus"), errors="coerce"))
+        if score_row is not None and pd.notna(pd.to_numeric(score_row.get("n_riders_150_plus"), errors="coerce"))
+        else 0
+    )
+    backtest_capture = (
+        float(winning_benchmark.iloc[0]["backtest_top_k_capture"])
+        if not winning_benchmark.empty
+        else 0.0
+    )
+
+    st.markdown("**Team continuity and top-5 ProTeam view**")
+    st.caption(
+        f"File-driven next-season top-5 forecast for `{planning_year}` using `{winning_model_name}`. "
+        "This section is meant to make the year-to-year team mapping explicit before you trust the forecast."
+    )
+    metric_left, metric_mid, metric_right, metric_far_right = st.columns(4)
+    metric_left.metric("Next-season top-5 prob.", f"{current_probability:.0%}")
+    metric_mid.metric("Current ProTeam rank", current_rank if current_rank else "NA")
+    metric_right.metric("Current 150+ riders", current_depth if current_depth else "NA")
+    metric_far_right.metric("Backtest capture", f"{backtest_capture:.0%}")
+
+    if continuity_df.empty:
+        st.caption("No continuity history rows were available for this team-season.")
+        return
+
+    if len(continuity_df) == 1:
+        st.caption(
+            "Only the current team-season row is available here. That usually means the upstream observed continuity "
+            "window does not extend into this rename chain yet."
+        )
+    elif (
+        continuity_df.get("continuity_source", pd.Series("", index=continuity_df.index))
+        .astype(str)
+        .isin({"base_slug_inferred_current_cycle", "identity_alias_inferred_current_cycle"})
+        .any()
+    ):
+        st.caption(
+            "The newest link in this chain is inferred because the observed continuity window stops before the current cycle. "
+            "The app first tries a stable team base slug, then falls back to a tracked rename alias for known sponsor changes."
+        )
+
+    display_columns = [
+        "season",
+        "team_name",
+        "proteam_rank",
+        "n_riders_150_plus",
+        "predicted_next_top5_probability",
+        "next_team_name",
+        "next_proteam_rank",
+        "next_top5_proteam",
+        "continuity_source",
+        "continuity_status",
+    ]
+    display_df = continuity_df[[column for column in display_columns if column in continuity_df.columns]].copy()
+    display_df = display_df.rename(
+        columns={
+            "season": "Season",
+            "team_name": "Team",
+            "proteam_rank": "Current rank",
+            "n_riders_150_plus": "150+ riders",
+            "predicted_next_top5_probability": "Next top-5 prob.",
+            "next_team_name": "Next team",
+            "next_proteam_rank": "Next rank",
+            "next_top5_proteam": "Observed next top-5",
+            "continuity_source": "Link source",
+            "continuity_status": "Row type",
+        }
+    )
+    if "Observed next top-5" in display_df.columns:
+        observed_top5 = pd.to_numeric(display_df["Observed next top-5"], errors="coerce")
+        display_df["Observed next top-5"] = observed_top5.map({1.0: True, 0.0: False})
+    if "Link source" in display_df.columns:
+        display_df["Link source"] = display_df["Link source"].replace(
+            {
+                "pcs_prev_link": "Observed PCS previous-team link",
+                "base_slug_inferred_current_cycle": "Inferred stable base slug",
+            }
+        )
+    if "Row type" in display_df.columns:
+        display_df["Row type"] = display_df["Row type"].replace(
+            {
+                "current_team_season": "Current team-season",
+                "historical_team_season": "Observed historical link",
+                "historical_inferred_link": "Inferred current-cycle link",
+            }
+        )
+    st.dataframe(
+        display_df.round({"Next top-5 prob.": 3}),
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Next top-5 prob.": st.column_config.NumberColumn(
+                "Next top-5 prob.",
+                format="%.3f",
+                help="Model probability that this team is top-5 ProTeam in the following season.",
+            ),
+            "Observed next top-5": st.column_config.CheckboxColumn(
+                "Observed next top-5",
+                help="Observed label from the ranking study data when the next season is available.",
+            ),
+        },
+    )
+
+
+def _filtered_rider_race_plan(race_plan_df: pd.DataFrame, view_mode: str) -> pd.DataFrame:
+    if race_plan_df.empty:
+        return race_plan_df.copy()
+
+    if view_mode == "Completed races only":
+        return race_plan_df.loc[race_plan_df["status"].astype(str) == "completed"].copy()
+    if view_mode in {"Season so far", "Active schedule"}:
+        return race_plan_df.loc[race_plan_df["status"].astype(str) != "cancelled"].copy()
+    return race_plan_df.copy()
+
+
+def _team_rider_race_plan_frame(team_slug: str, planning_year: int, view_mode: str) -> pd.DataFrame:
+    race_plan_df = load_rider_race_plan(team_slug, planning_year)
+    if race_plan_df.empty:
+        return pd.DataFrame()
+    filtered = _filtered_rider_race_plan(race_plan_df, view_mode)
+    return filtered.sort_values(
+        ["start_date", "selected_allocation_score_total", "race_name"],
+        ascending=[True, False, True],
+        na_position="last",
+    ).reset_index(drop=True)
+
+
+def render_rider_race_plan(team_slug: str, planning_year: int, view_mode: str) -> None:
+    full_plan_df = load_rider_race_plan(team_slug, planning_year)
+    plan_df = _team_rider_race_plan_frame(team_slug, planning_year, view_mode)
+    summary = load_rider_race_allocation_summary(team_slug, planning_year)
+    rider_load_df = load_rider_load_summary(team_slug, planning_year)
+    if full_plan_df.empty or not summary:
+        build_command = (
+            "python scripts/build_rider_race_allocation.py "
+            f"--team-slug {team_slug} --planning-year {planning_year}"
+        )
+        st.caption(
+            "Run "
+            f"`{build_command}` "
+            "to surface the race-by-race rider assignment layer here."
+        )
+        return
+    if plan_df.empty:
+        st.caption("No rider-race planning rows matched the current Team Calendar EV view.")
+        return
+
+    model_name = str(summary.get("rider_model_name") or "")
+    mean_breakout_probability = pd.to_numeric(
+        plan_df.get("selected_breakout_probability_mean"),
+        errors="coerce",
+    ).fillna(0.0)
+    top_race_leader_counts = plan_df["race_leader_rider"].astype(str).value_counts()
+    top_race_leader = top_race_leader_counts.index[0] if not top_race_leader_counts.empty else "Not available"
+    top_race_leader_count = int(top_race_leader_counts.iloc[0]) if not top_race_leader_counts.empty else 0
+
+    st.markdown("**Rider-race planning view**")
+    st.caption(
+        f"Deterministic race-by-race rider plan for `{planning_year}` using the saved Team Calendar EV artifact and "
+        f"the file-driven `{model_name}` rider model. This is a planning lens, not an optimization solver."
+    )
+    metric_left, metric_mid, metric_right = st.columns(3)
+    metric_left.metric("Planned races in view", len(plan_df))
+    metric_mid.metric("Mean selected rider prob.", f"{mean_breakout_probability.mean():.0%}")
+    metric_right.metric("Top race leader", f"{top_race_leader} ({top_race_leader_count})")
+
+    display_columns = [
+        "start_date",
+        "race_name",
+        "category",
+        "status",
+        "race_leader_rider",
+        "race_leader_specialty",
+        "top_recommended_riders",
+        "selected_breakout_probability_mean",
+        "selected_specialty_match_mean",
+        "selected_allocation_score_total",
+    ]
+    display_df = plan_df[[column for column in display_columns if column in plan_df.columns]].copy()
+    display_df = display_df.rename(
+        columns={
+            "start_date": "Date",
+            "race_name": "Race",
+            "category": "Category",
+            "status": "Status",
+            "race_leader_rider": "Race leader",
+            "race_leader_specialty": "Race leader specialty",
+            "top_recommended_riders": "Top riders",
+            "selected_breakout_probability_mean": "Mean rider prob.",
+            "selected_specialty_match_mean": "Mean specialty fit",
+            "selected_allocation_score_total": "Plan score",
+        }
+    )
+    st.dataframe(
+        display_df.round({"Mean rider prob.": 3, "Mean specialty fit": 3, "Plan score": 1}),
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Mean rider prob.": st.column_config.NumberColumn(
+                "Mean rider prob.",
+                format="%.3f",
+                help="Average breakout probability across the selected rider set for this race.",
+            ),
+            "Mean specialty fit": st.column_config.NumberColumn(
+                "Mean specialty fit",
+                format="%.3f",
+                help="Average specialty-to-race match score across the selected rider set.",
+            ),
+            "Plan score": st.column_config.NumberColumn(
+                "Plan score",
+                format="%.1f",
+                help="Deterministic planning score built from race priority, rider selection strength, and specialty fit.",
+            ),
+        },
+    )
+
+    if not rider_load_df.empty:
+        with st.expander("Rider load summary", expanded=False):
+            rider_display_columns = [
+                "rider_name",
+                "specialty_primary",
+                "recommended_race_count",
+                "race_leader_assignments",
+                "best_race_name",
+                "allocation_score_total",
+            ]
+            rider_display_df = rider_load_df[
+                [column for column in rider_display_columns if column in rider_load_df.columns]
+            ].copy()
+            rider_display_df = rider_display_df.rename(
+                columns={
+                    "rider_name": "Rider",
+                    "specialty_primary": "Primary specialty",
+                    "recommended_race_count": "Recommended races",
+                    "race_leader_assignments": "Race leader assignments",
+                    "best_race_name": "Best race",
+                    "allocation_score_total": "Total plan score",
+                }
+            )
+            st.dataframe(
+                rider_display_df.round({"Total plan score": 1}),
+                use_container_width=True,
+                hide_index=True,
+            )
 
 
 def _filtered_team_calendar_ev(calendar_ev_df: pd.DataFrame, view_mode: str) -> pd.DataFrame:
@@ -346,8 +1165,43 @@ def _format_team_calendar_ev_summary_value(value: object, *, decimals: int, sign
     return f"{numeric_value:+.{decimals}f}" if signed else f"{numeric_value:.{decimals}f}"
 
 
-def _team_calendar_ev_primary_metrics(summary_row: pd.Series | dict[str, object]) -> list[tuple[str, str]]:
+def _team_calendar_ev_summary_context(
+    summary_row: pd.Series | dict[str, object],
+    metadata: dict[str, object] | None = None,
+) -> dict[str, object]:
     summary_mapping = dict(summary_row)
+    tracked_uci_points = pd.to_numeric(summary_mapping.get("actual_points_known"), errors="coerce")
+    if not pd.isna(tracked_uci_points):
+        summary_mapping["tracked_all_uci_points"] = float(tracked_uci_points)
+
+    pcs_team_slug = str((metadata or {}).get("pcs_team_slug") or "").strip()
+    if pcs_team_slug:
+        try:
+            snapshot_df = load_proteam_risk_snapshot(CURRENT_SCOPE)
+        except Exception:  # noqa: BLE001
+            snapshot_df = pd.DataFrame()
+        if not snapshot_df.empty and "team_slug" in snapshot_df.columns and "team_total_points" in snapshot_df.columns:
+            matches = snapshot_df.loc[snapshot_df["team_slug"] == pcs_team_slug]
+            if not matches.empty:
+                counted_points = pd.to_numeric(matches["team_total_points"], errors="coerce").iloc[0]
+                if not pd.isna(counted_points):
+                    summary_mapping["counted_points_known"] = float(counted_points)
+                    summary_mapping["actual_points_known"] = float(counted_points)
+                    if not pd.isna(tracked_uci_points):
+                        points_delta = float(tracked_uci_points - float(counted_points))
+                        if points_delta > 0:
+                            summary_mapping["non_counted_uci_points"] = points_delta
+                        elif points_delta < 0:
+                            summary_mapping["counted_points_outside_tracked_set"] = abs(points_delta)
+
+    return summary_mapping
+
+
+def _team_calendar_ev_primary_metrics(
+    summary_row: pd.Series | dict[str, object],
+    metadata: dict[str, object] | None = None,
+) -> list[tuple[str, str]]:
+    summary_mapping = _team_calendar_ev_summary_context(summary_row, metadata)
     return [
         (
             label,
@@ -361,12 +1215,38 @@ def _team_calendar_ev_primary_metrics(summary_row: pd.Series | dict[str, object]
     ]
 
 
-def _team_calendar_ev_secondary_facts(summary_row: pd.Series | dict[str, object]) -> list[str]:
-    summary_mapping = dict(summary_row)
-    return [
+def _team_calendar_ev_secondary_facts(
+    summary_row: pd.Series | dict[str, object],
+    metadata: dict[str, object] | None = None,
+) -> list[str]:
+    summary_mapping = _team_calendar_ev_summary_context(summary_row, metadata)
+    secondary_facts = [
         f"{label}: {_format_team_calendar_ev_summary_value(summary_mapping.get(column), decimals=decimals, signed=signed)}"
         for label, column, decimals, signed in TEAM_EV_SECONDARY_FACT_SPECS
     ]
+    if "counted_points_known" in summary_mapping and "tracked_all_uci_points" in summary_mapping:
+        secondary_facts.insert(
+            0,
+            "All UCI points tracked: "
+            + _format_team_calendar_ev_summary_value(summary_mapping.get("tracked_all_uci_points"), decimals=1, signed=False),
+        )
+    if "non_counted_uci_points" in summary_mapping:
+        secondary_facts.insert(
+            1,
+            "Non-counted UCI points: "
+            + _format_team_calendar_ev_summary_value(summary_mapping.get("non_counted_uci_points"), decimals=1, signed=False),
+        )
+    elif "counted_points_outside_tracked_set" in summary_mapping:
+        secondary_facts.insert(
+            1,
+            "Counted points outside tracked set: "
+            + _format_team_calendar_ev_summary_value(
+                summary_mapping.get("counted_points_outside_tracked_set"),
+                decimals=1,
+                signed=False,
+            ),
+        )
+    return secondary_facts
 
 
 def _available_team_calendar_ev_columns(
@@ -1290,15 +2170,24 @@ def render_team_calendar_ev_workspace() -> None:
         f"below follow the current `{view_mode}` filter unless a section says otherwise."
     )
 
-    primary_metrics = _team_calendar_ev_primary_metrics(summary_row)
+    primary_metrics = _team_calendar_ev_primary_metrics(summary_row, metadata)
     metric_top_left, metric_top_right = st.columns(2)
     metric_bottom_left, metric_bottom_right = st.columns(2)
     metric_columns = [metric_top_left, metric_top_right, metric_bottom_left, metric_bottom_right]
     for metric_column, (label, value) in zip(metric_columns, primary_metrics):
         metric_column.metric(label, value)
-    st.caption("Secondary facts: " + " | ".join(_team_calendar_ev_secondary_facts(summary_row)))
+    st.caption("Secondary facts: " + " | ".join(_team_calendar_ev_secondary_facts(summary_row, metadata)))
+    summary_context = _team_calendar_ev_summary_context(summary_row, metadata)
+    if "non_counted_uci_points" in summary_context:
+        st.caption(
+            "Headline known points use the counted team-ranking total from the live ProTeam snapshot. "
+            "Race-level tables and charts below still show all tracked UCI points scored in the saved race set."
+        )
     st.caption("Weight details for this EV model live in the `How the model works: idea, methods, and math` expander above.")
     render_team_profile_identity_block(metadata)
+    render_top5_proteam_continuity(team_slug, planning_year)
+    render_rider_threshold_outlook(team_slug, planning_year)
+    render_rider_race_plan(team_slug, planning_year, view_mode)
 
     completed_missing_ev = filtered_df.loc[
         (filtered_df["status"] == "completed")
@@ -1403,7 +2292,7 @@ def render_team_calendar_ev_workspace() -> None:
             ),
             "Actual pts": st.column_config.NumberColumn(
                 "Actual pts",
-                help="Known PCS points from the race when results are available.",
+                help="Known UCI points from the race when results are available.",
                 format="%.1f",
             ),
             "EV gap": st.column_config.NumberColumn(
@@ -1641,6 +2530,174 @@ def render_data_sources_tab(
             }
         )
 
+    team_season_panel_df = load_team_season_panel()
+    if not team_season_panel_df.empty:
+        sources.append(
+            {
+                "label": "Team season panel",
+                "kind": "dataframe",
+                "data": team_season_panel_df,
+                "description": "Canonical team-season panel with continuity links, depth features, and observed next-season top-5 labels where available.",
+                "source_note": "This panel is the join backbone for the Team Calendar EV continuity view and the top-5 ProTeam model.",
+                "path": str(TEAM_SEASON_PANEL_PATH),
+                "download_name": TEAM_SEASON_PANEL_PATH.name,
+            }
+        )
+
+    top5_training_df = load_top5_proteam_training_table()
+    if not top5_training_df.empty:
+        sources.append(
+            {
+                "label": "Top-5 ProTeam training table",
+                "kind": "dataframe",
+                "data": top5_training_df,
+                "description": "Observed season-to-season team transitions used to fit and backtest the top-5 ProTeam model.",
+                "source_note": "This table should only contain labeled next seasons from the imported historical continuity window.",
+                "path": str(TOP5_TRAINING_TABLE_PATH),
+                "download_name": TOP5_TRAINING_TABLE_PATH.name,
+            }
+        )
+
+    top5_summary = load_top5_proteam_summary()
+    if top5_summary:
+        sources.append(
+            {
+                "label": "Top-5 ProTeam baseline summary",
+                "kind": "json",
+                "data": top5_summary,
+                "description": "Summary of the fitted next-season top-5 ProTeam baseline models and their training metrics.",
+                "source_note": "This JSON records the anchor team model, coefficients, and in-sample benchmark metrics.",
+                "path": str(TOP5_PROTEAM_SUMMARY_PATH),
+                "download_name": TOP5_PROTEAM_SUMMARY_PATH.name,
+            }
+        )
+
+    top5_scores_df = load_team_season_top5_scores()
+    if not top5_scores_df.empty:
+        sources.append(
+            {
+                "label": "Top-5 ProTeam full panel scores",
+                "kind": "dataframe",
+                "data": top5_scores_df,
+                "description": "Full team-season scoring output for the top-5 ProTeam models, including forward-looking planning seasons.",
+                "source_note": "This is the artifact used for the Team Calendar EV continuity and team-level top-5 forecast view.",
+                "path": str(TOP5_PROTEAM_PANEL_SCORES_PATH),
+                "download_name": TOP5_PROTEAM_PANEL_SCORES_PATH.name,
+            }
+        )
+
+    top5_backtest_summary = load_top5_proteam_backtest_summary()
+    if top5_backtest_summary:
+        sources.append(
+            {
+                "label": "Top-5 ProTeam backtest summary",
+                "kind": "json",
+                "data": top5_backtest_summary,
+                "description": "Expanding-window backtest summary for the top-5 ProTeam benchmark suite.",
+                "source_note": "This JSON names the current winning team model and stores fold-level benchmark metadata.",
+                "path": str(TOP5_PROTEAM_BACKTEST_SUMMARY_PATH),
+                "download_name": TOP5_PROTEAM_BACKTEST_SUMMARY_PATH.name,
+            }
+        )
+
+    top5_backtest_benchmark_df = load_top5_proteam_backtest_benchmark()
+    if not top5_backtest_benchmark_df.empty:
+        sources.append(
+            {
+                "label": "Top-5 ProTeam backtest benchmark",
+                "kind": "dataframe",
+                "data": top5_backtest_benchmark_df,
+                "description": "Leaderboard comparing top-5 ProTeam baseline models under expanding-window validation.",
+                "source_note": "This CSV shows which top-5 team spec currently wins on backtest top-k capture.",
+                "path": str(TOP5_PROTEAM_BACKTEST_BENCHMARK_PATH),
+                "download_name": TOP5_PROTEAM_BACKTEST_BENCHMARK_PATH.name,
+            }
+        )
+
+    rider_panel_df = load_rider_season_panel()
+    if not rider_panel_df.empty:
+        sources.append(
+            {
+                "label": "Rider season panel",
+                "kind": "dataframe",
+                "data": rider_panel_df,
+                "description": "Canonical rider-season panel with next-season threshold labels and imported rider/team enrichments.",
+                "source_note": "Built from imported rider history plus rider result summary and transfer context where available.",
+                "path": str(RIDER_SEASON_PANEL_PATH),
+                "download_name": RIDER_SEASON_PANEL_PATH.name,
+            }
+        )
+
+    rider_threshold_summary = load_rider_threshold_summary()
+    if rider_threshold_summary:
+        sources.append(
+            {
+                "label": "Rider threshold baseline summary",
+                "kind": "json",
+                "data": rider_threshold_summary,
+                "description": "Summary of the fitted rider-threshold baseline models and their expanding-window evaluation.",
+                "source_note": "This JSON records the anchor rider model, coefficients, and benchmark metrics.",
+                "path": str(RIDER_THRESHOLD_SUMMARY_PATH),
+                "download_name": RIDER_THRESHOLD_SUMMARY_PATH.name,
+            }
+        )
+
+    rider_threshold_predictions_df = load_rider_threshold_training_predictions()
+    if not rider_threshold_predictions_df.empty:
+        sources.append(
+            {
+                "label": "Rider threshold training predictions",
+                "kind": "dataframe",
+                "data": rider_threshold_predictions_df,
+                "description": "Full-fit and expanding-window predictions for the rider-threshold baseline models.",
+                "source_note": "Use this artifact to inspect rider-level probability outputs across observed seasons.",
+                "path": str(RIDER_THRESHOLD_PREDICTIONS_PATH),
+                "download_name": RIDER_THRESHOLD_PREDICTIONS_PATH.name,
+            }
+        )
+
+    rider_threshold_scores_df = load_rider_season_threshold_scores()
+    if not rider_threshold_scores_df.empty:
+        sources.append(
+            {
+                "label": "Rider threshold full panel scores",
+                "kind": "dataframe",
+                "data": rider_threshold_scores_df,
+                "description": "Full rider-season scoring output for the rider-threshold models, including forward-looking seasons.",
+                "source_note": "This is the artifact used for the Team Calendar EV rider breakout outlook.",
+                "path": str(RIDER_THRESHOLD_PANEL_SCORES_PATH),
+                "download_name": RIDER_THRESHOLD_PANEL_SCORES_PATH.name,
+            }
+        )
+
+    rider_backtest_summary = load_rider_threshold_backtest_summary()
+    if rider_backtest_summary:
+        sources.append(
+            {
+                "label": "Rider threshold backtest summary",
+                "kind": "json",
+                "data": rider_backtest_summary,
+                "description": "Expanding-window backtest summary for the rider-threshold benchmark suite.",
+                "source_note": "This JSON names the current winning rider model and stores fold-level benchmark metadata.",
+                "path": str(RIDER_THRESHOLD_BACKTEST_SUMMARY_PATH),
+                "download_name": RIDER_THRESHOLD_BACKTEST_SUMMARY_PATH.name,
+            }
+        )
+
+    rider_backtest_benchmark_df = load_rider_threshold_backtest_benchmark()
+    if not rider_backtest_benchmark_df.empty:
+        sources.append(
+            {
+                "label": "Rider threshold backtest benchmark",
+                "kind": "dataframe",
+                "data": rider_backtest_benchmark_df,
+                "description": "Leaderboard comparing rider-threshold baseline models under expanding-window validation.",
+                "source_note": "This CSV shows which rider-threshold spec currently wins on backtest top-k capture.",
+                "path": str(RIDER_THRESHOLD_BACKTEST_BENCHMARK_PATH),
+                "download_name": RIDER_THRESHOLD_BACKTEST_BENCHMARK_PATH.name,
+            }
+        )
+
     active_team_dataset = get_active_team_calendar_ev_dataset_row()
     if active_team_dataset is not None:
         team_label = str(active_team_dataset["label"])
@@ -1715,6 +2772,63 @@ def render_data_sources_tab(
                     "source_note": "This JSON powers the Team Calendar EV explanation shown in the main model explainer.",
                     "path": metadata_path,
                     "download_name": Path(metadata_path).name,
+                }
+            )
+
+        rider_race_paths = _rider_race_allocation_paths(team_slug, team_year)
+        rider_race_summary = load_rider_race_allocation_summary(team_slug, team_year)
+        if rider_race_summary:
+            sources.append(
+                {
+                    "label": f"Rider-race allocation summary ({team_label})",
+                    "kind": "json",
+                    "data": rider_race_summary,
+                    "description": "Summary metrics for the deterministic rider-to-race planning layer.",
+                    "source_note": "This JSON names the rider model used and stores the aggregate race-planning coverage metrics.",
+                    "path": str(rider_race_paths["summary"]),
+                    "download_name": rider_race_paths["summary"].name,
+                }
+            )
+
+        rider_race_plan_df = load_rider_race_plan(team_slug, team_year)
+        if not rider_race_plan_df.empty:
+            sources.append(
+                {
+                    "label": f"Rider-race plan ({team_label})",
+                    "kind": "dataframe",
+                    "data": rider_race_plan_df,
+                    "description": "Race-by-race race-leader and top-rider recommendations derived from saved EV and rider breakout scores.",
+                    "source_note": "This is the planning table surfaced in the Team Calendar EV rider-race planning view.",
+                    "path": str(rider_race_paths["race_plan"]),
+                    "download_name": rider_race_paths["race_plan"].name,
+                }
+            )
+
+        rider_load_df = load_rider_load_summary(team_slug, team_year)
+        if not rider_load_df.empty:
+            sources.append(
+                {
+                    "label": f"Rider load summary ({team_label})",
+                    "kind": "dataframe",
+                    "data": rider_load_df,
+                    "description": "Rider-level assignment summary showing race-leader frequency, recommended race count, and best-fit race.",
+                    "source_note": "Use this to spot overused riders or concentration in the deterministic planning layer.",
+                    "path": str(rider_race_paths["rider_load"]),
+                    "download_name": rider_race_paths["rider_load"].name,
+                }
+            )
+
+        rider_race_allocations_df = load_rider_race_allocations(team_slug, team_year)
+        if not rider_race_allocations_df.empty:
+            sources.append(
+                {
+                    "label": f"Rider-race pairings ({team_label})",
+                    "kind": "dataframe",
+                    "data": rider_race_allocations_df,
+                    "description": "Full scored rider-by-race pairing table behind the deterministic planning output.",
+                    "source_note": "This is the full Cartesian planning layer before the top riders per race are summarized.",
+                    "path": str(rider_race_paths["allocations"]),
+                    "download_name": rider_race_paths["allocations"].name,
                 }
             )
 

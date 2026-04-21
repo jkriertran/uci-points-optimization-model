@@ -1,0 +1,14 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+equipo-kern-pharma,Equipo Kern Pharma,2026,COBO Iván,oneday,engine,61,61,1912.700083,0.349316,0.553286,Tour de Langkawi,2026-09-27,2.Pro,106.192218
+equipo-kern-pharma,Equipo Kern Pharma,2026,BRUSTENGA Marc,oneday,engine,61,0,1794.406009,0.25491,0.553286,Tour de Langkawi,2026-09-27,2.Pro,98.864817
+equipo-kern-pharma,Equipo Kern Pharma,2026,SOSA Iván Ramiro,oneday,banker,61,0,1634.858434,0.212245,0.553286,Tour de Langkawi,2026-09-27,2.Pro,88.982082
+equipo-kern-pharma,Equipo Kern Pharma,2026,BERRADE Urko,hills,banker,56,0,1395.296266,0.251829,0.443423,Tour de Langkawi,2026-09-27,2.Pro,100.657083
+equipo-kern-pharma,Equipo Kern Pharma,2026,WENZEL Mats,oneday,unclassified,50,0,868.945826,0.140536,0.585462,Figueira Champions Classic,2026-02-14,1.Pro,39.265558
+equipo-kern-pharma,Equipo Kern Pharma,2026,RUIZ Ibon,gc,banker,21,0,725.092856,0.192964,0.434042,Tour de Langkawi,2026-09-27,2.Pro,99.848227
+equipo-kern-pharma,Equipo Kern Pharma,2026,RETEGI Mikel,oneday,low_conversion_depth,40,0,694.403292,0.120834,0.635528,Figueira Champions Classic,2026-02-14,1.Pro,37.010047
+equipo-kern-pharma,Equipo Kern Pharma,2026,URIARTE Diego,oneday,low_conversion_depth,40,0,681.424282,0.11798,0.635528,Figueira Champions Classic,2026-02-14,1.Pro,36.359274
+equipo-kern-pharma,Equipo Kern Pharma,2026,GIMENO Nil,gc,unclassified,12,0,553.99659,0.153461,0.509887,Tour de Langkawi,2026-09-27,2.Pro,92.397816
+equipo-kern-pharma,Equipo Kern Pharma,2026,IRIBAR Unai,hills,low_conversion_depth,16,0,369.333842,0.123747,0.442285,Vuelta a Andalucía,2026-02-18,2.Pro,52.220228
+equipo-kern-pharma,Equipo Kern Pharma,2026,AZNAR Hugo,oneday,low_conversion_depth,5,0,137.617399,0.117417,0.692456,Figueira Champions Classic,2026-02-14,1.Pro,36.134136
+equipo-kern-pharma,Equipo Kern Pharma,2026,GÓMEZ Iker,gc,low_conversion_depth,2,0,128.315698,0.115739,0.584852,Tour de Langkawi,2026-09-27,2.Pro,78.909105
+equipo-kern-pharma,Equipo Kern Pharma,2026,CARRASCOSA Pablo,fallback,low_conversion_depth,2,0,88.28797,0.115739,0.567493,Vuelta a Burgos,2026-08-04,2.Pro,46.456259

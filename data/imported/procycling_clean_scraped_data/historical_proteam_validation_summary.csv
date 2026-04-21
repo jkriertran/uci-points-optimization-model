@@ -1,0 +1,8 @@
+check_name,status,value,notes
+duplicate_keys,pass,0.0,
+raceday_sanity,pass,0.0,
+share_sanity,pass,0.0,
+rank_sanity,pass,0.0,
+merge_coverage,pass,1.0,Share of rider rows with a racedays value after merge.
+missing_page_log,pass,0.0,Non-success scrape rows recorded in the scrape manifest.
+team_total_consistency,pass,0.0,"Difference between derived totals and seed totals exceeds max(25 points, 1% of seed total)."

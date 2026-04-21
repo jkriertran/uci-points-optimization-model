@@ -1,0 +1,18 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,RAJOVIĆ Dušan,fallback,banker,21,17,730.528698,0.291516,0.443571,Tour of Hainan,2026-04-15,2.Pro,87.746522
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,NENCINI Tommaso,oneday,unclassified,14,4,229.361646,0.141852,0.489394,Milano - Torino,2026-03-18,1.Pro,30.593389
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,FABBRO Matteo,gc,unclassified,14,0,441.303156,0.158463,0.45627,Tour of Hainan,2026-04-15,2.Pro,65.292831
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,UMBA Santiago,gc,unclassified,14,0,408.477689,0.134106,0.45627,Tour of Hainan,2026-04-15,2.Pro,60.325532
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,BONNEU Kamiel,gc,low_conversion_depth,7,0,296.481567,0.124929,0.545639,Tour of Hainan,2026-04-15,2.Pro,56.633271
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,BALMER Alexandre,gc,low_conversion_depth,7,0,291.532074,0.121412,0.545639,Tour of Hainan,2026-04-15,2.Pro,55.58706
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,FINKŠT Tilen,sprint,low_conversion_depth,9,0,248.6741,0.129143,0.463701,Tour of Hainan,2026-04-15,2.Pro,67.077954
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,CONTI Valerio,fallback,inactive_depth,11,0,243.143359,0.115739,0.499376,Tour of Slovenia,2026-06-17,2.Pro,50.833446
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,IACCHI Alessandro,fallback,low_conversion_depth,8,0,133.3913,0.115739,0.497082,Tour of the Alps,2026-04-20,2.Pro,42.796703
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,REGNANTI Matteo,sprint,inactive_depth,3,0,126.848367,0.115739,0.542235,Tour of Hainan,2026-04-15,2.Pro,59.233092
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,GONZÁLEZ Roberto Carlos,gc,low_conversion_depth,3,0,124.412058,0.117417,0.536452,Tour of Slovenia,2026-06-17,2.Pro,50.427909
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,ARASHIRO Yukiya,oneday,low_conversion_depth,7,0,114.30366,0.118546,0.588799,Milano - Torino,2026-03-18,1.Pro,27.662747
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,GRANGER Ben,oneday,low_conversion_depth,7,0,109.935869,0.115739,0.588799,Milano - Torino,2026-03-18,1.Pro,26.653932
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,IWAMURA Genji,oneday,inactive_depth,7,0,108.792732,0.115739,0.588799,Milano - Torino,2026-03-18,1.Pro,26.389905
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,KAMADA Koki,oneday,inactive_depth,7,0,108.221164,0.115739,0.588799,Milano - Torino,2026-03-18,1.Pro,26.257892
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,GAZZOLI Michele,hills,low_conversion_depth,6,0,74.177671,0.115739,0.414985,Milano - Torino,2026-03-18,1.Pro,19.99663
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,MEO Felix James,fallback,low_conversion_depth,2,0,19.658749,0.115739,0.479681,Étoile de Bessèges,2026-02-04,2.1,10.027899

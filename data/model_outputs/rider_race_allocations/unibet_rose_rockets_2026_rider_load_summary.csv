@@ -1,0 +1,16 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+unibet-rose-rockets,Unibet Rose Rockets,2026,GROENEWEGEN Dylan,sprint,anchor,79,79,2564.053345,0.978735,0.357656,Tour of Türkiye,2026-04-26,2.Pro,109.343845
+unibet-rose-rockets,Unibet Rose Rockets,2026,VENTURINI Clément,oneday,anchor,79,0,2171.241695,0.520897,0.568214,Classique Dunkerque,2026-05-19,1.Pro,89.492867
+unibet-rose-rockets,Unibet Rose Rockets,2026,JOHANNINK Jelle,oneday,engine,75,0,1591.092591,0.259055,0.576602,Classique Dunkerque,2026-05-19,1.Pro,75.298024
+unibet-rose-rockets,Unibet Rose Rockets,2026,KOPECKÝ Matyáš,oneday,banker,73,0,1374.552171,0.205962,0.581296,Classique Dunkerque,2026-05-19,1.Pro,69.492975
+unibet-rose-rockets,Unibet Rose Rockets,2026,KUBIŠ Lukáš,fallback,anchor,59,0,1373.402337,0.510051,0.385973,Tour of Türkiye,2026-04-26,2.Pro,75.060167
+unibet-rose-rockets,Unibet Rose Rockets,2026,LOOCKX Lander,hills,engine,54,0,1133.436135,0.289279,0.438763,Tour of Türkiye,2026-04-26,2.Pro,61.784976
+unibet-rose-rockets,Unibet Rose Rockets,2026,MOURIS Wessel,oneday,unclassified,62,0,1125.340332,0.140536,0.61492,Classique Dunkerque,2026-05-19,1.Pro,64.442372
+unibet-rose-rockets,Unibet Rose Rockets,2026,DE VRIES Hartthijs,oneday,unclassified,25,0,511.052076,0.132226,0.655685,Classique Dunkerque,2026-05-19,1.Pro,63.77776
+unibet-rose-rockets,Unibet Rose Rockets,2026,MERIS Sergio,oneday,low_conversion_depth,20,0,414.76104,0.130985,0.662212,Classique Dunkerque,2026-05-19,1.Pro,63.465354
+unibet-rose-rockets,Unibet Rose Rockets,2026,FOUGNER Eivind Broholt,climber,low_conversion_depth,6,0,282.055154,0.115739,0.632803,Tour of Türkiye,2026-04-26,2.Pro,57.156537
+unibet-rose-rockets,Unibet Rose Rockets,2026,REINDERS Elmar,sprint,banker,9,0,280.89426,0.180599,0.471029,Tour of Türkiye,2026-04-26,2.Pro,60.648154
+unibet-rose-rockets,Unibet Rose Rockets,2026,SAVIOZ Colin,climber,low_conversion_depth,5,0,232.094221,0.115739,0.637266,Tour of Türkiye,2026-04-26,2.Pro,56.293416
+unibet-rose-rockets,Unibet Rose Rockets,2026,CHRISTOPHERSEN Cedrik Bakke,hills,low_conversion_depth,5,0,56.787818,0.129143,0.437986,Étoile de Bessèges,2026-02-04,2.1,12.558775
+unibet-rose-rockets,Unibet Rose Rockets,2026,POELS Wout,gc,unclassified,1,0,49.132875,0.146541,0.551374,Vuelta a Burgos,2026-08-04,2.Pro,49.132875
+unibet-rose-rockets,Unibet Rose Rockets,2026,BLOEM Joren,fallback,low_conversion_depth,1,0,5.496771,0.115739,0.532099,Tour of Estonia,2026-06-04,2.1,5.496771

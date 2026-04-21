@@ -272,7 +272,7 @@ def test_attach_actual_points_calculates_ev_gap() -> None:
 
 def test_build_actual_points_table_marks_completed_empty_rows_as_zero() -> None:
     class StubClient:
-        def get_team_race_points(self, team_slug: str, race_slug: str):
+        def get_team_race_uci_points(self, team_slug: str, race_slug: str, season_year: int):
             class Result:
                 source_url = "https://example.com"
                 actual_points = 0.0
@@ -292,7 +292,7 @@ def test_build_actual_points_table_marks_completed_empty_rows_as_zero() -> None:
     row = actual_points_df.iloc[0]
     assert row["status"] == "completed"
     assert float(row["actual_points"]) == 0.0
-    assert row["notes"] == "points_page_empty_after_race"
+    assert row["notes"] == "uci_points_missing_after_race"
 
 
 def test_build_team_calendar_ev_uses_category_fallback_for_missing_uwt_history() -> None:
@@ -361,9 +361,145 @@ def test_build_team_calendar_ev_uses_category_fallback_for_missing_uwt_history()
     assert "history_missing" in row["notes"]
 
 
+def test_build_team_calendar_ev_uses_category_fallback_for_missing_1_2_history() -> None:
+    calendar_df = pd.DataFrame(
+        [
+            {
+                "team_slug": "solution-tech-nippo-rali",
+                "team_name": "Solution Tech NIPPO Rali",
+                "planning_year": 2026,
+                "race_id": 501,
+                "race_name": "Gran Premio Primavera-Ontur",
+                "category": "1.2",
+                "date_label": "22.03",
+                "month": 3,
+                "start_date": "2026-03-22",
+                "end_date": "2026-03-22",
+                "pcs_race_slug": "gran-premio-primavera-ontur",
+                "status": "completed",
+                "team_calendar_status": "active",
+                "source": "team_program_live",
+                "overlap_group": "",
+                "notes": "",
+            }
+        ]
+    )
+    historical_df = pd.DataFrame(
+        [
+            {
+                "race_id": 601,
+                "race_name": "Comparable 1.1 One Day",
+                "historical_years_analyzed": 4,
+                "latest_category": "1.1",
+                "race_type": "One-day",
+                "route_profile": "hard one-day",
+                "avg_top10_points": 90.0,
+                "avg_winner_points": 30.0,
+                "avg_points_efficiency": 2.4,
+                "avg_stage_top10_points": 0.0,
+                "avg_stage_count": 0.0,
+                "avg_top10_field_form": 2.0,
+                "base_opportunity_index": 0.45,
+                "base_opportunity_points": 40.5,
+                "one_day_signal": 0.75,
+                "stage_hunter_signal": 0.0,
+                "gc_signal": 0.0,
+                "time_trial_signal": 0.0,
+                "all_round_signal": 0.35,
+                "sprint_bonus_signal": 0.25,
+                "field_softness_score": 0.35,
+            }
+        ]
+    )
+    actual_points_df = pd.DataFrame([{"race_id": 501, "actual_points": 15.0}])
+
+    result_df = module.build_team_calendar_ev(
+        team_slug="solution-tech-nippo-rali",
+        planning_year=2026,
+        historical_summary=historical_df,
+        team_calendar=calendar_df,
+        team_profile=TEAM_PROFILE,
+        actual_points_df=actual_points_df,
+    )
+
+    row = result_df.iloc[0]
+    assert float(row["base_opportunity_points"]) == 40.5
+    assert float(row["expected_points"]) > 0.0
+    assert "history_fallback_from=1.1" in row["notes"]
+    assert "history_missing" in row["notes"]
+
+
+def test_build_team_calendar_ev_uses_category_fallback_for_missing_2_2_history() -> None:
+    calendar_df = pd.DataFrame(
+        [
+            {
+                "team_slug": "solution-tech-nippo-rali",
+                "team_name": "Solution Tech NIPPO Rali",
+                "planning_year": 2026,
+                "race_id": 701,
+                "race_name": "Tour of Sharjah",
+                "category": "2.2",
+                "date_label": "23.01",
+                "month": 1,
+                "start_date": "2026-01-23",
+                "end_date": "2026-01-27",
+                "pcs_race_slug": "tour-of-sharjah",
+                "status": "completed",
+                "team_calendar_status": "active",
+                "source": "team_program_live",
+                "overlap_group": "",
+                "notes": "",
+            }
+        ]
+    )
+    historical_df = pd.DataFrame(
+        [
+            {
+                "race_id": 801,
+                "race_name": "Comparable 2.1 Stage Race",
+                "historical_years_analyzed": 3,
+                "latest_category": "2.1",
+                "race_type": "Stage race",
+                "route_profile": "short stage race",
+                "avg_top10_points": 180.0,
+                "avg_winner_points": 45.0,
+                "avg_points_efficiency": 2.8,
+                "avg_stage_top10_points": 120.0,
+                "avg_stage_count": 4.0,
+                "avg_top10_field_form": 3.2,
+                "base_opportunity_index": 0.50,
+                "base_opportunity_points": 90.0,
+                "one_day_signal": 0.15,
+                "stage_hunter_signal": 0.55,
+                "gc_signal": 0.45,
+                "time_trial_signal": 0.0,
+                "all_round_signal": 0.50,
+                "sprint_bonus_signal": 0.20,
+                "field_softness_score": 0.40,
+            }
+        ]
+    )
+    actual_points_df = pd.DataFrame([{"race_id": 701, "actual_points": 30.0}])
+
+    result_df = module.build_team_calendar_ev(
+        team_slug="solution-tech-nippo-rali",
+        planning_year=2026,
+        historical_summary=historical_df,
+        team_calendar=calendar_df,
+        team_profile=TEAM_PROFILE,
+        actual_points_df=actual_points_df,
+    )
+
+    row = result_df.iloc[0]
+    assert float(row["base_opportunity_points"]) == 90.0
+    assert float(row["expected_points"]) > 0.0
+    assert "history_fallback_from=2.1" in row["notes"]
+    assert "history_missing" in row["notes"]
+
+
 def test_build_actual_points_table_marks_completed_errors_as_unknown() -> None:
     class StubClient:
-        def get_team_race_points(self, team_slug: str, race_slug: str):
+        def get_team_race_uci_points(self, team_slug: str, race_slug: str, season_year: int):
             raise RuntimeError("boom")
 
     actual_points_df = module.build_actual_points_table(
@@ -376,7 +512,7 @@ def test_build_actual_points_table_marks_completed_errors_as_unknown() -> None:
 
     row = actual_points_df.iloc[0]
     assert pd.isna(row["actual_points"])
-    assert row["notes"] == "points_page_error=RuntimeError"
+    assert row["notes"] == "uci_points_error=RuntimeError"
 
 
 def test_summarize_team_calendar_ev_returns_one_row_kpis() -> None:

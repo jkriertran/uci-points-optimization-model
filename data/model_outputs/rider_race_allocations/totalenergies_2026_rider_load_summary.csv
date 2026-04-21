@@ -1,0 +1,14 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+totalenergies,TotalEnergies,2026,TURGIS Anthony,oneday,anchor,77,77,2613.58962,0.594402,0.571315,Classique Dunkerque,2026-05-19,1.Pro,117.677723
+totalenergies,TotalEnergies,2026,JEANNIÈRE Emilien,oneday,anchor,77,0,2496.140216,0.504624,0.571315,Classique Dunkerque,2026-05-19,1.Pro,112.988375
+totalenergies,TotalEnergies,2026,TESSON Jason,oneday,engine,77,0,2010.586073,0.270681,0.571315,Classique Dunkerque,2026-05-19,1.Pro,93.601882
+totalenergies,TotalEnergies,2026,BONNET Thomas,oneday,banker,67,0,1336.771369,0.178998,0.59608,Classique Dunkerque,2026-05-19,1.Pro,80.634341
+totalenergies,TotalEnergies,2026,DAUPHIN Florian,oneday,unclassified,61,0,1175.948709,0.149968,0.616772,Classique Dunkerque,2026-05-19,1.Pro,76.489139
+totalenergies,TotalEnergies,2026,VERCHER Mattéo,hills,banker,50,0,1157.818837,0.252853,0.4396,4 Jours de Dunkerque,2026-05-20,2.Pro,71.689178
+totalenergies,TotalEnergies,2026,GACHIGNARD Thomas,oneday,unclassified,59,0,1144.038748,0.13858,0.623566,Classique Dunkerque,2026-05-19,1.Pro,75.909241
+totalenergies,TotalEnergies,2026,DELETTRE Alexandre,fallback,banker,18,0,622.773092,0.255942,0.461511,4 Jours de Dunkerque,2026-05-20,2.Pro,76.600096
+totalenergies,TotalEnergies,2026,BURGAUDEAU Mathieu,oneday,low_conversion_depth,27,0,563.977819,0.132226,0.655821,Classique Dunkerque,2026-05-19,1.Pro,73.917713
+totalenergies,TotalEnergies,2026,BREUILLARD Nicolas,gc,banker,8,0,391.608791,0.166588,0.527657,4 Jours de Dunkerque,2026-05-20,2.Pro,65.45023
+totalenergies,TotalEnergies,2026,BOUCHARD Geoffrey,climber,low_conversion_depth,7,0,350.337848,0.122575,0.634214,4 Jours de Dunkerque,2026-05-20,2.Pro,66.661989
+totalenergies,TotalEnergies,2026,DUJARDIN Sandy,fallback,unclassified,9,0,161.555917,0.172705,0.44809,Boucles de la Mayenne,2026-05-28,2.Pro,46.51064
+totalenergies,TotalEnergies,2026,BOULAHOITE Rayan,fallback,low_conversion_depth,2,0,19.654957,0.128534,0.499702,Étoile de Bessèges,2026-02-04,2.1,10.562251

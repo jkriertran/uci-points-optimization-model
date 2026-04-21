@@ -1,0 +1,17 @@
+team_slug,team_name,planning_year,history_missing_races,completed_history_missing_races,scheduled_history_missing_races,cancelled_history_missing_races,history_missing_with_fallback,history_missing_with_zero_expected,history_missing_with_positive_actual_points,completed_missing_ev_components,actual_points_scored_in_history_missing_races,expected_points_in_history_missing_races,ev_gap_sum_in_history_missing_races,earliest_history_missing_race_date,latest_history_missing_race_date
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,37,17,20,0,37,0,15,0,1691.98,2253.107722,699.787546,2026-01-20,2026-10-13
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,22,8,14,0,22,0,6,0,253.0,548.671307,31.084158,2026-01-23,2026-09-19
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,21,13,8,0,21,0,13,0,1707.0,1302.085144,961.410083,2026-02-16,2026-08-22
+cofidis,Cofidis,2026,20,13,7,0,20,0,12,0,1437.03,1090.81132,774.78407,2026-01-23,2026-08-22
+unibet-rose-rockets,Unibet Rose Rockets,2026,18,14,4,0,18,0,14,0,1081.0,802.58576,493.892432,2026-01-23,2026-06-14
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,18,10,8,0,18,0,10,0,128.01,731.481227,-276.765916,2026-01-23,2026-09-19
+totalenergies,TotalEnergies,2026,17,11,6,0,17,0,11,0,549.98,874.247976,23.690565,2026-01-23,2026-07-04
+burgos-burpellet-bh,Burgos Burpellet BH,2026,17,14,3,0,17,0,8,0,257.01,729.428069,-303.548083,2026-01-19,2026-08-22
+equipo-kern-pharma,Equipo Kern Pharma,2026,14,9,5,0,14,0,9,0,445.97,639.807402,60.258274,2026-01-23,2026-08-22
+team-polti-visitmalta,Team Polti VisitMalta,2026,14,10,4,0,14,0,9,0,225.01,547.041958,-137.232988,2026-01-23,2026-09-19
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,13,8,5,0,13,0,8,0,235.01,755.426131,-218.544533,2026-01-23,2026-07-04
+team-flanders-baloise,Team Flanders - Baloise,2026,12,11,1,0,12,0,7,0,141.97,482.600357,-298.408872,2026-01-29,2026-04-22
+solution-tech-nippo-rali,Solution Tech NIPPO Rali,2026,10,9,1,0,10,0,8,0,214.0,372.916024,-112.723838,2026-01-23,2026-05-10
+euskaltel-euskadi,Euskaltel - Euskadi,2026,8,7,1,0,8,0,7,0,207.97,364.830147,-111.04625,2026-01-23,2026-05-01
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,7,5,2,0,7,0,4,0,101.0,390.00084,-216.623428,2026-02-16,2026-08-30
+team-novo-nordisk,Team Novo Nordisk,2026,2,2,0,0,2,0,0,0,0.0,100.113557,-100.113557,2026-02-25,2026-03-21

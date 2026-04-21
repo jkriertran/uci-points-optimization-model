@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 24.727381,
+  "mean_selected_breakout_probability": 0.168038,
+  "mean_selected_specialty_match_score": 0.537657,
+  "pairings_scored": 720,
+  "planning_year": 2026,
+  "race_count": 36,
+  "race_leader_assignments": 36,
+  "rider_count": 20,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 252,
+  "team_name": "Euskaltel - Euskadi",
+  "team_slug": "euskaltel-euskadi",
+  "top_race_leader_rider": "MART\u00cdN Gotzon",
+  "top_race_name": "Classica Camp de Morvedre",
+  "top_riders_per_race": 3
+}

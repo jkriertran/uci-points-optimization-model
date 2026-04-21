@@ -1,0 +1,16 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,PIDCOCK Thomas,oneday,anchor,56,56,2460.327375,0.995296,0.542289,Tour of Oman,2026-02-07,2.Pro,90.772823
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,DE GENDT Aimé,oneday,anchor,56,0,1844.723778,0.617725,0.542289,Tour of Oman,2026-02-07,2.Pro,65.944418
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,VAN MOER Brent,oneday,banker,54,0,1359.366339,0.233869,0.54654,Tour of Oman,2026-02-07,2.Pro,49.107977
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,MOSCHETTI Matteo,oneday,banker,44,0,933.384297,0.224284,0.578857,Figueira Champions Classic,2026-02-14,1.Pro,44.202526
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,MAŁECKI Kamil,oneday,unclassified,41,0,815.920293,0.160646,0.592738,Figueira Champions Classic,2026-02-14,1.Pro,41.707152
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,LIEPIŅŠ Emīls,oneday,unclassified,38,0,765.402253,0.143179,0.609057,Figueira Champions Classic,2026-02-14,1.Pro,40.981705
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,CAMPRUBÍ Marcel,oneday,low_conversion_depth,38,0,743.335649,0.13285,0.609057,Figueira Champions Classic,2026-02-14,1.Pro,39.913567
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,HERMANS Quinten,hills,banker,18,0,563.919445,0.219597,0.475067,Tour of Oman,2026-02-07,2.Pro,50.894763
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,GLOAG Thomas,gc,unclassified,13,0,462.349502,0.162854,0.528939,Tour of Oman,2026-02-07,2.Pro,49.895084
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,DONOVAN Mark,gc,unclassified,12,0,451.811218,0.170391,0.539165,Tour of Oman,2026-02-07,2.Pro,49.795927
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,ZUKOWSKY Nickolas,gc,low_conversion_depth,11,0,385.028537,0.143179,0.541994,Vuelta a Andalucía,2026-02-18,2.Pro,42.781359
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,GONZÁLEZ David,sprint,low_conversion_depth,4,0,118.478452,0.139229,0.479638,Tour of Oman,2026-02-07,2.Pro,49.947501
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,AZPARREN Xabier Mikel,gc,low_conversion_depth,2,0,70.260986,0.133477,0.589115,Tour of the Alps,2026-04-20,2.Pro,35.358648
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,HOUCOU Emmanuel,sprint,low_conversion_depth,2,0,51.385556,0.125524,0.479024,Tour de Hongrie,2026-05-13,2.Pro,31.229777
+pinarello-q365-pro-cycling-team,Pinarello Q36.5 Pro Cycling Team,2026,VADER Milan,hills,low_conversion_depth,3,0,31.802535,0.134738,0.434037,Coppi e Bartali,2026-03-25,2.1,12.606663

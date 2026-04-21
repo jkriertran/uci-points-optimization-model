@@ -1,0 +1,9 @@
+model_name,feature_columns,test_next_season,train_next_seasons,train_rows,test_rows,actual_positive_rows,predicted_positive_rows,top_k,top_k_capture,accuracy,precision,recall,brier_score,log_loss
+baseline_prior_points,uci_points,2023,2022,310,241,53,23,53,0.54716981,0.82572614,0.73913043,0.32075472,0.13871552,0.46927309
+baseline_prior_points,uci_points,2024,"2022, 2023",551,349,94,53,94,0.64893617,0.80229226,0.73584906,0.41489362,0.14456422,0.50202573
+baseline_prior_points,uci_points,2025,"2022, 2023, 2024",900,353,108,54,108,0.7037037,0.78470255,0.7962963,0.39814815,0.14240926,0.45716901
+baseline_prior_points,uci_points,2026,"2022, 2023, 2024, 2025",1253,264,24,37,24,0.33333333,0.875,0.37837838,0.58333333,0.11130324,0.46994779
+baseline_points_scoring_role,"uci_points, n_scoring_results, team_rank_within_roster",2023,2022,310,241,53,25,53,0.52830189,0.8340249,0.76,0.35849057,0.1372997,0.46892241
+baseline_points_scoring_role,"uci_points, n_scoring_results, team_rank_within_roster",2024,"2022, 2023",551,349,94,55,94,0.61702128,0.78510029,0.67272727,0.39361702,0.14119602,0.46708289
+baseline_points_scoring_role,"uci_points, n_scoring_results, team_rank_within_roster",2025,"2022, 2023, 2024",900,353,108,66,108,0.64814815,0.80736544,0.8030303,0.49074074,0.14252588,0.44312236
+baseline_points_scoring_role,"uci_points, n_scoring_results, team_rank_within_roster",2026,"2022, 2023, 2024, 2025",1253,264,24,50,24,0.41666667,0.83333333,0.3,0.625,0.1222937,0.44255487

@@ -1,0 +1,31 @@
+{
+  "audit_date": "2026-04-20",
+  "calendar_error_count": 5,
+  "calendar_errors": [
+    "2021: HTTPError: 403 Client Error: Forbidden for url: https://firstcycling.com/race.php?t=2&y=2021&m=02",
+    "2022: HTTPError: 403 Client Error: Forbidden for url: https://firstcycling.com/race.php?t=2&y=2022&m=01",
+    "2023: HTTPError: 403 Client Error: Forbidden for url: https://firstcycling.com/race.php?t=2&y=2023&m=01",
+    "2024: HTTPError: 403 Client Error: Forbidden for url: https://firstcycling.com/race.php?t=2&y=2024&m=01",
+    "2025: HTTPError: 403 Client Error: Forbidden for url: https://firstcycling.com/race.php?t=2&y=2025&m=01"
+  ],
+  "manifest_path": "/Volumes/Developer/Developer/uci-points-optimization-model/config/history_missing_backfill_manifest.csv",
+  "manifest_races": 7,
+  "matched_entries": 0,
+  "races_with_full_year_coverage": 0,
+  "races_with_partial_coverage": 7,
+  "requested_tiers": [
+    "P1"
+  ],
+  "requested_years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "scrape_error_count": 0,
+  "scrape_errors": [],
+  "scraped_editions": 0,
+  "snapshot_path": "/Volumes/Developer/Developer/uci-points-optimization-model/data/race_editions_snapshot.csv",
+  "snapshot_rows_after_merge": 688
+}

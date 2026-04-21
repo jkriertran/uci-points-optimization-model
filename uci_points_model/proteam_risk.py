@@ -16,6 +16,7 @@ SNAPSHOT_FILENAMES = {
 RISK_BAND_HIGH = "High"
 RISK_BAND_MEDIUM = "Medium"
 RISK_BAND_LOWER = "Lower"
+TEAM_OVERRIDE_THRESHOLDS = (50, 100, 150, 250, 300, 400)
 
 
 def default_proteam_snapshot_path(scope: str) -> Path:
@@ -257,6 +258,108 @@ def prepare_proteam_detail(raw_dataset: pd.DataFrame, team_slug: str) -> pd.Data
     detail["share_pct"] = detail["share_of_team"] * 100
     detail["cumulative_share_pct"] = detail["cumulative_share"] * 100
     return detail.sort_values(["team_rank_within_counted_list"]).reset_index(drop=True)
+
+
+def build_current_team_metric_overrides(raw_dataset: pd.DataFrame) -> pd.DataFrame:
+    if raw_dataset.empty:
+        rider_dataset = pd.DataFrame()
+    else:
+        dataset = raw_dataset.copy()
+        required_defaults: dict[str, object] = {
+            "cycle_label": "",
+            "ranking_url": "",
+            "source_url": "",
+            "scraped_at": "",
+            "season_year": pd.NA,
+            "points_counted": 0.0,
+            "points_not_counted": 0.0,
+            "sanction_points": 0.0,
+            "team_rank_within_counted_list": 0,
+            "is_placeholder_team_row": False,
+            "ranking_total_points": 0.0,
+            "team_total_points": 0.0,
+            "sanction_points_total": 0.0,
+        }
+        for column, default_value in required_defaults.items():
+            if column not in dataset.columns:
+                dataset[column] = default_value
+        rider_dataset = aggregate_proteam_riders(dataset)
+    if rider_dataset.empty:
+        return pd.DataFrame(
+            columns=[
+                "season",
+                "team_slug",
+                "snapshot_team_points_total",
+                "snapshot_top1_share",
+                "snapshot_top3_share",
+                "snapshot_top5_share",
+                "snapshot_n_riders_scoring",
+                "snapshot_effective_contributors",
+                "snapshot_points_outside_top5",
+                "snapshot_n_riders_50_plus",
+                "snapshot_n_riders_100_plus",
+                "snapshot_n_riders_150_plus",
+                "snapshot_n_riders_250_plus",
+                "snapshot_n_riders_300_plus",
+                "snapshot_n_riders_400_plus",
+            ]
+        )
+
+    override_rows: list[dict[str, object]] = []
+    for _, group in rider_dataset.groupby("team_slug", sort=False):
+        scoring_group = group.loc[~group["is_placeholder_team_row"]].copy()
+        if scoring_group.empty:
+            continue
+        scoring_group["points_counted"] = pd.to_numeric(scoring_group["points_counted"], errors="coerce").fillna(0.0)
+        scoring_group["team_rank_within_counted_list"] = pd.to_numeric(
+            scoring_group["team_rank_within_counted_list"],
+            errors="coerce",
+        ).astype("Int64")
+        scoring_group = scoring_group.sort_values(
+            ["team_rank_within_counted_list", "points_counted", "rider_name"],
+            ascending=[True, False, True],
+            na_position="last",
+        ).reset_index(drop=True)
+        season_values: set[int] = set()
+        for raw_years in scoring_group.get("season_years", pd.Series("", index=scoring_group.index)).astype(str):
+            for year_value in raw_years.split(","):
+                cleaned = year_value.strip()
+                if cleaned.isdigit():
+                    season_values.add(int(cleaned))
+        if not season_values:
+            continue
+
+        team_total_points = float(pd.to_numeric(scoring_group["team_total_points"], errors="coerce").iloc[0])
+        share_series = (
+            scoring_group["points_counted"].div(team_total_points).fillna(0.0)
+            if team_total_points
+            else pd.Series(0.0, index=scoring_group.index, dtype=float)
+        )
+        share_square_sum = float((share_series.pow(2)).sum())
+        override_row: dict[str, object] = {
+            "season": int(max(season_values)),
+            "team_slug": str(scoring_group["team_slug"].iloc[0]),
+            "snapshot_team_points_total": team_total_points,
+            "snapshot_top1_share": float(scoring_group["points_counted"].head(1).sum() / team_total_points)
+            if team_total_points
+            else 0.0,
+            "snapshot_top3_share": float(scoring_group["points_counted"].head(3).sum() / team_total_points)
+            if team_total_points
+            else 0.0,
+            "snapshot_top5_share": float(scoring_group["points_counted"].head(5).sum() / team_total_points)
+            if team_total_points
+            else 0.0,
+            "snapshot_n_riders_scoring": int((scoring_group["points_counted"] > 0).sum()),
+            "snapshot_effective_contributors": float(1.0 / share_square_sum) if share_square_sum > 0 else 0.0,
+            "snapshot_points_outside_top5": float(scoring_group["points_counted"].iloc[5:].sum()),
+        }
+        for threshold in TEAM_OVERRIDE_THRESHOLDS:
+            override_row[f"snapshot_n_riders_{threshold}_plus"] = int(
+                (scoring_group["points_counted"] >= float(threshold)).sum()
+            )
+        override_rows.append(override_row)
+
+    return pd.DataFrame(override_rows)
 
 
 def risk_band(top1_share: float, leader_shock_pct: float) -> str:

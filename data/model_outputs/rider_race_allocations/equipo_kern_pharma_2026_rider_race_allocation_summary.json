@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 25.725242,
+  "mean_selected_breakout_probability": 0.209392,
+  "mean_selected_specialty_match_score": 0.548654,
+  "pairings_scored": 1281,
+  "planning_year": 2026,
+  "race_count": 61,
+  "race_leader_assignments": 61,
+  "rider_count": 21,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 427,
+  "team_name": "Equipo Kern Pharma",
+  "team_slug": "equipo-kern-pharma",
+  "top_race_leader_rider": "COBO Iv\u00e1n",
+  "top_race_name": "Classica Camp de Morvedre",
+  "top_riders_per_race": 3
+}

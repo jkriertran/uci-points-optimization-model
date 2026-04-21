@@ -1,0 +1,15 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,ZANONCELLO Enrico,oneday,banker,54,37,1539.015113,0.207743,0.565391,Tour de Langkawi,2026-09-27,2.Pro,87.814517
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,MARCELLUSI Martin,hills,banker,55,18,1751.449815,0.263245,0.444014,Tour of Magnificent Qinghai,2026-07-05,2.Pro,115.906605
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,ROJAS Vicente,oneday,unclassified,47,0,1046.226881,0.146541,0.587897,Tour of Hainan,2026-04-15,2.Pro,72.803512
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,TURCONI Filippo,oneday,unclassified,45,0,853.11769,0.13858,0.596366,Coppa Bernocchi,2026-10-05,1.Pro,37.89456
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,CETTOLIN Filippo,oneday,inactive_depth,40,0,742.447142,0.121412,0.622317,Coppa Bernocchi,2026-10-05,1.Pro,35.735578
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,PINAZZI Mattia,oneday,low_conversion_depth,39,0,705.451192,0.120259,0.628801,Coppa Bernocchi,2026-10-05,1.Pro,34.746972
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,CRUZ Edward,oneday,inactive_depth,39,0,696.80031,0.117417,0.628801,Coppa Bernocchi,2026-10-05,1.Pro,34.322807
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,PALETTI Luca,fallback,low_conversion_depth,16,0,685.930146,0.137289,0.506908,Tour of Magnificent Qinghai,2026-07-05,2.Pro,93.873803
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,CONFORTI Lorenzo,fallback,low_conversion_depth,15,0,652.246815,0.131605,0.5177,Tour of Magnificent Qinghai,2026-07-05,2.Pro,91.868626
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,MANENTI Marco,hills,unclassified,14,0,493.684701,0.140536,0.463077,Tour of Hainan,2026-04-15,2.Pro,73.978992
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,TOLIO Alex,gc,low_conversion_depth,8,0,437.025252,0.12316,0.577171,Tour of Magnificent Qinghai,2026-07-05,2.Pro,90.525662
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,ROSTOVTSEV Sergey,sprint,inactive_depth,5,0,372.146917,0.115739,0.632918,Tour de Langkawi,2026-09-27,2.Pro,93.44857
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,MAGLI Filippo,gc,low_conversion_depth,6,0,290.362018,0.120259,0.574611,Tour of Magnificent Qinghai,2026-07-05,2.Pro,88.690798
+bardiani-csf-7-saber,Bardiani CSF 7 Saber,2026,TSVETKOV Nikita,sprint,inactive_depth,2,0,180.211265,0.115739,0.718368,Tour de Langkawi,2026-09-27,2.Pro,92.138811

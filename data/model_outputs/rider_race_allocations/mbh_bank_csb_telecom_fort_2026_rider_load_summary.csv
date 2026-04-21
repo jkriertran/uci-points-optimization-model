@@ -1,0 +1,13 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,BUDZIŃSKI Marcin,hills,banker,53,50,1626.183259,0.211339,0.441316,Tour de Langkawi,2026-09-27,2.Pro,105.808033
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,AMBROSINI Matteo,oneday,low_conversion_depth,37,2,684.465966,0.117417,0.618997,Coppa Bernocchi,2026-10-05,1.Pro,34.274714
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,PERSICO Davide,sprint,unclassified,51,1,1250.084781,0.149277,0.406977,Tour de Langkawi,2026-09-27,2.Pro,112.861605
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,BURATTI Nicolò,hills,banker,53,0,1573.332085,0.188772,0.441316,Tour de Langkawi,2026-09-27,2.Pro,102.554105
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,NESPOLI Lorenzo,sprint,low_conversion_depth,44,0,1015.060571,0.127322,0.422229,Tour de Langkawi,2026-09-27,2.Pro,104.368998
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,VERRE Alessandro,gc,unclassified,18,0,820.824196,0.172705,0.451642,Tour de Langkawi,2026-09-27,2.Pro,104.437194
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,FANCELLU Alessandro,gc,unclassified,18,0,787.062757,0.152757,0.451642,Tour de Langkawi,2026-09-27,2.Pro,100.639517
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,ZOCCARATO Samuele,oneday,low_conversion_depth,35,0,649.173786,0.117417,0.633189,Coppa Bernocchi,2026-10-05,1.Pro,34.034302
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,GRUSZCZYŃSKI Filip,climber,inactive_depth,12,0,627.911015,0.115739,0.609924,Tour de Langkawi,2026-09-27,2.Pro,93.202949
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,BAGATIN Christian,fallback,low_conversion_depth,41,0,495.840129,0.115739,0.342418,Tour of the Alps,2026-04-20,2.Pro,44.051895
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,CRETTI Luca,gc,low_conversion_depth,3,0,132.822901,0.118546,0.57296,Tour of Slovenia,2026-06-17,2.Pro,51.949844
+mbh-bank-csb-telecom-fort,MBH Bank CSB Telecom Fort,2026,BRACALENTE Diego,fallback,low_conversion_depth,6,0,59.686734,0.115739,0.372712,Coppa Sabatini,2026-09-10,1.Pro,15.174182

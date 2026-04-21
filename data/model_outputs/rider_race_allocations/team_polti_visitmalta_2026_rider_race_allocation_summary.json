@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 24.396631,
+  "mean_selected_breakout_probability": 0.163213,
+  "mean_selected_specialty_match_score": 0.578816,
+  "pairings_scored": 1656,
+  "planning_year": 2026,
+  "race_count": 69,
+  "race_leader_assignments": 69,
+  "rider_count": 24,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 483,
+  "team_name": "Team Polti VisitMalta",
+  "team_slug": "team-polti-visitmalta",
+  "top_race_leader_rider": "LONARDI Giovanni",
+  "top_race_name": "Classica Camp de Morvedre",
+  "top_riders_per_race": 3
+}

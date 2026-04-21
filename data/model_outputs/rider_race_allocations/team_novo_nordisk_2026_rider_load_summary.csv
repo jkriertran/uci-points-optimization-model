@@ -1,0 +1,10 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+team-novo-nordisk,Team Novo Nordisk,2026,RIDOLFO Filippo,oneday,low_conversion_depth,16,16,521.813631,0.117417,0.46566,Tour of Hainan,2026-04-15,2.Pro,84.295307
+team-novo-nordisk,Team Novo Nordisk,2026,ARMITT Hamish,fallback,low_conversion_depth,16,0,420.710214,0.115739,0.444326,Tour of Hainan,2026-04-15,2.Pro,69.702514
+team-novo-nordisk,Team Novo Nordisk,2026,BEADLE Hamish,fallback,low_conversion_depth,16,0,417.944282,0.115739,0.444326,Tour of Hainan,2026-04-15,2.Pro,69.239233
+team-novo-nordisk,Team Novo Nordisk,2026,BRAND Sam,fallback,low_conversion_depth,16,0,415.178349,0.115739,0.444326,Tour of Hainan,2026-04-15,2.Pro,68.775952
+team-novo-nordisk,Team Novo Nordisk,2026,COLLADON Jacopo,fallback,inactive_depth,16,0,412.412415,0.115739,0.444326,Tour of Hainan,2026-04-15,2.Pro,68.312671
+team-novo-nordisk,Team Novo Nordisk,2026,DAUGE Lucas,fallback,inactive_depth,15,0,349.661764,0.115739,0.437661,Tour of Hainan,2026-04-15,2.Pro,67.84939
+team-novo-nordisk,Team Novo Nordisk,2026,DE GRAEVE Quinten,fallback,inactive_depth,11,0,248.63025,0.115739,0.457714,Volta Comunitat Valenciana,2026-02-04,2.Pro,53.013709
+team-novo-nordisk,Team Novo Nordisk,2026,MACKIE Donovan,sprint,inactive_depth,5,0,173.542616,0.115739,0.472379,Tour of Hainan,2026-04-15,2.Pro,75.747478
+team-novo-nordisk,Team Novo Nordisk,2026,LÓPEZ Juan José,gc,inactive_depth,1,0,60.910126,0.115739,0.570884,Tour of Türkiye,2026-04-26,2.Pro,60.910126

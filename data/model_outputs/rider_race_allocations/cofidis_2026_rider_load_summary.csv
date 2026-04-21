@@ -1,0 +1,11 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+cofidis,Cofidis,2026,IZAGIRRE Ion,hills,anchor,82,78,3190.76588,0.908744,0.44089,Tour of Magnificent Qinghai,2026-07-05,2.Pro,126.238833
+cofidis,Cofidis,2026,ANIOŁKOWSKI Stanisław,oneday,anchor,82,3,2721.523958,0.567983,0.561372,Classique Dunkerque,2026-05-19,1.Pro,111.260501
+cofidis,Cofidis,2026,ARANBURU Alex,fallback,anchor,82,1,2861.883289,0.786677,0.371273,Tour of Magnificent Qinghai,2026-07-05,2.Pro,127.607005
+cofidis,Cofidis,2026,COQUARD Bryan,oneday,engine,82,0,2713.172433,0.587842,0.561372,Classique Dunkerque,2026-05-19,1.Pro,110.965415
+cofidis,Cofidis,2026,BIERMANS Jenthe,oneday,engine,74,0,1870.818503,0.315606,0.577757,Classique Dunkerque,2026-05-19,1.Pro,94.36071
+cofidis,Cofidis,2026,RENARD Alexis,oneday,banker,62,0,1343.815941,0.226178,0.61278,Classique Dunkerque,2026-05-19,1.Pro,84.490483
+cofidis,Cofidis,2026,CARR Simon,oneday,banker,59,0,1223.431759,0.165087,0.623506,Classique Dunkerque,2026-05-19,1.Pro,80.096571
+cofidis,Cofidis,2026,FRETIN Milan,fallback,engine,23,0,897.150843,0.319134,0.478684,Tour of Magnificent Qinghai,2026-07-05,2.Pro,92.330884
+cofidis,Cofidis,2026,IZQUIERDO Clément,fallback,banker,20,0,722.632995,0.207743,0.505256,Tour of Magnificent Qinghai,2026-07-05,2.Pro,80.479214
+cofidis,Cofidis,2026,JOALLAND Yaël,climber,low_conversion_depth,8,0,390.105407,0.121992,0.660894,Tour of Magnificent Qinghai,2026-07-05,2.Pro,84.229454

@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 26.20606,
+  "mean_selected_breakout_probability": 0.150722,
+  "mean_selected_specialty_match_score": 0.465635,
+  "pairings_scored": 1113,
+  "planning_year": 2026,
+  "race_count": 53,
+  "race_leader_assignments": 53,
+  "rider_count": 21,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 371,
+  "team_name": "MBH Bank CSB Telecom Fort",
+  "team_slug": "mbh-bank-csb-telecom-fort",
+  "top_race_leader_rider": "BUDZI\u0143SKI Marcin",
+  "top_race_name": "Classica Camp de Morvedre",
+  "top_riders_per_race": 3
+}

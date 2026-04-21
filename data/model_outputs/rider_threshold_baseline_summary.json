@@ -1,0 +1,286 @@
+{
+  "anchor_model_name": "baseline_prior_points",
+  "artifact_version": "rider_threshold_baseline_v1",
+  "model_results": [
+    {
+      "coefficients": {
+        "uci_points": 0.00542832
+      },
+      "converged": true,
+      "expanding_window_folds": [
+        {
+          "accuracy": 0.82572614,
+          "actual_positive_rows": 53,
+          "brier_score": 0.13871552,
+          "log_loss": 0.46927309,
+          "precision": 0.73913043,
+          "predicted_positive_rows": 23,
+          "recall": 0.32075472,
+          "test_next_season": 2023,
+          "test_rows": 241,
+          "top_k": 53,
+          "top_k_capture": 0.54716981,
+          "train_next_seasons": [
+            2022
+          ],
+          "train_rows": 310
+        },
+        {
+          "accuracy": 0.80229226,
+          "actual_positive_rows": 94,
+          "brier_score": 0.14456422,
+          "log_loss": 0.50202573,
+          "precision": 0.73584906,
+          "predicted_positive_rows": 53,
+          "recall": 0.41489362,
+          "test_next_season": 2024,
+          "test_rows": 349,
+          "top_k": 94,
+          "top_k_capture": 0.64893617,
+          "train_next_seasons": [
+            2022,
+            2023
+          ],
+          "train_rows": 551
+        },
+        {
+          "accuracy": 0.78470255,
+          "actual_positive_rows": 108,
+          "brier_score": 0.14240926,
+          "log_loss": 0.45716901,
+          "precision": 0.7962963,
+          "predicted_positive_rows": 54,
+          "recall": 0.39814815,
+          "test_next_season": 2025,
+          "test_rows": 353,
+          "top_k": 108,
+          "top_k_capture": 0.7037037,
+          "train_next_seasons": [
+            2022,
+            2023,
+            2024
+          ],
+          "train_rows": 900
+        },
+        {
+          "accuracy": 0.875,
+          "actual_positive_rows": 24,
+          "brier_score": 0.11130324,
+          "log_loss": 0.46994779,
+          "precision": 0.37837838,
+          "predicted_positive_rows": 37,
+          "recall": 0.58333333,
+          "test_next_season": 2026,
+          "test_rows": 264,
+          "top_k": 24,
+          "top_k_capture": 0.33333333,
+          "train_next_seasons": [
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "train_rows": 1253
+        }
+      ],
+      "expanding_window_summary": {
+        "accuracy": 0.81772991,
+        "brier_score": 0.1354912,
+        "eligible": true,
+        "fold_count": 4,
+        "log_loss": 0.47535101,
+        "precision": 0.67599523,
+        "recall": 0.42804147,
+        "rows_scored": 1207,
+        "test_seasons": [
+          2023,
+          2024,
+          2025,
+          2026
+        ],
+        "top_k_capture": 0.62365591
+      },
+      "feature_columns": [
+        "uci_points"
+      ],
+      "feature_means": {
+        "uci_points": 135.84574819
+      },
+      "feature_scales": {
+        "uci_points": 270.14020372
+      },
+      "in_sample_metrics": {
+        "accuracy": 0.8127884,
+        "brier_score": 0.13287146,
+        "log_loss": 0.4368333,
+        "precision": 0.71851852,
+        "recall": 0.28279883
+      },
+      "intercept": -2.03341026,
+      "iterations": 7,
+      "model_name": "baseline_prior_points",
+      "negative_rows": 1174,
+      "odds_ratios": {
+        "uci_points": 1.00544308
+      },
+      "positive_rows": 343,
+      "regularization_strength": 1.0,
+      "standardized_coefficients": {
+        "uci_points": 1.46640835
+      },
+      "training_rows": 1517
+    },
+    {
+      "coefficients": {
+        "n_scoring_results": 0.11149914,
+        "team_rank_within_roster": -0.03542712,
+        "uci_points": 0.00172057
+      },
+      "converged": true,
+      "expanding_window_folds": [
+        {
+          "accuracy": 0.8340249,
+          "actual_positive_rows": 53,
+          "brier_score": 0.1372997,
+          "log_loss": 0.46892241,
+          "precision": 0.76,
+          "predicted_positive_rows": 25,
+          "recall": 0.35849057,
+          "test_next_season": 2023,
+          "test_rows": 241,
+          "top_k": 53,
+          "top_k_capture": 0.52830189,
+          "train_next_seasons": [
+            2022
+          ],
+          "train_rows": 310
+        },
+        {
+          "accuracy": 0.78510029,
+          "actual_positive_rows": 94,
+          "brier_score": 0.14119602,
+          "log_loss": 0.46708289,
+          "precision": 0.67272727,
+          "predicted_positive_rows": 55,
+          "recall": 0.39361702,
+          "test_next_season": 2024,
+          "test_rows": 349,
+          "top_k": 94,
+          "top_k_capture": 0.61702128,
+          "train_next_seasons": [
+            2022,
+            2023
+          ],
+          "train_rows": 551
+        },
+        {
+          "accuracy": 0.80736544,
+          "actual_positive_rows": 108,
+          "brier_score": 0.14252588,
+          "log_loss": 0.44312236,
+          "precision": 0.8030303,
+          "predicted_positive_rows": 66,
+          "recall": 0.49074074,
+          "test_next_season": 2025,
+          "test_rows": 353,
+          "top_k": 108,
+          "top_k_capture": 0.64814815,
+          "train_next_seasons": [
+            2022,
+            2023,
+            2024
+          ],
+          "train_rows": 900
+        },
+        {
+          "accuracy": 0.83333333,
+          "actual_positive_rows": 24,
+          "brier_score": 0.1222937,
+          "log_loss": 0.44255487,
+          "precision": 0.3,
+          "predicted_positive_rows": 50,
+          "recall": 0.625,
+          "test_next_season": 2026,
+          "test_rows": 264,
+          "top_k": 24,
+          "top_k_capture": 0.41666667,
+          "train_next_seasons": [
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "train_rows": 1253
+        }
+      ],
+      "expanding_window_summary": {
+        "accuracy": 0.81193041,
+        "brier_score": 0.13667259,
+        "eligible": true,
+        "fold_count": 4,
+        "log_loss": 0.4550778,
+        "precision": 0.64673696,
+        "recall": 0.46561727,
+        "rows_scored": 1207,
+        "test_seasons": [
+          2023,
+          2024,
+          2025,
+          2026
+        ],
+        "top_k_capture": 0.59498208
+      },
+      "feature_columns": [
+        "uci_points",
+        "n_scoring_results",
+        "team_rank_within_roster"
+      ],
+      "feature_means": {
+        "n_scoring_results": 6.21555702,
+        "team_rank_within_roster": 13.53460778,
+        "uci_points": 135.84574819
+      },
+      "feature_scales": {
+        "n_scoring_results": 6.34134048,
+        "team_rank_within_roster": 8.67943087,
+        "uci_points": 270.14020372
+      },
+      "in_sample_metrics": {
+        "accuracy": 0.81608438,
+        "brier_score": 0.13122771,
+        "log_loss": 0.41804127,
+        "precision": 0.69277108,
+        "recall": 0.33527697
+      },
+      "intercept": -1.93068519,
+      "iterations": 6,
+      "model_name": "baseline_points_scoring_role",
+      "negative_rows": 1174,
+      "odds_ratios": {
+        "n_scoring_results": 1.11795278,
+        "team_rank_within_roster": 0.96519307,
+        "uci_points": 1.00172205
+      },
+      "positive_rows": 343,
+      "regularization_strength": 1.0,
+      "standardized_coefficients": {
+        "n_scoring_results": 0.70705401,
+        "team_rank_within_roster": -0.30748726,
+        "uci_points": 0.4647942
+      },
+      "training_rows": 1517
+    }
+  ],
+  "training_summary": {
+    "negative_rows": 1174,
+    "next_seasons": [
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "positive_rows": 343,
+    "rows": 1517
+  }
+}

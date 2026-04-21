@@ -1,0 +1,25 @@
+{
+  "all_checks_passed": true,
+  "artifact_version": "manual_sample_audit_v1",
+  "audit_date": "2026-04-20",
+  "race_audit": {
+    "all_checks_passed": true,
+    "failed_rows": 0,
+    "passed_rows": 924,
+    "sample_rows": 924
+  },
+  "random_seed": 20260420,
+  "rider_audit": {
+    "all_checks_passed": true,
+    "failed_rows": 0,
+    "passed_rows": 2724,
+    "sample_rows": 2724
+  },
+  "team_audit": {
+    "all_checks_passed": true,
+    "failed_rows": 0,
+    "passed_rows": 100,
+    "sample_rows": 100
+  },
+  "upstream_root": "/Volumes/Developer/Developer/procycling-clean-scraped-data"
+}

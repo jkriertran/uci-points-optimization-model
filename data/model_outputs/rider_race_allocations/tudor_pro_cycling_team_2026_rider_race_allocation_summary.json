@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 31.884219,
+  "mean_selected_breakout_probability": 0.399719,
+  "mean_selected_specialty_match_score": 0.554422,
+  "pairings_scored": 3920,
+  "planning_year": 2026,
+  "race_count": 98,
+  "race_leader_assignments": 98,
+  "rider_count": 40,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 686,
+  "team_name": "Tudor Pro Cycling Team",
+  "team_slug": "tudor-pro-cycling-team",
+  "top_race_leader_rider": "TRENTIN Matteo",
+  "top_race_name": "Tour Down Under",
+  "top_riders_per_race": 3
+}

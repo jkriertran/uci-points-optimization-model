@@ -1,0 +1,15 @@
+priority_tier,race_name,category,aliases,notes
+P1,Gran Premio Primavera-Ontur,1.2,,Repeated across three teams with no historical anchor.
+P1,Giro della Provincia Biella,1.2,Giro della Provincia di Biella,Repeated across two teams; token-overlap actual matching suggests alias review too.
+P1,Clásica de Pascua-Padron,1.2,Clasica de Pascua-Padron|Clásica de Pascua - Padron|Clasica de Pascua - Padron,Repeated across two teams; token-overlap actual matching suggests alias review too.
+P1,Popolarissima,1.2,,Repeated across two teams with no historical anchor.
+P1,Tour of Sharjah,2.2,,Repeated across two teams with no historical anchor.
+P1,GP Slovenian Istria,1.2,,Repeated across two teams with no historical anchor.
+P1,UMAG Classic,1.2,,Repeated across two teams with no historical anchor.
+P2,Istrian Spring Tour,2.2,,Repeated across two teams with lower total points impact.
+P2,POREC Classic,1.2,,Repeated across two teams but low actual-points impact so far.
+P2,GP Lillers,1.2,Grand Prix de Lillers,Single-team race with meaningful actual-points distortion.
+P3,Rhodes GP,1.2,,Single-team race with modest points impact.
+P3,Pune Grand Tour,2.2,,Single-team race with modest points impact.
+P3,Tour of Rhodes,2.2,,Single-team race with modest points impact and possible alias review.
+P3,Le Tour des 100 Communes,1.2,,Single-team race with zero actual points in the current completed row.

@@ -1,0 +1,17 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+team-flanders-baloise,Team Flanders - Baloise,2026,HESTERS Jules,oneday,unclassified,46,38,1218.719697,0.15702,0.577906,Vuelta a Andalucía,2026-02-18,2.Pro,61.562428
+team-flanders-baloise,Team Flanders - Baloise,2026,CRABBE Tom,sprint,banker,43,8,1015.749905,0.176618,0.369915,Tour of Türkiye,2026-04-26,2.Pro,75.040442
+team-flanders-baloise,Team Flanders - Baloise,2026,VAN HEMELEN Vincent,oneday,unclassified,45,0,1107.380044,0.152056,0.581677,Vuelta a Andalucía,2026-02-18,2.Pro,58.034088
+team-flanders-baloise,Team Flanders - Baloise,2026,LAMBRECHT Michiel,oneday,unclassified,43,0,953.539952,0.141852,0.589162,Vuelta a Andalucía,2026-02-18,2.Pro,53.788517
+team-flanders-baloise,Team Flanders - Baloise,2026,VANHOOF Ward,oneday,low_conversion_depth,38,0,706.721997,0.123747,0.614216,Clasica de Almeria,2026-02-15,1.Pro,34.64407
+team-flanders-baloise,Team Flanders - Baloise,2026,MARIS Elias,oneday,inactive_depth,38,0,655.568915,0.117417,0.614216,Clasica de Almeria,2026-02-15,1.Pro,32.170421
+team-flanders-baloise,Team Flanders - Baloise,2026,VANDENSTORME Dylan,oneday,low_conversion_depth,38,0,648.854166,0.117417,0.614216,Clasica de Almeria,2026-02-15,1.Pro,31.845711
+team-flanders-baloise,Team Flanders - Baloise,2026,VANDENABEELE Henri,gc,inactive_depth,8,0,335.217619,0.127322,0.485602,Vuelta a Andalucía,2026-02-18,2.Pro,60.492681
+team-flanders-baloise,Team Flanders - Baloise,2026,THONNON Senne,gc,low_conversion_depth,5,0,252.563921,0.122575,0.545747,Vuelta a Andalucía,2026-02-18,2.Pro,54.44533
+team-flanders-baloise,Team Flanders - Baloise,2026,DEWEIRDT Siebe,hills,low_conversion_depth,5,0,167.233,0.124337,0.485627,Vuelta a Andalucía,2026-02-18,2.Pro,53.589921
+team-flanders-baloise,Team Flanders - Baloise,2026,VAN HAUTEGEM Leander,sprint,inactive_depth,3,0,141.721792,0.120834,0.544353,Tour of Türkiye,2026-04-26,2.Pro,57.199824
+team-flanders-baloise,Team Flanders - Baloise,2026,LANHOVE Milan,gc,low_conversion_depth,2,0,91.030933,0.120834,0.565179,Tour de Wallonie,2026-06-01,2.Pro,48.368642
+team-flanders-baloise,Team Flanders - Baloise,2026,HUYSMANS Nolan,sprint,low_conversion_depth,2,0,86.247334,0.11798,0.561735,Tour of Türkiye,2026-04-26,2.Pro,54.52324
+team-flanders-baloise,Team Flanders - Baloise,2026,TORNEY Artuur,sprint,low_conversion_depth,1,0,54.252961,0.11798,0.621924,Tour of Türkiye,2026-04-26,2.Pro,54.252961
+team-flanders-baloise,Team Flanders - Baloise,2026,VERCOUILLIE Victor,oneday,low_conversion_depth,3,0,47.733673,0.116296,0.575077,Brabantse Pijl,2026-04-17,1.Pro,21.929318
+team-flanders-baloise,Team Flanders - Baloise,2026,DEMAN Brem,hills,low_conversion_depth,2,0,21.851715,0.121412,0.436696,Étoile de Bessèges,2026-02-04,2.1,12.527319

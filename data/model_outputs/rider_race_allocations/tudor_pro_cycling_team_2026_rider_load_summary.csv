@@ -1,0 +1,17 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,TRENTIN Matteo,oneday,anchor,98,98,4138.072298,0.784849,0.552406,Tour de Langkawi,2026-09-27,2.Pro,133.608583
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,MOZZATO Luca,oneday,anchor,98,0,3931.406885,0.747981,0.552406,Tour de Langkawi,2026-09-27,2.Pro,126.30178
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,RONDEL Mathys,hills,engine,98,0,3047.594217,0.466675,0.445604,Tour de Langkawi,2026-09-27,2.Pro,113.316254
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,PLUIMERS Rick,oneday,banker,73,0,1576.861707,0.22523,0.602158,Classique Dunkerque,2026-05-19,1.Pro,69.197355
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,BRENNER Marco,gc,anchor,30,0,1568.321299,0.489698,0.465164,Tour de Langkawi,2026-09-27,2.Pro,128.636286
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,HIRSCHI Marc,oneday,banker,72,0,1508.676963,0.179798,0.605343,Classique Dunkerque,2026-05-19,1.Pro,67.175758
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,HALLER Marco,oneday,low_conversion_depth,70,0,1359.656921,0.133477,0.608621,Classique Dunkerque,2026-05-19,1.Pro,62.192164
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,KOLZE CHANGIZI Sebastian,oneday,low_conversion_depth,67,0,1326.462039,0.133477,0.617326,Classique Dunkerque,2026-05-19,1.Pro,62.011506
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,VOISARD Yannis,gc,engine,26,0,1212.724195,0.238767,0.517989,Tour de Langkawi,2026-09-27,2.Pro,104.772646
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,STORER Michael,gc,banker,23,0,997.807598,0.220529,0.530576,Tour of Oman,2026-02-07,2.Pro,70.48339
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,ALAPHILIPPE Julian,fallback,unclassified,22,0,820.186261,0.154167,0.540813,4 Jours de Dunkerque,2026-05-20,2.Pro,54.200013
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,FROIDEVAUX Robin,sprint,low_conversion_depth,5,0,256.201379,0.139229,0.534274,Tour de Langkawi,2026-09-27,2.Pro,102.32228
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,ZIJLAARD Maikel,sprint,inactive_depth,1,0,99.288513,0.121412,0.724337,Tour de Langkawi,2026-09-27,2.Pro,99.288513
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,BARTA Will,tt,unclassified,1,0,9.958237,0.142514,0.734253,Chrono des Nations,2026-10-18,1.1,9.958237
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,STORK Florian,fallback,unclassified,1,0,9.729326,0.137933,0.497844,Tour des Alpes-Maritimes,2026-02-22,1.1,9.729326
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,KÜNG Stefan,tt,inactive_depth,1,0,9.626532,0.121412,0.734253,Chrono des Nations,2026-10-18,1.1,9.626532

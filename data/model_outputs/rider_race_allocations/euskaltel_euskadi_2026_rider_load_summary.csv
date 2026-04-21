@@ -1,0 +1,13 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+euskaltel-euskadi,Euskaltel - Euskadi,2026,MARTÍN Gotzon,oneday,banker,36,32,1063.089705,0.240746,0.542881,Tour of Hainan,2026-04-15,2.Pro,73.870013
+euskaltel-euskadi,Euskaltel - Euskadi,2026,LÓPEZ Jordi,gc,banker,14,4,519.608947,0.18547,0.426369,Tour of Hainan,2026-04-15,2.Pro,69.155345
+euskaltel-euskadi,Euskaltel - Euskadi,2026,BERASATEGI Xabier,oneday,banker,36,0,992.968409,0.19381,0.542882,Tour of Hainan,2026-04-15,2.Pro,68.378753
+euskaltel-euskadi,Euskaltel - Euskadi,2026,AGIRRE Jon,oneday,unclassified,35,0,858.807705,0.195512,0.546729,Tour of Hainan,2026-04-15,2.Pro,62.000663
+euskaltel-euskadi,Euskaltel - Euskadi,2026,VAN DER TUUK Axel,gc,banker,14,0,498.847559,0.178202,0.426369,Tour of Hainan,2026-04-15,2.Pro,66.384845
+euskaltel-euskadi,Euskaltel - Euskadi,2026,MINTEGI Iker,oneday,unclassified,29,0,492.779476,0.13858,0.575655,Figueira Champions Classic,2026-02-14,1.Pro,39.568644
+euskaltel-euskadi,Euskaltel - Euskadi,2026,MURGUIALDAY Jokin,oneday,low_conversion_depth,22,0,352.381741,0.117417,0.636875,Figueira Champions Classic,2026-02-14,1.Pro,35.455668
+euskaltel-euskadi,Euskaltel - Euskadi,2026,VAN DER TUUK Danny,oneday,low_conversion_depth,22,0,342.734765,0.116296,0.636875,Figueira Champions Classic,2026-02-14,1.Pro,34.539212
+euskaltel-euskadi,Euskaltel - Euskadi,2026,LASTRA Jonathan,gc,low_conversion_depth,7,0,341.220652,0.128534,0.52861,Tour of Hainan,2026-04-15,2.Pro,56.275761
+euskaltel-euskadi,Euskaltel - Euskadi,2026,SUTTON Louis,hills,low_conversion_depth,27,0,338.363714,0.127927,0.431372,Figueira Champions Classic,2026-02-14,1.Pro,25.883619
+euskaltel-euskadi,Euskaltel - Euskadi,2026,BIZKARRA Mikel,gc,low_conversion_depth,6,0,278.421724,0.12672,0.537856,Vuelta a Andalucía,2026-02-18,2.Pro,54.176165
+euskaltel-euskadi,Euskaltel - Euskadi,2026,HENNEQUIN Paul,sprint,low_conversion_depth,4,0,152.075601,0.12316,0.509327,Tour of Hainan,2026-04-15,2.Pro,62.490824

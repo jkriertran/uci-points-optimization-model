@@ -1,0 +1,17 @@
+{
+  "actual_points_scored_in_history_missing_races": 8675.94,
+  "audit_date": "2026-04-20",
+  "cancelled_history_missing_races": 0,
+  "completed_history_missing_races": 161,
+  "completed_missing_ev_components": 0,
+  "ev_gap_sum_in_history_missing_races": 1269.899663,
+  "expected_points_in_history_missing_races": 11985.154939,
+  "history_missing_with_fallback": 250,
+  "history_missing_with_positive_actual_points": 141,
+  "history_missing_with_zero_expected": 0,
+  "scanned_team_files": 16,
+  "scheduled_history_missing_races": 89,
+  "team_ev_root": "/Volumes/Developer/Developer/uci-points-optimization-model/data/team_ev",
+  "teams_with_history_missing": 16,
+  "total_history_missing_races": 250
+}

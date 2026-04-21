@@ -1,0 +1,15 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+team-polti-visitmalta,Team Polti VisitMalta,2026,LONARDI Giovanni,oneday,banker,69,69,2077.950571,0.259055,0.565307,Tour of Magnificent Qinghai,2026-07-05,2.Pro,101.499484
+team-polti-visitmalta,Team Polti VisitMalta,2026,PEÑALVER Manuel,oneday,banker,68,0,1701.239852,0.192964,0.56721,Tour of Hainan,2026-04-15,2.Pro,65.282639
+team-polti-visitmalta,Team Polti VisitMalta,2026,CROZZOLO Fabrizio,oneday,unclassified,50,0,984.344858,0.133477,0.626776,GP Industria & Artigianato,2026-09-06,1.Pro,39.149125
+team-polti-visitmalta,Team Polti VisitMalta,2026,SEVILLA Diego Pablo,oneday,unclassified,49,0,947.101819,0.146541,0.632028,GP Industria & Artigianato,2026-09-06,1.Pro,38.541277
+team-polti-visitmalta,Team Polti VisitMalta,2026,MAESTRI Mirco,oneday,low_conversion_depth,49,0,907.804498,0.135372,0.632028,GP Industria & Artigianato,2026-09-06,1.Pro,36.943423
+team-polti-visitmalta,Team Polti VisitMalta,2026,GIULIANO Dario,oneday,low_conversion_depth,47,0,836.515038,0.120259,0.638324,GP Industria & Artigianato,2026-09-06,1.Pro,34.662868
+team-polti-visitmalta,Team Polti VisitMalta,2026,SERRANO Javier,oneday,low_conversion_depth,45,0,788.29203,0.119115,0.640755,GP Industria & Artigianato,2026-09-06,1.Pro,34.525159
+team-polti-visitmalta,Team Polti VisitMalta,2026,CRESCIOLI Ludovico,hills,unclassified,24,0,754.239649,0.159916,0.458772,Tour of Magnificent Qinghai,2026-07-05,2.Pro,91.161308
+team-polti-visitmalta,Team Polti VisitMalta,2026,PESENTI Thomas,hills,unclassified,22,0,704.190573,0.159188,0.459891,Tour of Magnificent Qinghai,2026-07-05,2.Pro,90.573349
+team-polti-visitmalta,Team Polti VisitMalta,2026,MIFSUD Andrea,hills,unclassified,20,0,683.466848,0.154167,0.468513,Tour of Magnificent Qinghai,2026-07-05,2.Pro,89.995099
+team-polti-visitmalta,Team Polti VisitMalta,2026,BELLETTA Dario Igor,hills,unclassified,20,0,671.716639,0.150661,0.468513,Tour of Magnificent Qinghai,2026-07-05,2.Pro,88.594659
+team-polti-visitmalta,Team Polti VisitMalta,2026,BAIS Mattia,hills,unclassified,16,0,429.489733,0.149968,0.468428,Tour of Slovenia,2026-06-17,2.Pro,45.659633
+team-polti-visitmalta,Team Polti VisitMalta,2026,BESSEGA Tommaso,sprint,low_conversion_depth,2,0,150.276822,0.117417,0.641773,Tour of Magnificent Qinghai,2026-07-05,2.Pro,90.673247
+team-polti-visitmalta,Team Polti VisitMalta,2026,MUÑOZ Francisco,gc,low_conversion_depth,2,0,146.943788,0.132226,0.616004,Tour of Magnificent Qinghai,2026-07-05,2.Pro,92.004265

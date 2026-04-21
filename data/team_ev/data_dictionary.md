@@ -63,3 +63,13 @@
 | `race_count` | Total number of tracked races in the saved season artifact. |
 | `completed_race_count` | Number of completed races in the saved season artifact. |
 | `remaining_race_count` | Number of scheduled races in the saved season artifact. |
+
+## UI-Only Roster Scenario Overlay
+
+The Streamlit `Team Calendar EV` workspace can recompute a non-persistent roster scenario overlay directly from the saved race-level EV artifact.
+
+- Scope: `ui_only_saved_team_ev_overlay`
+- Formula: `base_opportunity_points * scenario_team_fit_multiplier * scenario_participation_confidence * execution_multiplier`
+- Preset catalog version: `deterministic-ui-v1`
+- Saved artifact fields stay unchanged; the overlay adds scenario columns only inside the app and in the optional scenario download.
+- The first version keeps `base_opportunity_points` and `execution_multiplier` fixed to the saved artifact and changes only team-fit plus participation assumptions.

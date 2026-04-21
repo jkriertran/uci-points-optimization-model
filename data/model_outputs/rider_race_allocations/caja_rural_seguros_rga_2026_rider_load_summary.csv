@@ -1,0 +1,16 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,LEITÃO Iúri,oneday,engine,66,52,2129.733814,0.277158,0.552018,Tour of Magnificent Qinghai,2026-07-05,2.Pro,85.195473
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,BERWICK Sebastian,hills,banker,66,14,1913.897558,0.260099,0.446506,Tour of Magnificent Qinghai,2026-07-05,2.Pro,92.743989
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,MOLENAAR Alex,oneday,banker,56,0,1289.934107,0.192964,0.577149,Tour of Hainan,2026-04-15,2.Pro,60.550411
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,PRADES Eduard,oneday,low_conversion_depth,44,0,806.115226,0.127927,0.627932,Figueira Champions Classic,2026-02-14,1.Pro,37.819573
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,FERNÁNDEZ Samuel,oneday,low_conversion_depth,44,0,799.526521,0.127322,0.627932,Figueira Champions Classic,2026-02-14,1.Pro,37.533033
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,CASTELLON Jan,gc,unclassified,19,0,786.397742,0.178998,0.489813,Tour of Magnificent Qinghai,2026-07-05,2.Pro,84.93549
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,ARRIOLABENGOA Julen,oneday,low_conversion_depth,44,0,767.927006,0.119115,0.627932,Figueira Champions Classic,2026-02-14,1.Pro,36.158786
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,PEÑUELA Francisco Joel,oneday,low_conversion_depth,42,0,734.206008,0.11798,0.631087,Figueira Champions Classic,2026-02-14,1.Pro,35.586867
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,SORARRAIN Gorka,gc,unclassified,15,0,722.162982,0.165836,0.530347,Tour of Magnificent Qinghai,2026-07-05,2.Pro,83.21434
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,OLDANI Stefano,hills,unclassified,22,0,672.304919,0.162116,0.457762,Tour of Hainan,2026-04-15,2.Pro,60.363711
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,GAVIRIA Fernando,sprint,unclassified,14,0,577.069991,0.149968,0.521065,Tour of Magnificent Qinghai,2026-07-05,2.Pro,84.396886
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,BARCELÓ Fernando,hills,unclassified,17,0,490.207198,0.153461,0.459733,Vuelta a Andalucía,2026-02-18,2.Pro,45.593694
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,PARRA José Félix,gc,low_conversion_depth,4,0,212.73072,0.133477,0.591116,Tour of Magnificent Qinghai,2026-07-05,2.Pro,76.640869
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,VILLAR Iker,sprint,low_conversion_depth,3,0,146.875953,0.119115,0.596942,Tour of Magnificent Qinghai,2026-07-05,2.Pro,76.372246
+caja-rural-seguros-rga,Caja Rural - Seguros RGA,2026,DARDER Sergi,hills,unclassified,6,0,73.98927,0.141852,0.404813,O Gran Camiño,2026-04-14,2.1,15.098848

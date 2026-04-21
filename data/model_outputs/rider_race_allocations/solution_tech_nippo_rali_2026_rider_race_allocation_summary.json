@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 25.913224,
+  "mean_selected_breakout_probability": 0.150852,
+  "mean_selected_specialty_match_score": 0.499291,
+  "pairings_scored": 504,
+  "planning_year": 2026,
+  "race_count": 21,
+  "race_leader_assignments": 21,
+  "rider_count": 24,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 147,
+  "team_name": "Solution Tech NIPPO Rali",
+  "team_slug": "solution-tech-nippo-rali",
+  "top_race_leader_rider": "RAJOVI\u0106 Du\u0161an",
+  "top_race_name": "GP la Marseillaise",
+  "top_riders_per_race": 3
+}

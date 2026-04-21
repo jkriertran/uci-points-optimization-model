@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-cofidis,2026,2026-04-18T00:28:37.535044+00:00,status_changed,77,Brabantse Pijl,completed,scheduled,team_calendar_refresh,matched_via=token_overlap
-cofidis,2026,2026-04-18T00:28:37.535044+00:00,status_changed,15075,Classic Grand Besançon Doubs,completed,scheduled,team_calendar_refresh,matched_via=normalized_name

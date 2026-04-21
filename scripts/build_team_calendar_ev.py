@@ -40,6 +40,11 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional YYYY-MM-DD override for status calculation.",
     )
+    parser.add_argument(
+        "--reuse-saved-actual-points",
+        action="store_true",
+        help="Reuse the existing actual-points CSV instead of refetching live race results.",
+    )
     return parser.parse_args()
 
 
@@ -69,6 +74,7 @@ def main() -> None:
         paths=paths,
         default_profile_path=DEFAULT_PROTEAM_PROFILE_PATH,
         refresh_calendar=not Path(args.calendar_path).exists(),
+        refresh_actual_points=not args.reuse_saved_actual_points,
         as_of_date=args.as_of_date,
     )
     write_team_calendar_ev_artifacts(bundle, write_changelog=False, write_shared_docs=True)

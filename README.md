@@ -30,6 +30,7 @@ The recommendation layer is **category-aware**. If a race changes class across y
 - includes a `Team Calendar EV` tab that loads saved multi-team team-season EV artifacts from disk
 - includes archetype-aware team profiles plus optimizer-backed strength weights for tracked ProTeams
 - includes a UI-only deterministic roster-scenario overlay for saved team-season EV artifacts
+- includes a file-driven rider breakout and rider-to-race planning view inside `Team Calendar EV`
 - includes a `Data Sources` tab for inspecting the live data currently driving each workspace
 
 If you want a presentation-ready explanation of the model, see `MODEL_STUDY_GUIDE.md`.
@@ -46,6 +47,9 @@ Planned future work is tracked in `ROADMAP.md`.
 │   ├── team_calendar_race_aliases.csv
 │   └── tracked_proteams_2026.csv
 ├── data/
+│   ├── imported/
+│   │   └── procycling_clean_scraped_data/
+│   ├── model_inputs/
 │   ├── proteam_risk_current_snapshot.csv
 │   ├── proteam_risk_cycle_2026_2028_snapshot.csv
 │   ├── race_editions_snapshot.csv
@@ -58,17 +62,33 @@ Planned future work is tracked in `ROADMAP.md`.
 │   ├── build_all_proteam_calendar_ev.py
 │   ├── build_proteam_risk_snapshot.py
 │   ├── build_snapshot.py
+│   ├── backtest_top5_proteam.py
+│   ├── backtest_rider_thresholds.py
+│   ├── build_rider_race_allocation.py
+│   ├── build_rider_season_panel.py
+│   ├── build_team_depth_panel.py
 │   ├── build_team_calendar_ev.py
 │   ├── build_team_calendar_snapshots.py
+│   ├── build_top5_proteam_training_table.py
+│   ├── fit_top5_proteam_baseline.py
+│   ├── fit_rider_threshold_baseline.py
+│   ├── import_historical_proteam_data.py
+│   ├── validate_historical_import.py
 │   └── fit_team_profile_weights.py
 ├── tests/
 │   ├── test_app_team_calendar_ev.py
 │   ├── test_calendar_ev.py
 │   ├── test_data.py
 │   ├── test_fc_client.py
+│   ├── test_historical_data_import.py
 │   ├── test_model.py
 │   ├── test_pcs_client.py
 │   ├── test_proteam_risk.py
+│   ├── test_rider_race_allocation.py
+│   ├── test_rider_threshold_backtest.py
+│   ├── test_rider_threshold_model.py
+│   ├── test_source_registry.py
+│   ├── test_top5_proteam_backtest.py
 │   ├── test_roster_scenarios.py
 │   ├── test_team_calendar.py
 │   ├── test_team_calendar_artifacts.py
@@ -80,17 +100,27 @@ Planned future work is tracked in `ROADMAP.md`.
     ├── backtest.py
     ├── calendar_ev.py
     ├── data.py
+    ├── data_sources.py
     ├── fc_client.py
+    ├── historical_data_import.py
     ├── model.py
     ├── pcs_client.py
     ├── proteam_risk.py
+    ├── rider_race_allocation.py
+    ├── rider_threshold_backtest.py
+    ├── rider_threshold_model.py
     ├── roster_scenarios.py
+    ├── source_registry.py
     ├── team_calendar.py
     ├── team_calendar_artifacts.py
     ├── team_calendar_client.py
+    ├── team_depth_features.py
     ├── team_identity.py
     ├── team_profile_optimizer.py
-    └── team_profiles.py
+    ├── team_profiles.py
+    ├── top5_proteam_backtest.py
+    ├── target_definitions.py
+    └── top5_proteam_model.py
 ```
 
 ## Local run
@@ -134,6 +164,90 @@ that refreshes those two files on a daily schedule. It is intentionally `latest 
 the fixed snapshot filenames are overwritten in place rather than archived by date.
 If the scheduled refresh fails, the workflow opens or updates a GitHub issue so the failure is visible without opening the app.
 
+## Historical ProTeam import workflow
+
+The top-five ProTeam modeling work now starts from verified upstream historical datasets before any fallback scraping.
+
+Import the required historical files with:
+
+```bash
+PYTHONPATH=. python3 scripts/import_historical_proteam_data.py
+```
+
+For the rider-threshold workflow, import the optional rider enrichments too:
+
+```bash
+PYTHONPATH=. python3 scripts/import_historical_proteam_data.py --include-optional
+```
+
+Validate the imported landing zone with:
+
+```bash
+PYTHONPATH=. python3 scripts/validate_historical_import.py
+```
+
+By default the importer tries a local sibling checkout of `procycling-clean-scraped-data` first, then falls back to authenticated GitHub if needed. Imported files land under `data/imported/procycling_clean_scraped_data/` together with `import_metadata.json`.
+
+Build the canonical historical team-season panel with:
+
+```bash
+PYTHONPATH=. python3 scripts/build_team_depth_panel.py
+```
+
+Build the observed top-five ProTeam training table with:
+
+```bash
+PYTHONPATH=. python3 scripts/build_top5_proteam_training_table.py
+```
+
+Build the canonical rider-season panel with:
+
+```bash
+PYTHONPATH=. python3 scripts/build_rider_season_panel.py
+```
+
+Fit the anchor logistic baselines and write summary plus prediction artifacts with:
+
+```bash
+PYTHONPATH=. python3 scripts/fit_top5_proteam_baseline.py
+```
+
+Fit the first rider-threshold baselines with:
+
+```bash
+PYTHONPATH=. python3 scripts/fit_rider_threshold_baseline.py
+```
+
+Run the expanding-window rider-threshold benchmark report with:
+
+```bash
+PYTHONPATH=. python3 scripts/backtest_rider_thresholds.py
+```
+
+Build a first deterministic rider-to-race allocation artifact from saved Team Calendar EV outputs plus the winning rider-threshold model with:
+
+```bash
+PYTHONPATH=. python3 scripts/build_rider_race_allocation.py \
+  --team-slug bardiani-csf-7-saber \
+  --planning-year 2026
+```
+
+Rebuild rider-to-race allocation artifacts for every saved Team Calendar EV team-season with:
+
+```bash
+PYTHONPATH=. python3 scripts/build_all_rider_race_allocations.py
+```
+
+The rider-race planning layer stays as a deterministic `v1` for now. It is inspectable, reproducible, and already useful inside the app, while a constrained optimizer should wait until overlap rules, rider-load limits, and explicit planning objectives are specified.
+
+Run the expanding-window benchmark report with:
+
+```bash
+PYTHONPATH=. python3 scripts/backtest_top5_proteam.py
+```
+
+Those generated model-input files land under `data/model_inputs/`, and the fitted baseline plus backtest artifacts land under `data/model_outputs/`.
+
 ## App workspaces
 
 The Streamlit app is organized around five workspaces:
@@ -141,7 +255,7 @@ The Streamlit app is organized around five workspaces:
 - `Recommended Targets`: race-level historical opportunity ranking with the current planning calendar overlay
 - `Backtest & Calibration`: walk-forward evaluation plus default-versus-calibrated weight comparison
 - `ProTeam Risk Monitor`: concentration analysis on counted team points
-- `Team Calendar EV`: saved team-season EV artifacts, explainability, profile transparency, and roster scenarios
+- `Team Calendar EV`: saved team-season EV artifacts, team continuity plus top-5 ProTeam forecast, rider breakout outlook, rider-race planning, explainability, and roster scenarios
 - `Data Sources`: the raw datasets currently driving the active analysis
 
 ## Team Calendar EV pipeline

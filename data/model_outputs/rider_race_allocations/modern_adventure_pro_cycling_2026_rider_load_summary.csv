@@ -1,0 +1,15 @@
+team_slug,team_name,planning_year,rider_name,specialty_primary,archetype,recommended_race_count,race_leader_assignments,allocation_score_total,mean_breakout_probability,mean_specialty_match_score,best_race_name,best_race_start_date,best_race_category,best_race_allocation_score
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,CARPENTER Robin,oneday,inactive_depth,17,16,313.327634,0.115739,0.592286,Maryland Cycling Classic,2026-09-05,2.Pro,45.583619
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,OLIVER Ben,sprint,banker,26,9,668.679263,0.16434,0.390225,Tour of Türkiye,2026-04-26,2.Pro,68.318224
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,LÓPEZ Ian,climber,inactive_depth,9,1,347.795734,0.115739,0.583341,Tour of Türkiye,2026-04-26,2.Pro,57.709093
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,PICKRELL Riley,hills,low_conversion_depth,26,0,597.234727,0.129143,0.444453,Tour of Slovenia,2026-06-17,2.Pro,52.386105
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,DE BOD Stefan,tt,banker,18,0,381.335094,0.263245,0.091414,Tour of Slovenia,2026-06-17,2.Pro,50.338467
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,MCGILL Scott,sprint,low_conversion_depth,14,0,348.993709,0.119115,0.447189,Tour of Türkiye,2026-04-26,2.Pro,58.490404
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,CAUDELL Ezra,gc,low_conversion_depth,7,0,299.181832,0.117417,0.528409,Tour of Türkiye,2026-04-26,2.Pro,53.369986
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,STEWART Mark,gc,low_conversion_depth,6,0,260.458236,0.116855,0.546343,Tour of Türkiye,2026-04-26,2.Pro,52.515605
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,CHRISTIAN Sean,hills,low_conversion_depth,19,0,259.224288,0.115739,0.425058,Maryland Cycling Classic,2026-09-05,2.Pro,30.312328
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,TOWERS Lucas,hills,low_conversion_depth,17,0,212.61136,0.115739,0.429491,Maryland Cycling Classic,2026-09-05,2.Pro,28.408976
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,MCDONALD Brody,sprint,inactive_depth,6,0,166.617319,0.115739,0.476467,Tour of Türkiye,2026-04-26,2.Pro,53.401447
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,WRIGHT Paul,hills,inactive_depth,14,0,161.089524,0.115739,0.429293,GP de Denain,2026-03-19,1.Pro,20.686867
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,HAUG Kieran,gc,low_conversion_depth,2,0,90.600976,0.115739,0.563225,Tour of Slovenia,2026-06-17,2.Pro,49.09623
+modern-adventure-pro-cycling,Modern Adventure Pro Cycling,2026,HAYTER Leo,gc,inactive_depth,1,0,41.251074,0.115739,0.579791,PostNord Tour of Denmark,2026-07-29,2.Pro,41.251074

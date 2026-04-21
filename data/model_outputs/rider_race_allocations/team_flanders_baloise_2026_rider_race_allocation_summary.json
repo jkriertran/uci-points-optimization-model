@@ -1,0 +1,19 @@
+{
+  "artifact_version": "rider_race_allocation_v1",
+  "mean_selected_allocation_score": 23.305552,
+  "mean_selected_breakout_probability": 0.140337,
+  "mean_selected_specialty_match_score": 0.559532,
+  "pairings_scored": 920,
+  "planning_year": 2026,
+  "race_count": 46,
+  "race_leader_assignments": 46,
+  "rider_count": 20,
+  "rider_model_name": "baseline_prior_points",
+  "roster_size": 7,
+  "selected_pairings": 322,
+  "team_name": "Team Flanders - Baloise",
+  "team_slug": "team-flanders-baloise",
+  "top_race_leader_rider": "HESTERS Jules",
+  "top_race_name": "Trofeo Calvi\u00e0",
+  "top_riders_per_race": 3
+}
