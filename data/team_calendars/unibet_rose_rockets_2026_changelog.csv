@@ -1,5 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-unibet-rose-rockets,2026,2026-04-20T11:01:36.777190+00:00,race_added,187,Tour du Poitou-Charentes,,scheduled,team_calendar_refresh,matched_via=alias
-unibet-rose-rockets,2026,2026-04-20T11:01:36.777190+00:00,race_added,192,Vuelta a Burgos,,scheduled,team_calendar_refresh,matched_via=alias
-unibet-rose-rockets,2026,2026-04-20T11:01:36.777190+00:00,race_removed,32,PostNord Tour of Denmark,scheduled,,team_calendar_refresh,matched_via=normalized_name
-unibet-rose-rockets,2026,2026-04-20T11:01:36.777190+00:00,status_changed,9,Amstel Gold Race,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+unibet-rose-rockets,2026,2026-04-21T10:49:52.237789+00:00,race_added,537,Circuit de Wallonie,,scheduled,team_calendar_refresh,matched_via=token_overlap

@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-04-20T11:01:10.980842+00:00,status_changed,139,Tour of Hainan,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-solution-tech-nippo-rali,2026,2026-04-20T11:01:10.980842+00:00,status_changed,798,Giro della Provincia Biella,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
