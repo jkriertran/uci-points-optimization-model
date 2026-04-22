@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+totalenergies,2026,2026-04-22T10:46:08.938887+00:00,race_added,539,Grand Prix Criquielion,,scheduled,team_calendar_refresh,matched_via=normalized_name
