@@ -1,2 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-pinarello-q365-pro-cycling-team,2026,2026-04-25T10:11:11.901452+00:00,status_changed,62,Tour of the Alps,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
