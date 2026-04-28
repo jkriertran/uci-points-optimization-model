@@ -1,2 +1,7 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-bardiani-csf-7-saber,2026,2026-04-27T11:20:51.057539+00:00,status_changed,149,Giro dell'Appennino,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-04-28T11:20:23.162112+00:00,race_added,212,Route d'Occitanie,,scheduled,team_calendar_refresh,matched_via=token_overlap
+bardiani-csf-7-saber,2026,2026-04-28T11:20:23.162112+00:00,race_added,408,Trofeo Castelfidardo,,scheduled,team_calendar_refresh,matched_via=token_overlap
+bardiani-csf-7-saber,2026,2026-04-28T11:20:23.162112+00:00,race_added,535,Circuito del Porto,,scheduled,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-04-28T11:20:23.162112+00:00,race_added,559,Giro del Medio Brenta,,scheduled,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-04-28T11:20:23.162112+00:00,race_added,734,Due Giorni Marchigiana - G.P. Santa Rita,,scheduled,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-04-28T11:20:23.162112+00:00,race_added,18948,Andorra MoraBanc Clàssica,,scheduled,team_calendar_refresh,matched_via=normalized_name

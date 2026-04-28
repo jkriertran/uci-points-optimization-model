@@ -1,2 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-mbh-bank-csb-telecom-fort,2026,2026-04-27T11:21:18.694897+00:00,status_changed,149,Giro dell'Appennino,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
