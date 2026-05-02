@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+tudor-pro-cycling-team,2026,2026-05-02T10:16:26.641671+00:00,status_changed,35,Eschborn-Frankfurt,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
