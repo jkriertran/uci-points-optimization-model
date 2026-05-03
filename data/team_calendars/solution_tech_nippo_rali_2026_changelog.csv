@@ -1,2 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-05-02T10:16:07.406404+00:00,status_changed,1047,GP Vorarlberg,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
