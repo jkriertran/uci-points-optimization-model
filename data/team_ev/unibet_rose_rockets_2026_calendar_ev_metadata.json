@@ -1,6 +1,6 @@
 {
   "artifact_row_count": 79,
-  "as_of_date": "2026-05-03",
+  "as_of_date": "2026-05-04",
   "expected_points_formula": "base_opportunity_points * team_fit_multiplier * participation_confidence * execution_multiplier",
   "opportunity_model": {
     "rationale": {
