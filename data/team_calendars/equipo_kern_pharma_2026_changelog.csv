@@ -1,2 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-equipo-kern-pharma,2026,2026-05-06T11:24:26.556499+00:00,race_added,250,Tour of Estonia,,scheduled,team_calendar_refresh,matched_via=normalized_name
