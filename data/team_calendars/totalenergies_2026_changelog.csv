@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+totalenergies,2026,2026-05-10T10:43:18.370821+00:00,status_changed,180,Grand Prix du Morbihan,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
