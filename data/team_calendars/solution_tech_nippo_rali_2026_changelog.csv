@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+solution-tech-nippo-rali,2026,2026-05-11T12:27:12.742454+00:00,status_changed,513,Tour of Hellas,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

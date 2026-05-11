@@ -1,2 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-burgos-burpellet-bh,2026,2026-05-10T10:42:36.414533+00:00,status_changed,180,Grand Prix du Morbihan,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-11T12:26:47.200080+00:00,status_changed,148,Tro-Bro Leon,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-11T12:26:47.200080+00:00,status_changed,513,Tour of Hellas,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
