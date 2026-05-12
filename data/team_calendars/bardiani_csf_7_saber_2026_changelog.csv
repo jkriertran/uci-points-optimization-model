@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+bardiani-csf-7-saber,2026,2026-05-12T11:29:31.176418+00:00,race_removed,10204,Antwerp Port Epic,scheduled,,team_calendar_refresh,matched_via=normalized_name
