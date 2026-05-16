@@ -1,2 +1,10 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-burgos-burpellet-bh,2026,2026-05-15T11:32:21.658666+00:00,status_changed,27600,Baku-Khankendi Azerbaijan Cycling Race,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_added,85,Vuelta a Castilla y León,,scheduled,team_calendar_refresh,matched_via=token_overlap
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_added,127,Tour of Magnificent Qinghai,,scheduled,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_added,192,Vuelta a Burgos,,scheduled,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_added,202,Circuito de Getxo,,scheduled,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_added,207,Villafranca de Ordizia,,scheduled,team_calendar_refresh,matched_via=token_overlap
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_added,13188,Mercan'Tour Classic Alpes-Maritimes,,scheduled,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_added,18948,Andorra MoraBanc Clàssica,,scheduled,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_removed,5228,Tour de Maurice,scheduled,,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-05-16T10:42:19.822521+00:00,race_removed,24928,Classique of Mauritius,scheduled,,team_calendar_refresh,matched_via=normalized_name
