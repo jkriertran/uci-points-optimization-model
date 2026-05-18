@@ -1,2 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-totalenergies,2026,2026-05-17T10:47:02.867284+00:00,status_changed,147,Tour du Finistère,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+totalenergies,2026,2026-05-18T12:50:26.176853+00:00,status_changed,144,Rund um Köln,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+totalenergies,2026,2026-05-18T12:50:26.176853+00:00,status_changed,182,Boucles de l'Aulne,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

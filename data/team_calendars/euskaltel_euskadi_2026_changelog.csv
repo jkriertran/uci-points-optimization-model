@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-euskaltel-euskadi,2026,2026-05-17T10:46:36.846667+00:00,status_changed,147,Tour du Finistère,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-05-18T12:50:01.055651+00:00,status_changed,182,Boucles de l'Aulne,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
