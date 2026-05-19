@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-mbh-bank-csb-telecom-fort,2026,2026-05-18T12:50:04.074850+00:00,race_added,535,Circuito del Porto,,completed,team_calendar_refresh,matched_via=normalized_name
-mbh-bank-csb-telecom-fort,2026,2026-05-18T12:50:04.074850+00:00,status_changed,765,Tour de Hongrie,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
