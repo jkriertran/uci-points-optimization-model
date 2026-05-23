@@ -1,2 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-team-novo-nordisk,2026,2026-05-22T12:03:39.258866+00:00,race_added,380,Okolo Slovenska,,scheduled,team_calendar_refresh,matched_via=normalized_name
