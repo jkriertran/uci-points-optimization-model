@@ -1,1 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+solution-tech-nippo-rali,2026,2026-05-24T10:52:53.905189+00:00,race_added,408,Trofeo Castelfidardo,,scheduled,team_calendar_refresh,matched_via=token_overlap
+solution-tech-nippo-rali,2026,2026-05-24T10:52:53.905189+00:00,race_added,734,Due Giorni Marchigiana - G.P. Santa Rita,,completed,team_calendar_refresh,matched_via=normalized_name
