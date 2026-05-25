@@ -1,3 +1,5 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-05-24T10:52:53.905189+00:00,race_added,408,Trofeo Castelfidardo,,scheduled,team_calendar_refresh,matched_via=token_overlap
-solution-tech-nippo-rali,2026,2026-05-24T10:52:53.905189+00:00,race_added,734,Due Giorni Marchigiana - G.P. Santa Rita,,completed,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-05-25T12:47:30.652381+00:00,race_added,199,GP Gippingen,,scheduled,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-05-25T12:47:30.652381+00:00,race_added,13188,Mercan'Tour Classic Alpes-Maritimes,,scheduled,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-05-25T12:47:30.652381+00:00,status_changed,408,Trofeo Castelfidardo,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+solution-tech-nippo-rali,2026,2026-05-25T12:47:30.652381+00:00,status_changed,4008,GP Beiras e Serra da Estrela,scheduled,completed,team_calendar_refresh,matched_via=token_overlap

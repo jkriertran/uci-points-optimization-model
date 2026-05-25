@@ -1,1 +1,8 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+euskaltel-euskadi,2026,2026-05-25T12:47:15.145535+00:00,race_added,85,Vuelta a Castilla y León,,scheduled,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-05-25T12:47:15.145535+00:00,race_added,127,Tour of Magnificent Qinghai,,scheduled,team_calendar_refresh,matched_via=normalized_name
+euskaltel-euskadi,2026,2026-05-25T12:47:15.145535+00:00,race_added,207,Villafranca de Ordizia,,scheduled,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-05-25T12:47:15.145535+00:00,race_added,531,Mem. A.Trochanowskiego,,scheduled,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-05-25T12:47:15.145535+00:00,race_added,563,Dookola Mazowsza,,scheduled,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-05-25T12:47:15.145535+00:00,race_added,4014,Puchar Mon,,scheduled,team_calendar_refresh,matched_via=normalized_name
+euskaltel-euskadi,2026,2026-05-25T12:47:15.145535+00:00,status_changed,4008,GP Beiras e Serra da Estrela,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
