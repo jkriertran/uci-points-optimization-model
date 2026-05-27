@@ -1,5 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-caja-rural-seguros-rga,2026,2026-05-25T12:47:00.972569+00:00,race_added,85,Vuelta a Castilla y León,,scheduled,team_calendar_refresh,matched_via=token_overlap
-caja-rural-seguros-rga,2026,2026-05-25T12:47:00.972569+00:00,race_added,207,Villafranca de Ordizia,,scheduled,team_calendar_refresh,matched_via=token_overlap
-caja-rural-seguros-rga,2026,2026-05-25T12:47:00.972569+00:00,race_added,212,Route d'Occitanie,,scheduled,team_calendar_refresh,matched_via=token_overlap
-caja-rural-seguros-rga,2026,2026-05-25T12:47:00.972569+00:00,status_changed,4008,GP Beiras e Serra da Estrela,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-05-27T12:39:34.028278+00:00,race_removed,212,Route d'Occitanie,scheduled,,team_calendar_refresh,matched_via=token_overlap

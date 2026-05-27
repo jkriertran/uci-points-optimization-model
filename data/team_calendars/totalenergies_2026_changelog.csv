@@ -1,3 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-totalenergies,2026,2026-05-25T12:47:43.717699+00:00,status_changed,175,4 Jours de Dunkerque,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-05-25T12:47:43.717699+00:00,status_changed,539,Grand Prix Criquielion,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+totalenergies,2026,2026-05-27T12:40:12.546925+00:00,race_added,349,Heistse Pijl,,scheduled,team_calendar_refresh,matched_via=token_overlap
+totalenergies,2026,2026-05-27T12:40:12.546925+00:00,status_changed,10204,Antwerp Port Epic,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

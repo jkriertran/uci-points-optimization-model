@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-pinarello-q365-pro-cycling-team,2026,2026-05-25T12:47:26.041747+00:00,race_added,199,GP Gippingen,,scheduled,team_calendar_refresh,matched_via=normalized_name
-pinarello-q365-pro-cycling-team,2026,2026-05-25T12:47:26.041747+00:00,status_changed,539,Grand Prix Criquielion,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+pinarello-q365-pro-cycling-team,2026,2026-05-27T12:39:56.897111+00:00,status_changed,10204,Antwerp Port Epic,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
