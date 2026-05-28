@@ -1,2 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-cofidis,2026,2026-05-27T12:39:37.701030+00:00,status_changed,10204,Antwerp Port Epic,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
