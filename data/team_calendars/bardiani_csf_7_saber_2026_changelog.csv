@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-bardiani-csf-7-saber,2026,2026-06-01T15:40:35.263888+00:00,status_changed,13,Giro d'Italia,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-bardiani-csf-7-saber,2026,2026-06-01T15:40:35.263888+00:00,status_changed,315,Alpes Isère Tour,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
