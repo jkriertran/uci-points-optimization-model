@@ -1,4 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-06-02T12:55:08.595545+00:00,race_added,258,Sibiu Cycling Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
-solution-tech-nippo-rali,2026,2026-06-02T12:55:08.595545+00:00,race_added,546,Trofeo Alcide Degasperi,,scheduled,team_calendar_refresh,matched_via=token_overlap
-solution-tech-nippo-rali,2026,2026-06-02T12:55:08.595545+00:00,race_added,18948,Andorra MoraBanc Clàssica,,scheduled,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-06-03T14:12:00.497914+00:00,status_changed,546,Trofeo Alcide Degasperi,scheduled,completed,team_calendar_refresh,matched_via=token_overlap

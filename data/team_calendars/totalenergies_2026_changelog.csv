@@ -1,14 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,20,ADAC Cyclassics,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,21,Renewi Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,22,Bretagne Classic,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,60,Baloise Belgium Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,85,Vuelta a Castilla y León,,scheduled,team_calendar_refresh,matched_via=token_overlap
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,192,Vuelta a Burgos,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,202,Circuito de Getxo,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,207,Villafranca de Ordizia,,scheduled,team_calendar_refresh,matched_via=token_overlap
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,231,Circuit Franco-Belge,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,259,Arctic Race of Norway,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,265,Philly Cycling Classic,,scheduled,team_calendar_refresh,matched_via=token_overlap
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,996,Muur Classic Geraardsbergen,,scheduled,team_calendar_refresh,matched_via=normalized_name
-totalenergies,2026,2026-06-02T12:55:22.103066+00:00,race_added,18948,Andorra MoraBanc Clàssica,,scheduled,team_calendar_refresh,matched_via=normalized_name
