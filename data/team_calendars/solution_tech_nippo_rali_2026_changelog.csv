@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-06-03T14:12:00.497914+00:00,status_changed,546,Trofeo Alcide Degasperi,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+solution-tech-nippo-rali,2026,2026-06-04T12:24:36.202950+00:00,status_changed,13188,Mercan'Tour Classic Alpes-Maritimes,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
