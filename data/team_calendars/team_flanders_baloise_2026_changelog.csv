@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+team-flanders-baloise,2026,2026-06-06T11:02:10.275282+00:00,status_changed,193,Tour de Wallonie,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
