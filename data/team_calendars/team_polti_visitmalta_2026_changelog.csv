@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-team-polti-visitmalta,2026,2026-06-06T11:02:14.430274+00:00,race_added,231,Circuit Franco-Belge,,scheduled,team_calendar_refresh,matched_via=normalized_name
+team-polti-visitmalta,2026,2026-06-07T11:18:55.371454+00:00,status_changed,349,Heistse Pijl,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
