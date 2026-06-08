@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-pinarello-q365-pro-cycling-team,2026,2026-06-07T11:18:44.398516+00:00,status_changed,349,Heistse Pijl,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+pinarello-q365-pro-cycling-team,2026,2026-06-08T13:49:16.713946+00:00,status_changed,64,Brussels Cycling Classic,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
