@@ -1834,10 +1834,10 @@ def _render_model_explainer_legacy(
             """
         )
 
-        st.markdown("**Step 5: Combine the components into the arbitrage score**")
+        st.markdown("**Step 5: Combine the components into the opportunity score**")
         st.latex(
             rf"""
-            \text{{arbitrage\_score}}
+            \text{{opportunity\_score}}
             =
             \frac{{
             {weights["top10_points"]:.2f}\cdot\text{{top10\_points\_pct}}
@@ -1897,7 +1897,7 @@ def _render_model_explainer_legacy(
             rf"""
             \text{{targeting\_score}}
             =
-            (1 - {fit_emphasis:.2f}) \cdot \text{{arbitrage\_score}}
+            (1 - {fit_emphasis:.2f}) \cdot \text{{opportunity\_score}}
             +
             {fit_emphasis:.2f} \cdot \text{{specialty\_fit\_score}}
             """
@@ -1935,7 +1935,7 @@ def _render_model_explainer_legacy(
         st.markdown("**Interpretation guide**")
         st.markdown(
             """
-            - A higher `Arbitrage Score` means the race has looked attractive on a payout-versus-field basis.
+            - A higher `Opportunity Score` means the race has looked attractive on a payout-versus-field basis.
             - A higher `Specialty Fit` means the race profile better matches the specialty mix you selected in the sidebar.
             - `Targeting Score` is the blended planning score: historical opportunity plus your chosen specialty-fit emphasis.
             - A high `Avg Top-10 Points` with a low `Avg Top-10 Field Form` is usually the sweet spot.
@@ -2139,10 +2139,10 @@ def render_model_explainer(
                 """
             )
 
-            st.markdown("**Step 5: Combine the components into the arbitrage score**")
+            st.markdown("**Step 5: Combine the components into the opportunity score**")
             st.latex(
                 rf"""
-                \text{{arbitrage\_score}}
+                \text{{opportunity\_score}}
                 =
                 \frac{{
                 {weights["top10_points"]:.2f}\cdot\text{{top10\_points\_pct}}
@@ -2203,7 +2203,7 @@ def render_model_explainer(
             rf"""
             \text{{targeting\_score}}
             =
-            (1 - {fit_emphasis:.2f}) \cdot \text{{arbitrage\_score}}
+            (1 - {fit_emphasis:.2f}) \cdot \text{{opportunity\_score}}
             +
             {fit_emphasis:.2f} \cdot \text{{specialty\_fit\_score}}
             """
@@ -2255,7 +2255,7 @@ def render_model_explainer(
         st.markdown("**Interpretation Guide**")
         st.markdown(
             """
-            - A higher `Arbitrage Score` means the race has looked attractive on a payout-versus-field basis.
+            - A higher `Opportunity Score` means the race has looked attractive on a payout-versus-field basis.
             - A higher `Specialty Fit` means the race profile better matches the specialty mix you selected in the sidebar.
             - `Targeting Score` is the blended planning score: historical opportunity plus your chosen specialty-fit emphasis.
             - A high `Avg Top-10 Points` with a low `Avg Top-10 Field Form` is usually the sweet spot.
@@ -2285,7 +2285,7 @@ def render_backtest_tab(dataset: pd.DataFrame, years: list[int], categories: lis
         "Calibration is now category-aware: a race's `1.1` history and `1.Pro` history are treated as separate target histories."
     )
     st.caption(
-        "The walk-forward backtest calibrates only the core arbitrage model. The new route-and-specialty fit layer is a user/team overlay and is not backtested here."
+        "The walk-forward backtest calibrates only the core opportunity model. The new route-and-specialty fit layer is a user/team overlay and is not backtested here."
     )
     st.markdown(
         "This is a **walk-forward / time-series** backtest, not ordinary random k-fold cross-validation. "
@@ -2785,12 +2785,12 @@ def render_proteam_risk_tab() -> None:
 
 def main() -> None:
     st.set_page_config(
-        page_title="UCI Points Optimization Model",
+        page_title="Race Opportunity Score",
         page_icon=":bike:",
         layout="wide",
     )
 
-    st.title("UCI Points Optimization Model")
+    st.title("Race Opportunity Score: Finding High-Value UCI Points Targets")
     st.caption(
         "An explainable race-opportunity and ProTeam-risk app for `.1` and `.Pro` road racing."
     )
@@ -3007,7 +3007,7 @@ def main() -> None:
             "years_analyzed": "Same-Category Editions",
             "years": "Years",
             "avg_targeting_score": "Targeting Score",
-            "avg_arbitrage_score": "Arbitrage Score",
+            "avg_arbitrage_score": "Opportunity Score",
             "avg_specialty_fit_score": "Specialty Fit",
             "avg_top10_points": "Avg Top-10 Points",
             "avg_stage_top10_points": "Avg Stage Top-10 Points",
@@ -3062,7 +3062,7 @@ def main() -> None:
             "Same-Category Editions",
             "Years",
             "Targeting Score",
-            "Arbitrage Score",
+            "Opportunity Score",
             "Specialty Fit",
             "Avg Top-10 Points",
             "Avg Stage Top-10 Points",

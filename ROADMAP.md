@@ -1,6 +1,6 @@
 # Roadmap
 
-This file tracks planned upgrades for the UCI Points Optimization Model.
+This file tracks planned upgrades for Race Opportunity Score: Finding High-Value UCI Points Targets.
 
 ## Current Focus
 

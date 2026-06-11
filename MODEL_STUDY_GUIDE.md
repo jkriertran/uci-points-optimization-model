@@ -1,4 +1,4 @@
-# UCI Points Optimization Model Study Guide
+# Race Opportunity Score Study Guide
 
 This guide is meant to help you explain the app clearly to another person, whether that person is technical or not.
 
@@ -58,7 +58,7 @@ For each race edition, the app looks at:
 - the extended startlist
 - for stage races, both GC points and individual stage-result points
 
-Then it estimates field strength using a simple rider-form proxy, converts the inputs to percentiles so they are comparable, and combines them into one "arbitrage score." The app also includes a lightweight beta route-profile x specialty-fit overlay, but that layer is still intentionally simple and inferred from event structure rather than full GPX analysis.
+Then it estimates field strength using a simple rider-form proxy, converts the inputs to percentiles so they are comparable, and combines them into one "opportunity score." The app also includes a lightweight beta route-profile x specialty-fit overlay, but that layer is still intentionally simple and inferred from event structure rather than full GPX analysis.
 
 Finally, it aggregates repeated race histories, handles category changes explicitly, checks whether a recommended race is actually on the current planning-season calendar, and includes a separate ProTeam Risk Monitor for rider-contribution concentration.
 
@@ -227,7 +227,7 @@ Percentiles make the pieces comparable.
 
 ### Step 5: Combine The Components Into One Score
 
-The app computes one final arbitrage score as a weighted combination of those percentiles.
+The app computes one final opportunity score as a weighted combination of those percentiles.
 
 Current default weights:
 
@@ -240,7 +240,7 @@ Current default weights:
 Conceptually:
 
 ```text
-arbitrage_score
+opportunity_score
 = weight_1 * top10_points_pct
 + weight_2 * winner_points_pct
 + weight_3 * field_softness_pct
@@ -648,7 +648,7 @@ So the clean answer is:
 
 Because the model combines variables with different scales. Percentiles make them comparable and easier to combine.
 
-### "Why is it called an arbitrage score?"
+### "Why is it called an opportunity score?"
 
 Because the idea is to find races where the points opportunity looks better than the difficulty would suggest.
 
@@ -676,7 +676,7 @@ Here is a clean explanation you can say almost word-for-word.
 
 "For each race edition, it calculates a rider-form score from wins, podiums, top-10s, and starts. It then turns that into top-end and full-field strength measures. On the payout side, it uses result-table points, and for stage races it now includes both GC and stage-result points."
 
-"Those raw components are converted into percentiles so they can be compared on the same scale. Then the app combines them into a weighted arbitrage score. The current default weights were calibrated using a walk-forward backtest that checks whether past race history helps identify future efficient races."
+"Those raw components are converted into percentiles so they can be compared on the same scale. Then the app combines them into a weighted opportunity score. The current default weights were calibrated using a walk-forward backtest that checks whether past race history helps identify future efficient races."
 
 "The app also handles category changes explicitly. If a race moved from 1.1 to 1.Pro, those histories are not blended together. And because historical recommendations are not enough by themselves, the app overlays the live planning-season calendar so you can see whether a recommended race actually exists this year and whether it is still in scope."
 

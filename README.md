@@ -1,8 +1,8 @@
-# UCI Points Optimization Model
+# Race Opportunity Score: Finding High-Value UCI Points Targets
 
 An explainable Streamlit app for ranking `.1` and `.Pro` road races as historical UCI points opportunities.
 
-It scrapes historical `.1` and `.Pro` races from FirstCycling, estimates how soft or hard each historical startlist was, and ranks races by an explainable "arbitrage score" that balances:
+It scrapes historical `.1` and `.Pro` races from FirstCycling, estimates how soft or hard each historical startlist was, and ranks races by an explainable "opportunity score" that balances:
 
 - top-10 points payout
 - winner upside
