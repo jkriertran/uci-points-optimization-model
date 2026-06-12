@@ -1,2 +1,6 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-equipo-kern-pharma,2026,2026-06-11T12:59:12.084957+00:00,status_changed,231,Circuit Franco-Belge,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+equipo-kern-pharma,2026,2026-06-12T12:40:38.394554+00:00,race_added,94,Tour de Vendée,,scheduled,team_calendar_refresh,matched_via=normalized_name
+equipo-kern-pharma,2026,2026-06-12T12:40:38.394554+00:00,race_added,125,Cholet Agglo Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
+equipo-kern-pharma,2026,2026-06-12T12:40:38.394554+00:00,race_added,154,Chrono des Nations,,scheduled,team_calendar_refresh,matched_via=normalized_name
+equipo-kern-pharma,2026,2026-06-12T12:40:38.394554+00:00,race_added,203,Polynormande,,scheduled,team_calendar_refresh,matched_via=token_overlap
+equipo-kern-pharma,2026,2026-06-12T12:40:38.394554+00:00,race_removed,259,Arctic Race of Norway,scheduled,,team_calendar_refresh,matched_via=normalized_name
