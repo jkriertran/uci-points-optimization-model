@@ -1,1 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+caja-rural-seguros-rga,2026,2026-06-20T11:27:57.450340+00:00,race_added,398,GP Torres Vedras,,scheduled,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-06-20T11:27:57.450340+00:00,status_changed,15,Tour Auvergne - Rhône-Alpes,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

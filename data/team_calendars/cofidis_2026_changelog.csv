@@ -1,1 +1,4 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+cofidis,2026,2026-06-20T11:28:03.634832+00:00,status_changed,15,Tour Auvergne - Rhône-Alpes,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+cofidis,2026,2026-06-20T11:28:03.634832+00:00,status_changed,996,Muur Classic Geraardsbergen,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+cofidis,2026,2026-06-20T11:28:03.634832+00:00,status_changed,24060,Copenhagen Sprint,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
