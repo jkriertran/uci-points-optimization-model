@@ -1,3 +1,5 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-unibet-rose-rockets,2026,2026-06-20T11:28:59.944487+00:00,status_changed,996,Muur Classic Geraardsbergen,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-unibet-rose-rockets,2026,2026-06-20T11:28:59.944487+00:00,status_changed,24060,Copenhagen Sprint,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+unibet-rose-rockets,2026,2026-06-21T11:59:55.199813+00:00,race_added,85,Vuelta a Castilla y León,,scheduled,team_calendar_refresh,matched_via=token_overlap
+unibet-rose-rockets,2026,2026-06-21T11:59:55.199813+00:00,race_added,202,Circuito de Getxo,,scheduled,team_calendar_refresh,matched_via=normalized_name
+unibet-rose-rockets,2026,2026-06-21T11:59:55.199813+00:00,race_added,207,Villafranca de Ordizia,,scheduled,team_calendar_refresh,matched_via=token_overlap
+unibet-rose-rockets,2026,2026-06-21T11:59:55.199813+00:00,status_changed,212,Route d'Occitanie,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
