@@ -1,4 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-pinarello-q365-pro-cycling-team,2026,2026-06-22T15:03:18.989932+00:00,status_changed,16,Tour de Suisse,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-pinarello-q365-pro-cycling-team,2026,2026-06-22T15:03:18.989932+00:00,status_changed,60,Baloise Belgium Tour,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-pinarello-q365-pro-cycling-team,2026,2026-06-22T15:03:18.989932+00:00,status_changed,18948,Andorra MoraBanc Clàssica,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
