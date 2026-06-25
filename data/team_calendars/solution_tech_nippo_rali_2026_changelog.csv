@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+solution-tech-nippo-rali,2026,2026-06-25T12:00:23.752193+00:00,race_added,559,Giro del Medio Brenta,,scheduled,team_calendar_refresh,matched_via=normalized_name
