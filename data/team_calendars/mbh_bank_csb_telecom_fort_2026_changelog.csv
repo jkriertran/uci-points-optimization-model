@@ -1,1 +1,7 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+mbh-bank-csb-telecom-fort,2026,2026-07-19T10:49:33.417490+00:00,race_removed,531,Mem. A.Trochanowskiego,scheduled,,team_calendar_refresh,matched_via=token_overlap
+mbh-bank-csb-telecom-fort,2026,2026-07-19T10:49:33.417490+00:00,race_removed,16539,Tour of Binzhou,scheduled,,team_calendar_refresh,matched_via=normalized_name
+mbh-bank-csb-telecom-fort,2026,2026-07-19T10:49:33.417490+00:00,status_changed,127,Tour of Magnificent Qinghai,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+mbh-bank-csb-telecom-fort,2026,2026-07-19T10:49:33.417490+00:00,status_changed,559,Giro del Medio Brenta,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+mbh-bank-csb-telecom-fort,2026,2026-07-19T10:49:33.417490+00:00,status_changed,581,GP Slovakia,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+mbh-bank-csb-telecom-fort,2026,2026-07-19T10:49:33.417490+00:00,status_changed,662,Trofeo Citta di Brescia,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

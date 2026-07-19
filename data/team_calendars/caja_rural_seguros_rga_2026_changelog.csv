@@ -1,1 +1,26 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,18,Donostia San Sebastian Klasikoa,,scheduled,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,28,Paris - Tours,,scheduled,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,29,Giro dell'Emilia,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,61,Gran Piemonte,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,68,Memorial Pantani,,scheduled,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,88,Giro del Lazio,,scheduled,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,94,Tour de Vendée,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,125,Cholet Agglo Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,128,Tour de Langkawi,,scheduled,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,160,Coppa Sabatini,,scheduled,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,163,Giro della Romagna,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,183,Giro del Veneto,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,190,Tre Valli Varesine,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,192,Vuelta a Burgos,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,196,Coppa Bernocchi,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,202,Circuito de Getxo,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,205,Trofeo Matteotti,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,262,Coppa Agostoni,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,263,GP Industria & Artigianato,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,752,Giro d'Abruzzo,,scheduled,team_calendar_refresh,matched_via=token_overlap
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,773,CRO Race,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,4025,Giro della Toscana,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,15208,Veneto Classic,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,race_added,27048,Trofeo Tessile & Moda - Valdengo Oropa,,scheduled,team_calendar_refresh,matched_via=normalized_name
+caja-rural-seguros-rga,2026,2026-07-19T10:49:11.623332+00:00,status_changed,127,Tour of Magnificent Qinghai,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

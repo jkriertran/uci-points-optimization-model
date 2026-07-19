@@ -1,1 +1,5 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+solution-tech-nippo-rali,2026,2026-07-19T10:49:47.093167+00:00,race_added,127,Tour of Magnificent Qinghai,,completed,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-07-19T10:49:47.093167+00:00,race_added,662,Trofeo Citta di Brescia,,completed,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-07-19T10:49:47.093167+00:00,status_changed,258,Sibiu Cycling Tour,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-07-19T10:49:47.093167+00:00,status_changed,559,Giro del Medio Brenta,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
