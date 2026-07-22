@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+bardiani-csf-7-saber,2026,2026-07-22T11:22:41.945250+00:00,race_added,773,CRO Race,,scheduled,team_calendar_refresh,matched_via=normalized_name
