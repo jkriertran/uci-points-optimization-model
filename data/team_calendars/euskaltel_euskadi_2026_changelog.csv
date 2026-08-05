@@ -1,3 +1,8 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-euskaltel-euskadi,2026,2026-07-22T11:24:15.118874+00:00,race_added,773,CRO Race,,scheduled,team_calendar_refresh,matched_via=normalized_name
-euskaltel-euskadi,2026,2026-07-22T11:24:15.118874+00:00,status_changed,531,Mem. A.Trochanowskiego,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-08-05T11:34:11.558911+00:00,race_added,752,Giro d'Abruzzo,,scheduled,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-08-05T11:34:11.558911+00:00,status_changed,18,Donostia San Sebastian Klasikoa,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-08-05T11:34:11.558911+00:00,status_changed,85,Vuelta a Castilla y León,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-08-05T11:34:11.558911+00:00,status_changed,202,Circuito de Getxo,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+euskaltel-euskadi,2026,2026-08-05T11:34:11.558911+00:00,status_changed,207,Villafranca de Ordizia,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-08-05T11:34:11.558911+00:00,status_changed,563,Dookola Mazowsza,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+euskaltel-euskadi,2026,2026-08-05T11:34:11.558911+00:00,status_changed,4014,Puchar Mon,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

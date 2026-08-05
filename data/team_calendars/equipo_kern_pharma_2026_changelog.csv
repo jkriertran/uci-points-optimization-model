@@ -1,1 +1,5 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+equipo-kern-pharma,2026,2026-08-05T11:34:08.367018+00:00,status_changed,18,Donostia San Sebastian Klasikoa,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+equipo-kern-pharma,2026,2026-08-05T11:34:08.367018+00:00,status_changed,85,Vuelta a Castilla y León,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+equipo-kern-pharma,2026,2026-08-05T11:34:08.367018+00:00,status_changed,202,Circuito de Getxo,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+equipo-kern-pharma,2026,2026-08-05T11:34:08.367018+00:00,status_changed,207,Villafranca de Ordizia,scheduled,completed,team_calendar_refresh,matched_via=token_overlap

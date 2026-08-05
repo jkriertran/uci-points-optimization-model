@@ -1,2 +1,4 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-07-22T11:25:26.479665+00:00,race_added,773,CRO Race,,scheduled,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-08-05T11:34:30.114216+00:00,race_added,752,Giro d'Abruzzo,,scheduled,team_calendar_refresh,matched_via=token_overlap
+solution-tech-nippo-rali,2026,2026-08-05T11:34:30.114216+00:00,race_added,18951,Trans-Himalaya Cycling Race,,scheduled,team_calendar_refresh,matched_via=token_overlap
+solution-tech-nippo-rali,2026,2026-08-05T11:34:30.114216+00:00,race_added,27610,Tour of Kahramanmaras,,scheduled,team_calendar_refresh,matched_via=normalized_name
