@@ -1,8 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-unibet-rose-rockets,2026,2026-08-05T11:34:48.713617+00:00,race_added,22,Bretagne Classic,,scheduled,team_calendar_refresh,matched_via=normalized_name
-unibet-rose-rockets,2026,2026-08-05T11:34:48.713617+00:00,race_added,263,GP Industria & Artigianato,,scheduled,team_calendar_refresh,matched_via=normalized_name
-unibet-rose-rockets,2026,2026-08-05T11:34:48.713617+00:00,race_added,752,Giro d'Abruzzo,,scheduled,team_calendar_refresh,matched_via=token_overlap
-unibet-rose-rockets,2026,2026-08-05T11:34:48.713617+00:00,status_changed,63,Tour de l'Ain,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-unibet-rose-rockets,2026,2026-08-05T11:34:48.713617+00:00,status_changed,85,Vuelta a Castilla y León,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
-unibet-rose-rockets,2026,2026-08-05T11:34:48.713617+00:00,status_changed,202,Circuito de Getxo,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-unibet-rose-rockets,2026,2026-08-05T11:34:48.713617+00:00,status_changed,207,Villafranca de Ordizia,scheduled,completed,team_calendar_refresh,matched_via=token_overlap

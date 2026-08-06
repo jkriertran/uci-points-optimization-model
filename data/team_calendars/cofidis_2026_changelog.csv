@@ -1,8 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-cofidis,2026,2026-08-05T11:34:04.763897+00:00,race_added,18,Donostia San Sebastian Klasikoa,,completed,team_calendar_refresh,matched_via=token_overlap
-cofidis,2026,2026-08-05T11:34:04.763897+00:00,race_added,20,ADAC Cyclassics,,scheduled,team_calendar_refresh,matched_via=normalized_name
-cofidis,2026,2026-08-05T11:34:04.763897+00:00,race_added,192,Vuelta a Burgos,,scheduled,team_calendar_refresh,matched_via=normalized_name
-cofidis,2026,2026-08-05T11:34:04.763897+00:00,race_added,202,Circuito de Getxo,,completed,team_calendar_refresh,matched_via=normalized_name
-cofidis,2026,2026-08-05T11:34:04.763897+00:00,race_added,8328,GP Plouay Elite Open,,scheduled,team_calendar_refresh,matched_via=token_overlap
-cofidis,2026,2026-08-05T11:34:04.763897+00:00,status_changed,17,Tour de France,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-cofidis,2026,2026-08-05T11:34:04.763897+00:00,status_changed,63,Tour de l'Ain,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

@@ -1,5 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-tudor-pro-cycling-team,2026,2026-08-05T11:34:44.474439+00:00,race_added,45,Tour of Britain,,scheduled,team_calendar_refresh,matched_via=token_overlap
-tudor-pro-cycling-team,2026,2026-08-05T11:34:44.474439+00:00,race_removed,259,Arctic Race of Norway,scheduled,,team_calendar_refresh,matched_via=normalized_name
-tudor-pro-cycling-team,2026,2026-08-05T11:34:44.474439+00:00,status_changed,17,Tour de France,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-tudor-pro-cycling-team,2026,2026-08-05T11:34:44.474439+00:00,status_changed,18,Donostia San Sebastian Klasikoa,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
