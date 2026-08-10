@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-pinarello-q365-pro-cycling-team,2026,2026-08-09T10:01:55.895293+00:00,status_changed,192,Vuelta a Burgos,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+pinarello-q365-pro-cycling-team,2026,2026-08-10T10:40:41.698245+00:00,status_changed,19,Tour de Pologne,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
