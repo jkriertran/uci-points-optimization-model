@@ -1,1 +1,5 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+cofidis,2026,2026-08-11T10:16:29.749182+00:00,race_added,167,Kamp. van Vlaanderen,,scheduled,team_calendar_refresh,matched_via=token_overlap
+cofidis,2026,2026-08-11T10:16:29.749182+00:00,race_added,170,Omloop van het Houtland,,scheduled,team_calendar_refresh,matched_via=token_overlap
+cofidis,2026,2026-08-11T10:16:29.749182+00:00,race_added,171,GP d'Isbergues,,scheduled,team_calendar_refresh,matched_via=token_overlap
+cofidis,2026,2026-08-11T10:16:29.749182+00:00,race_added,7591,Tour of Guangxi,,scheduled,team_calendar_refresh,matched_via=normalized_name
