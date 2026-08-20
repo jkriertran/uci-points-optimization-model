@@ -1,5 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-08-19T09:55:38.927069+00:00,race_added,160,Coppa Sabatini,,scheduled,team_calendar_refresh,matched_via=token_overlap
-solution-tech-nippo-rali,2026,2026-08-19T09:55:38.927069+00:00,race_added,4025,Giro della Toscana,,scheduled,team_calendar_refresh,matched_via=normalized_name
-solution-tech-nippo-rali,2026,2026-08-19T09:55:38.927069+00:00,race_added,18945,Tour de Kyushu,,scheduled,team_calendar_refresh,matched_via=normalized_name
-solution-tech-nippo-rali,2026,2026-08-19T09:55:38.927069+00:00,race_added,20781,Tour of Istanbul,,scheduled,team_calendar_refresh,matched_via=normalized_name
