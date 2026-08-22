@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+unibet-rose-rockets,2026,2026-08-22T09:48:40.516395+00:00,status_changed,191,Tour du Limousin,scheduled,completed,team_calendar_refresh,matched_via=alias

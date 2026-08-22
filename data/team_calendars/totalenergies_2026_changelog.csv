@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-totalenergies,2026,2026-08-21T09:57:27.479184+00:00,race_added,213,ZLM Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
+totalenergies,2026,2026-08-22T09:48:29.320345+00:00,status_changed,191,Tour du Limousin,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
