@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-totalenergies,2026,2026-08-26T10:03:56.096821+00:00,race_added,68,Memorial Pantani,,scheduled,team_calendar_refresh,matched_via=token_overlap
-totalenergies,2026,2026-08-26T10:03:56.096821+00:00,race_added,263,GP Industria & Artigianato,,scheduled,team_calendar_refresh,matched_via=normalized_name
+totalenergies,2026,2026-08-27T19:54:38.498911+00:00,race_added,20781,Tour of Istanbul,,scheduled,team_calendar_refresh,matched_via=normalized_name
