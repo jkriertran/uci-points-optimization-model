@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-team-polti-visitmalta,2026,2026-08-27T19:54:34.483849+00:00,race_added,8328,GP Plouay Elite Open,,scheduled,team_calendar_refresh,matched_via=token_overlap
-team-polti-visitmalta,2026,2026-08-27T19:54:34.483849+00:00,race_added,20781,Tour of Istanbul,,scheduled,team_calendar_refresh,matched_via=normalized_name
