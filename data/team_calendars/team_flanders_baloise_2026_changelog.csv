@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+team-flanders-baloise,2026,2026-08-31T17:08:47.140718+00:00,race_added,37,Tour de Luxembourg,,scheduled,team_calendar_refresh,matched_via=token_overlap
