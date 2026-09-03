@@ -1,2 +1,8 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-bardiani-csf-7-saber,2026,2026-09-02T13:44:36.076538+00:00,race_removed,538,Giro della Regione Friuli,scheduled,,team_calendar_refresh,matched_via=token_overlap
+bardiani-csf-7-saber,2026,2026-09-03T13:40:05.382212+00:00,race_added,24,Il Lombardia,,scheduled,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-09-03T13:40:05.382212+00:00,race_added,163,Giro della Romagna,,scheduled,team_calendar_refresh,matched_via=token_overlap
+bardiani-csf-7-saber,2026,2026-09-03T13:40:05.382212+00:00,race_added,16539,Tour of Binzhou,,scheduled,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-09-03T13:40:05.382212+00:00,race_added,21437,Coppa Citta' di San Daniele,,scheduled,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-09-03T13:40:05.382212+00:00,race_added,24779,Tour of Shanghai,,scheduled,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-09-03T13:40:05.382212+00:00,race_added,27611,Tour d'Arménie,,scheduled,team_calendar_refresh,matched_via=normalized_name
+bardiani-csf-7-saber,2026,2026-09-03T13:40:05.382212+00:00,race_removed,242,Tour of Taihu Lake,scheduled,,team_calendar_refresh,matched_via=normalized_name

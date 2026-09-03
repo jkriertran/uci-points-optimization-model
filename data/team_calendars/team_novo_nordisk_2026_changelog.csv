@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-team-novo-nordisk,2026,2026-09-02T13:45:29.792244+00:00,race_added,24779,Tour of Shanghai,,scheduled,team_calendar_refresh,matched_via=normalized_name
+team-novo-nordisk,2026,2026-09-03T13:40:54.425474+00:00,race_added,242,Tour of Taihu Lake,,scheduled,team_calendar_refresh,matched_via=normalized_name
