@@ -1,4 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-09-03T13:40:48.545584+00:00,race_added,242,Tour of Taihu Lake,,scheduled,team_calendar_refresh,matched_via=normalized_name
-solution-tech-nippo-rali,2026,2026-09-03T13:40:48.545584+00:00,race_added,24779,Tour of Shanghai,,scheduled,team_calendar_refresh,matched_via=normalized_name
-solution-tech-nippo-rali,2026,2026-09-03T13:40:48.545584+00:00,race_added,27611,Tour d'Arménie,,scheduled,team_calendar_refresh,matched_via=normalized_name
