@@ -1,1 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+tudor-pro-cycling-team,2026,2026-09-07T15:08:12.256310+00:00,status_changed,45,Tour of Britain,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+tudor-pro-cycling-team,2026,2026-09-07T15:08:12.256310+00:00,status_changed,263,GP Industria & Artigianato,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
