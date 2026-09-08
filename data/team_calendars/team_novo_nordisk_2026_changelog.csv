@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-team-novo-nordisk,2026,2026-09-07T15:08:00.137848+00:00,status_changed,20781,Tour of Istanbul,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-team-novo-nordisk,2026,2026-09-07T15:08:00.137848+00:00,status_changed,24779,Tour of Shanghai,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
