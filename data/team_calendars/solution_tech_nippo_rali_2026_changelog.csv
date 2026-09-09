@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-09-08T13:43:31.826249+00:00,race_added,949,Paris-Chauny,,scheduled,team_calendar_refresh,matched_via=normalized_name
-solution-tech-nippo-rali,2026,2026-09-08T13:43:31.826249+00:00,race_added,16539,Tour of Binzhou,,scheduled,team_calendar_refresh,matched_via=normalized_name
+solution-tech-nippo-rali,2026,2026-09-09T13:48:17.609130+00:00,race_added,190,Tre Valli Varesine,,scheduled,team_calendar_refresh,matched_via=normalized_name
