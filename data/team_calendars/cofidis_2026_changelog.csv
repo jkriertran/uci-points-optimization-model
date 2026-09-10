@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-cofidis,2026,2026-09-09T13:47:44.330464+00:00,race_added,190,Tre Valli Varesine,,scheduled,team_calendar_refresh,matched_via=normalized_name
+cofidis,2026,2026-09-10T13:42:45.763876+00:00,status_changed,4025,Giro della Toscana,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
