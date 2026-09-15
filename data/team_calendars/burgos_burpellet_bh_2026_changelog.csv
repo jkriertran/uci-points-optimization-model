@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-burgos-burpellet-bh,2026,2026-09-14T15:56:26.275098+00:00,status_changed,23,Vuelta a España,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
-burgos-burpellet-bh,2026,2026-09-14T15:56:26.275098+00:00,status_changed,205,Trofeo Matteotti,scheduled,completed,team_calendar_refresh,matched_via=normalized_name

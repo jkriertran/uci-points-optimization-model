@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-modern-adventure-pro-cycling,2026,2026-09-14T15:56:52.095993+00:00,status_changed,58,GP Montreal,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+modern-adventure-pro-cycling,2026,2026-09-15T14:23:34.008272+00:00,race_added,159,Binche-Chimay-Binche,,scheduled,team_calendar_refresh,matched_via=normalized_name

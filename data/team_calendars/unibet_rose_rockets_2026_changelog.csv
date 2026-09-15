@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-unibet-rose-rockets,2026,2026-09-14T15:57:24.866508+00:00,status_changed,92,GP de Fourmies,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-unibet-rose-rockets,2026,2026-09-14T15:57:24.866508+00:00,status_changed,205,Trofeo Matteotti,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+unibet-rose-rockets,2026,2026-09-15T14:24:07.872319+00:00,race_added,159,Binche-Chimay-Binche,,scheduled,team_calendar_refresh,matched_via=normalized_name

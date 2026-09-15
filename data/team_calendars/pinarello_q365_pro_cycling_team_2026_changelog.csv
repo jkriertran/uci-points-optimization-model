@@ -1,4 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-pinarello-q365-pro-cycling-team,2026,2026-09-14T15:56:54.911570+00:00,status_changed,23,Vuelta a España,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
-pinarello-q365-pro-cycling-team,2026,2026-09-14T15:56:54.911570+00:00,status_changed,58,GP Montreal,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
-pinarello-q365-pro-cycling-team,2026,2026-09-14T15:56:54.911570+00:00,status_changed,92,GP de Fourmies,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+pinarello-q365-pro-cycling-team,2026,2026-09-15T14:23:36.863552+00:00,race_added,167,Kamp. van Vlaanderen,,scheduled,team_calendar_refresh,matched_via=token_overlap
