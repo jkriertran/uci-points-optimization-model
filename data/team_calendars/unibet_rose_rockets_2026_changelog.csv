@@ -1,2 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-unibet-rose-rockets,2026,2026-09-18T13:42:57.380054+00:00,race_added,125,Cholet Agglo Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
+unibet-rose-rockets,2026,2026-09-19T13:15:20.425652+00:00,status_changed,167,Kamp. van Vlaanderen,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+unibet-rose-rockets,2026,2026-09-19T13:15:20.425652+00:00,status_changed,752,Giro d'Abruzzo,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
