@@ -1,2 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-pinarello-q365-pro-cycling-team,2026,2026-09-19T13:14:55.810322+00:00,status_changed,167,Kamp. van Vlaanderen,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+pinarello-q365-pro-cycling-team,2026,2026-09-20T13:38:11.959215+00:00,race_added,171,GP d'Isbergues,,scheduled,team_calendar_refresh,matched_via=token_overlap
