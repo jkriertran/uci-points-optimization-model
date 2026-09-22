@@ -1,2 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-team-polti-visitmalta,2026,2026-09-21T15:58:18.569097+00:00,status_changed,163,Giro della Romagna,scheduled,completed,team_calendar_refresh,matched_via=token_overlap

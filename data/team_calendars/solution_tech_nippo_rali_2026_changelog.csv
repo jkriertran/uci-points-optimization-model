@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-solution-tech-nippo-rali,2026,2026-09-21T15:58:07.225405+00:00,race_added,158,Münsterland Giro,,scheduled,team_calendar_refresh,matched_via=token_overlap
-solution-tech-nippo-rali,2026,2026-09-21T15:58:07.225405+00:00,status_changed,163,Giro della Romagna,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+solution-tech-nippo-rali,2026,2026-09-22T14:06:19.028153+00:00,race_added,29,Giro dell'Emilia,,scheduled,team_calendar_refresh,matched_via=normalized_name

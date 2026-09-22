@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-pinarello-q365-pro-cycling-team,2026,2026-09-21T15:58:01.993975+00:00,race_added,158,Münsterland Giro,,scheduled,team_calendar_refresh,matched_via=token_overlap
-pinarello-q365-pro-cycling-team,2026,2026-09-21T15:58:01.993975+00:00,status_changed,171,GP d'Isbergues,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+pinarello-q365-pro-cycling-team,2026,2026-09-22T14:06:12.796172+00:00,race_added,61,Gran Piemonte,,scheduled,team_calendar_refresh,matched_via=normalized_name

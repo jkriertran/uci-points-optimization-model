@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-burgos-burpellet-bh,2026,2026-09-21T15:57:31.908190+00:00,status_changed,163,Giro della Romagna,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
-burgos-burpellet-bh,2026,2026-09-21T15:57:31.908190+00:00,status_changed,20780,Tour of Huangshan,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-09-22T14:05:39.382263+00:00,race_added,61,Gran Piemonte,,scheduled,team_calendar_refresh,matched_via=normalized_name
