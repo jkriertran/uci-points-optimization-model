@@ -1,2 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-cofidis,2026,2026-09-22T14:05:50.141255+00:00,race_added,61,Gran Piemonte,,scheduled,team_calendar_refresh,matched_via=normalized_name
+cofidis,2026,2026-09-23T14:18:07.898556+00:00,race_added,125,Cholet Agglo Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
+cofidis,2026,2026-09-23T14:18:07.898556+00:00,race_added,262,Coppa Agostoni,,scheduled,team_calendar_refresh,matched_via=normalized_name
