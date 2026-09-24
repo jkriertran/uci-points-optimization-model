@@ -1,3 +1,3 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-burgos-burpellet-bh,2026,2026-09-23T14:17:58.534495+00:00,race_added,94,Tour de Vendée,,scheduled,team_calendar_refresh,matched_via=normalized_name
-burgos-burpellet-bh,2026,2026-09-23T14:17:58.534495+00:00,race_added,125,Cholet Agglo Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-09-24T14:16:04.447755+00:00,race_added,183,Giro del Veneto,,scheduled,team_calendar_refresh,matched_via=normalized_name
+burgos-burpellet-bh,2026,2026-09-24T14:16:04.447755+00:00,race_added,15208,Veneto Classic,,scheduled,team_calendar_refresh,matched_via=normalized_name

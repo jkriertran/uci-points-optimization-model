@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-euskaltel-euskadi,2026,2026-09-23T14:18:16.192880+00:00,race_added,94,Tour de Vendée,,scheduled,team_calendar_refresh,matched_via=normalized_name
-euskaltel-euskadi,2026,2026-09-23T14:18:16.192880+00:00,race_added,125,Cholet Agglo Tour,,scheduled,team_calendar_refresh,matched_via=normalized_name
