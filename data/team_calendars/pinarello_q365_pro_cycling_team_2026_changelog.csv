@@ -1,1 +1,4 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+pinarello-q365-pro-cycling-team,2026,2026-09-30T16:00:21.371417+00:00,race_added,183,Giro del Veneto,,scheduled,team_calendar_refresh,matched_via=normalized_name
+pinarello-q365-pro-cycling-team,2026,2026-09-30T16:00:21.371417+00:00,race_added,196,Coppa Bernocchi,,scheduled,team_calendar_refresh,matched_via=normalized_name
+pinarello-q365-pro-cycling-team,2026,2026-09-30T16:00:21.371417+00:00,race_added,15208,Veneto Classic,,scheduled,team_calendar_refresh,matched_via=normalized_name
