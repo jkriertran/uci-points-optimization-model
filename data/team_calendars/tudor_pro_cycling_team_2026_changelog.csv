@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-tudor-pro-cycling-team,2026,2026-10-04T14:54:21.456934+00:00,status_changed,29,Giro dell'Emilia,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-tudor-pro-cycling-team,2026,2026-10-04T14:54:21.456934+00:00,status_changed,158,Münsterland Giro,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+tudor-pro-cycling-team,2026,2026-10-05T18:37:40.675399+00:00,status_changed,128,Tour de Langkawi,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
