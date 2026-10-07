@@ -1,3 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-burgos-burpellet-bh,2026,2026-10-05T18:36:31.453433+00:00,status_changed,94,Tour de Vendée,scheduled,completed,team_calendar_refresh,matched_via=normalized_name
-burgos-burpellet-bh,2026,2026-10-05T18:36:31.453433+00:00,status_changed,128,Tour de Langkawi,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
+burgos-burpellet-bh,2026,2026-10-07T16:42:11.044240+00:00,race_removed,61,Gran Piemonte,scheduled,,team_calendar_refresh,matched_via=normalized_name
