@@ -1,97 +1,97 @@
 team_slug,team_name,planning_year,race_id,race_name,category,date_label,status,actual_points,rider_count,source_url,pcs_race_slug,checked_at_utc,notes
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,1,Tour Down Under,2.UWT,20.01-25.01,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,2,Paris-Nice,2.UWT,08.03-15.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,3,Tirreno-Adriatico,2.UWT,09.03-15.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,4,Milano-Sanremo,1.UWT,21.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,5,Ronde van Vlaanderen,1.UWT,05.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,6,Itzulia Basque Country,2.UWT,06.04-11.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,7,In Flanders Fields,1.UWT,29.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,8,Paris-Roubaix,1.UWT,12.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,9,Amstel Gold Race,1.UWT,19.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,10,La Flèche Wallonne,1.UWT,22.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,11,Liège-Bastogne-Liège,1.UWT,26.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,12,Tour de Romandie,2.UWT,28.04-03.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,13,Giro d'Italia,2.UWT,08.05-31.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,15,Tour Auvergne - Rhône-Alpes,2.UWT,07.06-14.06,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,16,Tour de Suisse,2.UWT,17.06-21.06,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,17,Tour de France,2.UWT,04.07-26.07,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,18,Donostia San Sebastian Klasikoa,1.UWT,01.08,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,19,Tour de Pologne,2.UWT,03.08-09.08,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,20,ADAC Cyclassics,1.UWT,16.08,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,21,Renewi Tour,2.UWT,19.08-23.08,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,22,Bretagne Classic,1.UWT,30.08,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,23,Vuelta a España,2.UWT,22.08-13.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,24,Il Lombardia,1.UWT,10.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,28,Paris - Tours,1.Pro,11.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,29,Giro dell'Emilia,1.Pro,03.10,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,35,Eschborn-Frankfurt,1.UWT,01.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,36,Lidl Deutschland Tour,2.Pro,19.08-23.08,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,40,Ronde Van Brugge - Tour of Bruges,1.UWT,25.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,45,Tour of Britain,2.Pro,02.09-06.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,47,E3 Saxo Classic,1.UWT,27.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,48,GP Miguel Indurain,1.Pro,04.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,50,Veenendaal Classic,1.1,23.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,53,Omloop Nieuwsblad,1.UWT,28.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,54,Strade Bianche,1.UWT,07.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,56,Scheldeprijs,1.Pro,08.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,57,Tour of Oman,2.Pro,07.02-11.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,58,GP Montreal,1.UWT,13.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,59,GP Québec,1.UWT,11.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,60,Baloise Belgium Tour,2.Pro,17.06-21.06,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,61,Gran Piemonte,1.Pro,08.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,62,Tour of the Alps,2.Pro,20.04-24.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,64,Brussels Cycling Classic,1.Pro,07.06,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,68,Memorial Pantani,1.1,12.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,75,Dwars door Vlaanderen,1.UWT,01.04,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,83,Trofeo Palma,1.1,01.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,84,Kuurne-Brussel-Kuurne,1.Pro,01.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,89,Milano - Torino,1.Pro,18.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,92,GP de Fourmies,1.Pro,13.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,93,Grand Prix de Wallonie,1.Pro,16.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,95,Japan Cup,1.Pro,18.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,100,Trofeo Serra Tramuntana,1.1,30.01,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,107,Volta ao Algarve,2.Pro,18.02-22.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,111,Tour des Alpes-Maritimes,1.1,22.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,112,Trofeo Laigueglia,1.Pro,04.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,121,Faun-Ardèche Classic,1.Pro,28.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,122,Nokere Koerse,1.Pro,18.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,123,Bredene Koksijde Classic,1.Pro,20.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,128,Tour de Langkawi,2.Pro,27.09-04.10,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,129,Clasica de Almeria,1.Pro,15.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,144,Rund um Köln,1.1,17.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,154,Chrono des Nations,1.1,18.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,158,Münsterland Giro,1.Pro,03.10,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,159,Binche-Chimay-Binche,1.1,06.10,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,160,Coppa Sabatini,1.Pro,10.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,167,Kamp. van Vlaanderen,1.1,18.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,170,Omloop van het Houtland,1.1,23.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,171,GP d'Isbergues,1.1,20.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,175,4 Jours de Dunkerque,2.Pro,20.05-24.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,183,Giro del Veneto,1.Pro,14.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,190,Tre Valli Varesine,1.Pro,06.10,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,192,Vuelta a Burgos,2.Pro,04.08-08.08,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,196,Coppa Bernocchi,1.Pro,05.10,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,199,GP Gippingen,1.1,14.06,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,231,Circuit Franco-Belge,1.Pro,10.06,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,263,GP Industria & Artigianato,1.Pro,06.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,271,Trofeo Calvià,1.1,28.01,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,274,Trofeo Andratx - Pollença,1.1,31.01,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,343,Boucles de la Mayenne,2.Pro,28.05-31.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,349,Heistse Pijl,1.1,06.06,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,432,Faun Drome Classic,1.Pro,01.03,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,539,Grand Prix Criquielion,1.1,24.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,752,Giro d'Abruzzo,2.1,15.09-18.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,868,AlUla Tour,2.Pro,27.01-31.01,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,949,Paris-Chauny,1.1,27.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,1172,Cadel Evans Great Ocean Road Race,1.UWT,01.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,4025,Giro della Toscana,1.1,09.09,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,7591,Tour of Guangxi,2.UWT,13.10-18.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,8499,Hong Kong Cyclothon,1.1,11.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,9800,UAE Tour,2.UWT,16.02-22.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,15208,Veneto Classic,1.Pro,18.10,scheduled,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,18946,Muscat Classic,1.Pro,06.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,18947,Figueira Champions Classic,1.Pro,14.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,21999,Classic Var,1.1,21.02,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,24060,Copenhagen Sprint,1.UWT,14.06,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,24917,Classique Dunkerque,1.Pro,19.05,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
-tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,27987,Trofeo Ses Salines TTT,1.1,29.01,completed,,,,,2026-10-08T16:39:36.972707+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,1,Tour Down Under,2.UWT,20.01-25.01,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,2,Paris-Nice,2.UWT,08.03-15.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,3,Tirreno-Adriatico,2.UWT,09.03-15.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,4,Milano-Sanremo,1.UWT,21.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,5,Ronde van Vlaanderen,1.UWT,05.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,6,Itzulia Basque Country,2.UWT,06.04-11.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,7,In Flanders Fields,1.UWT,29.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,8,Paris-Roubaix,1.UWT,12.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,9,Amstel Gold Race,1.UWT,19.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,10,La Flèche Wallonne,1.UWT,22.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,11,Liège-Bastogne-Liège,1.UWT,26.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,12,Tour de Romandie,2.UWT,28.04-03.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,13,Giro d'Italia,2.UWT,08.05-31.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,15,Tour Auvergne - Rhône-Alpes,2.UWT,07.06-14.06,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,16,Tour de Suisse,2.UWT,17.06-21.06,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,17,Tour de France,2.UWT,04.07-26.07,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,18,Donostia San Sebastian Klasikoa,1.UWT,01.08,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,19,Tour de Pologne,2.UWT,03.08-09.08,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,20,ADAC Cyclassics,1.UWT,16.08,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,21,Renewi Tour,2.UWT,19.08-23.08,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,22,Bretagne Classic,1.UWT,30.08,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,23,Vuelta a España,2.UWT,22.08-13.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,24,Il Lombardia,1.UWT,10.10,scheduled,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,28,Paris - Tours,1.Pro,11.10,scheduled,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,29,Giro dell'Emilia,1.Pro,03.10,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,35,Eschborn-Frankfurt,1.UWT,01.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,36,Lidl Deutschland Tour,2.Pro,19.08-23.08,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,40,Ronde Van Brugge - Tour of Bruges,1.UWT,25.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,45,Tour of Britain,2.Pro,02.09-06.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,47,E3 Saxo Classic,1.UWT,27.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,48,GP Miguel Indurain,1.Pro,04.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,50,Veenendaal Classic,1.1,23.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,53,Omloop Nieuwsblad,1.UWT,28.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,54,Strade Bianche,1.UWT,07.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,56,Scheldeprijs,1.Pro,08.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,57,Tour of Oman,2.Pro,07.02-11.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,58,GP Montreal,1.UWT,13.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,59,GP Québec,1.UWT,11.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,60,Baloise Belgium Tour,2.Pro,17.06-21.06,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,61,Gran Piemonte,1.Pro,08.10,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,62,Tour of the Alps,2.Pro,20.04-24.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,64,Brussels Cycling Classic,1.Pro,07.06,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,68,Memorial Pantani,1.1,12.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,75,Dwars door Vlaanderen,1.UWT,01.04,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,83,Trofeo Palma,1.1,01.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,84,Kuurne-Brussel-Kuurne,1.Pro,01.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,89,Milano - Torino,1.Pro,18.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,92,GP de Fourmies,1.Pro,13.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,93,Grand Prix de Wallonie,1.Pro,16.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,95,Japan Cup,1.Pro,18.10,scheduled,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,100,Trofeo Serra Tramuntana,1.1,30.01,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,107,Volta ao Algarve,2.Pro,18.02-22.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,111,Tour des Alpes-Maritimes,1.1,22.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,112,Trofeo Laigueglia,1.Pro,04.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,121,Faun-Ardèche Classic,1.Pro,28.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,122,Nokere Koerse,1.Pro,18.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,123,Bredene Koksijde Classic,1.Pro,20.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,128,Tour de Langkawi,2.Pro,27.09-04.10,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,129,Clasica de Almeria,1.Pro,15.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,144,Rund um Köln,1.1,17.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,154,Chrono des Nations,1.1,18.10,scheduled,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,158,Münsterland Giro,1.Pro,03.10,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,159,Binche-Chimay-Binche,1.1,06.10,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,160,Coppa Sabatini,1.Pro,10.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,167,Kamp. van Vlaanderen,1.1,18.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,170,Omloop van het Houtland,1.1,23.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,171,GP d'Isbergues,1.1,20.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,175,4 Jours de Dunkerque,2.Pro,20.05-24.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,183,Giro del Veneto,1.Pro,14.10,scheduled,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,190,Tre Valli Varesine,1.Pro,06.10,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,192,Vuelta a Burgos,2.Pro,04.08-08.08,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,196,Coppa Bernocchi,1.Pro,05.10,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,199,GP Gippingen,1.1,14.06,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,231,Circuit Franco-Belge,1.Pro,10.06,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,263,GP Industria & Artigianato,1.Pro,06.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,271,Trofeo Calvià,1.1,28.01,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,274,Trofeo Andratx - Pollença,1.1,31.01,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,343,Boucles de la Mayenne,2.Pro,28.05-31.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,349,Heistse Pijl,1.1,06.06,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,432,Faun Drome Classic,1.Pro,01.03,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,539,Grand Prix Criquielion,1.1,24.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,752,Giro d'Abruzzo,2.1,15.09-18.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,868,AlUla Tour,2.Pro,27.01-31.01,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,949,Paris-Chauny,1.1,27.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,1172,Cadel Evans Great Ocean Road Race,1.UWT,01.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,4025,Giro della Toscana,1.1,09.09,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,7591,Tour of Guangxi,2.UWT,13.10-18.10,scheduled,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,8499,Hong Kong Cyclothon,1.1,11.10,scheduled,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,9800,UAE Tour,2.UWT,16.02-22.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,15208,Veneto Classic,1.Pro,18.10,scheduled,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,18946,Muscat Classic,1.Pro,06.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,18947,Figueira Champions Classic,1.Pro,14.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,21999,Classic Var,1.1,21.02,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,24060,Copenhagen Sprint,1.UWT,14.06,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,24917,Classique Dunkerque,1.Pro,19.05,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug
+tudor-pro-cycling-team,Tudor Pro Cycling Team,2026,27987,Trofeo Ses Salines TTT,1.1,29.01,completed,,,,,2026-10-09T16:23:27.339308+00:00,missing_race_slug

@@ -1,85 +1,85 @@
 team_slug,team_name,planning_year,race_id,race_name,category,date_label,status,actual_points,rider_count,source_url,pcs_race_slug,checked_at_utc,notes
-team-polti-visitmalta,Team Polti VisitMalta,2026,3,Tirreno-Adriatico,2.UWT,09.03-15.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,4,Milano-Sanremo,1.UWT,21.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,13,Giro d'Italia,2.UWT,08.05-31.05,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,24,Il Lombardia,1.UWT,10.10,scheduled,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,29,Giro dell'Emilia,1.Pro,03.10,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,32,PostNord Tour of Denmark,2.Pro,29.07-02.08,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,50,Veenendaal Classic,1.1,23.05,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,54,Strade Bianche,1.UWT,07.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,61,Gran Piemonte,1.Pro,08.10,scheduled,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,62,Tour of the Alps,2.Pro,20.04-24.04,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,64,Brussels Cycling Classic,1.Pro,07.06,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,68,Memorial Pantani,1.1,12.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,83,Trofeo Palma,1.1,01.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,85,Vuelta a Castilla y León,1.1,26.07,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,88,Giro del Lazio,1.1,19.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,89,Milano - Torino,1.Pro,18.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,92,GP de Fourmies,1.Pro,13.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,93,Grand Prix de Wallonie,1.Pro,16.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,94,Tour de Vendée,1.1,04.10,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,97,GP la Marseillaise,1.1,01.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,100,Trofeo Serra Tramuntana,1.1,30.01,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,106,Étoile de Bessèges,2.1,04.02-08.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,109,Giro di Sardegna,2.1,25.02-01.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,111,Tour des Alpes-Maritimes,1.1,22.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,112,Trofeo Laigueglia,1.Pro,04.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,114,Coppi e Bartali,2.1,25.03-29.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,125,Cholet Agglo Tour,1.1,03.10,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,127,Tour of Magnificent Qinghai,2.Pro,05.07-12.07,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,129,Clasica de Almeria,1.Pro,15.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,134,Route Adélie de Vitré,1.1,03.04,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,139,Tour of Hainan,2.Pro,15.04-19.04,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,145,Paris - Camembert,1.1,31.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,149,Giro dell'Appennino,1.1,26.04,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,152,Tour of Türkiye,2.Pro,26.04-03.05,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,160,Coppa Sabatini,1.Pro,10.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,163,Giro della Romagna,1.1,20.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,183,Giro del Veneto,1.Pro,14.10,scheduled,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,190,Tre Valli Varesine,1.Pro,06.10,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,196,Coppa Bernocchi,1.Pro,05.10,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,202,Circuito de Getxo,1.1,02.08,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,203,Polynormande,1.1,16.08,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,205,Trofeo Matteotti,1.1,13.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,207,Villafranca de Ordizia,1.1,25.07,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,211,Tour of Slovenia,2.Pro,17.06-21.06,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,212,Route d'Occitanie,2.1,18.06-20.06,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,217,Région Pays de la Loire Tour,2.Pro,07.04-10.04,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,231,Circuit Franco-Belge,1.Pro,10.06,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,259,Arctic Race of Norway,2.Pro,13.08-16.08,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,260,La Roue Tourangelle,1.1,29.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,262,Coppa Agostoni,1.1,04.10,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,263,GP Industria & Artigianato,1.Pro,06.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,271,Trofeo Calvià,1.1,28.01,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,274,Trofeo Andratx - Pollença,1.1,31.01,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,319,Volta Comunitat Valenciana,2.Pro,04.02-08.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,349,Heistse Pijl,1.1,06.06,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,411,Clàssica Comunitat Valenciana 1969,1.1,25.01,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,539,Grand Prix Criquielion,1.1,24.05,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,559,Giro del Medio Brenta,1.2,05.07,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,752,Giro d'Abruzzo,2.1,15.09-18.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,765,Tour de Hongrie,2.Pro,13.05-17.05,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,773,CRO Race,2.Pro,22.09-27.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,949,Paris-Chauny,1.1,27.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,1194,Popolarissima,1.2,15.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,1285,Tour du Jura,1.1,18.04,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,1499,Gran Premio Primavera-Ontur,1.2,22.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,4025,Giro della Toscana,1.1,09.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,4396,Tour de La Provence,2.1,13.02-15.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,8328,GP Plouay Elite Open,1.2,30.08,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,8499,Hong Kong Cyclothon,1.1,11.10,scheduled,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,10204,Antwerp Port Epic,1.1,25.05,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,13188,Mercan'Tour Classic Alpes-Maritimes,1.1,03.06,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,15075,Classic Grand Besançon Doubs,1.1,17.04,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,15208,Veneto Classic,1.Pro,18.10,scheduled,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,15209,Czech Tour,2.Pro,13.08-16.08,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,18948,Andorra MoraBanc Clàssica,1.1,21.06,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,20781,Tour of Istanbul,2.1,03.09-06.09,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,21999,Classic Var,1.1,21.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,22014,Clásica Terres de l´Ebre,1.1,21.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,22183,Gran Premio Castellón,1.1,24.01,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,24060,Copenhagen Sprint,1.UWT,14.06,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,24922,Classica Camp de Morvedre,1.1,23.01,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,27602,Visit South Aegean GP,1.1,28.02,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,27604,Region on Dodecanese GP,1.1,01.03,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
-team-polti-visitmalta,Team Polti VisitMalta,2026,27987,Trofeo Ses Salines TTT,1.1,29.01,completed,,,,,2026-10-08T16:39:30.032208+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,3,Tirreno-Adriatico,2.UWT,09.03-15.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,4,Milano-Sanremo,1.UWT,21.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,13,Giro d'Italia,2.UWT,08.05-31.05,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,24,Il Lombardia,1.UWT,10.10,scheduled,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,29,Giro dell'Emilia,1.Pro,03.10,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,32,PostNord Tour of Denmark,2.Pro,29.07-02.08,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,50,Veenendaal Classic,1.1,23.05,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,54,Strade Bianche,1.UWT,07.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,61,Gran Piemonte,1.Pro,08.10,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,62,Tour of the Alps,2.Pro,20.04-24.04,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,64,Brussels Cycling Classic,1.Pro,07.06,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,68,Memorial Pantani,1.1,12.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,83,Trofeo Palma,1.1,01.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,85,Vuelta a Castilla y León,1.1,26.07,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,88,Giro del Lazio,1.1,19.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,89,Milano - Torino,1.Pro,18.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,92,GP de Fourmies,1.Pro,13.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,93,Grand Prix de Wallonie,1.Pro,16.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,94,Tour de Vendée,1.1,04.10,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,97,GP la Marseillaise,1.1,01.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,100,Trofeo Serra Tramuntana,1.1,30.01,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,106,Étoile de Bessèges,2.1,04.02-08.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,109,Giro di Sardegna,2.1,25.02-01.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,111,Tour des Alpes-Maritimes,1.1,22.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,112,Trofeo Laigueglia,1.Pro,04.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,114,Coppi e Bartali,2.1,25.03-29.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,125,Cholet Agglo Tour,1.1,03.10,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,127,Tour of Magnificent Qinghai,2.Pro,05.07-12.07,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,129,Clasica de Almeria,1.Pro,15.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,134,Route Adélie de Vitré,1.1,03.04,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,139,Tour of Hainan,2.Pro,15.04-19.04,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,145,Paris - Camembert,1.1,31.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,149,Giro dell'Appennino,1.1,26.04,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,152,Tour of Türkiye,2.Pro,26.04-03.05,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,160,Coppa Sabatini,1.Pro,10.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,163,Giro della Romagna,1.1,20.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,183,Giro del Veneto,1.Pro,14.10,scheduled,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,190,Tre Valli Varesine,1.Pro,06.10,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,196,Coppa Bernocchi,1.Pro,05.10,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,202,Circuito de Getxo,1.1,02.08,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,203,Polynormande,1.1,16.08,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,205,Trofeo Matteotti,1.1,13.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,207,Villafranca de Ordizia,1.1,25.07,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,211,Tour of Slovenia,2.Pro,17.06-21.06,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,212,Route d'Occitanie,2.1,18.06-20.06,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,217,Région Pays de la Loire Tour,2.Pro,07.04-10.04,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,231,Circuit Franco-Belge,1.Pro,10.06,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,259,Arctic Race of Norway,2.Pro,13.08-16.08,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,260,La Roue Tourangelle,1.1,29.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,262,Coppa Agostoni,1.1,04.10,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,263,GP Industria & Artigianato,1.Pro,06.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,271,Trofeo Calvià,1.1,28.01,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,274,Trofeo Andratx - Pollença,1.1,31.01,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,319,Volta Comunitat Valenciana,2.Pro,04.02-08.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,349,Heistse Pijl,1.1,06.06,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,411,Clàssica Comunitat Valenciana 1969,1.1,25.01,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,539,Grand Prix Criquielion,1.1,24.05,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,559,Giro del Medio Brenta,1.2,05.07,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,752,Giro d'Abruzzo,2.1,15.09-18.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,765,Tour de Hongrie,2.Pro,13.05-17.05,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,773,CRO Race,2.Pro,22.09-27.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,949,Paris-Chauny,1.1,27.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,1194,Popolarissima,1.2,15.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,1285,Tour du Jura,1.1,18.04,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,1499,Gran Premio Primavera-Ontur,1.2,22.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,4025,Giro della Toscana,1.1,09.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,4396,Tour de La Provence,2.1,13.02-15.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,8328,GP Plouay Elite Open,1.2,30.08,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,8499,Hong Kong Cyclothon,1.1,11.10,scheduled,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,10204,Antwerp Port Epic,1.1,25.05,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,13188,Mercan'Tour Classic Alpes-Maritimes,1.1,03.06,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,15075,Classic Grand Besançon Doubs,1.1,17.04,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,15208,Veneto Classic,1.Pro,18.10,scheduled,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,15209,Czech Tour,2.Pro,13.08-16.08,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,18948,Andorra MoraBanc Clàssica,1.1,21.06,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,20781,Tour of Istanbul,2.1,03.09-06.09,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,21999,Classic Var,1.1,21.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,22014,Clásica Terres de l´Ebre,1.1,21.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,22183,Gran Premio Castellón,1.1,24.01,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,24060,Copenhagen Sprint,1.UWT,14.06,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,24922,Classica Camp de Morvedre,1.1,23.01,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,27602,Visit South Aegean GP,1.1,28.02,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,27604,Region on Dodecanese GP,1.1,01.03,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
+team-polti-visitmalta,Team Polti VisitMalta,2026,27987,Trofeo Ses Salines TTT,1.1,29.01,completed,,,,,2026-10-09T16:23:20.953186+00:00,missing_race_slug
