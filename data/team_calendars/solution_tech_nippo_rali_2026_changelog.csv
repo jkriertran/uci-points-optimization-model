@@ -1,1 +1,2 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
+solution-tech-nippo-rali,2026,2026-10-12T19:10:26.424032+00:00,race_added,183,Giro del Veneto,,scheduled,team_calendar_refresh,matched_via=normalized_name
