@@ -1,3 +1,1 @@
 team_slug,planning_year,detected_at_utc,change_type,race_id,race_name,old_value,new_value,source,notes
-cofidis,2026,2026-10-12T19:10:11.352075+00:00,status_changed,28,Paris - Tours,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
-cofidis,2026,2026-10-12T19:10:11.352075+00:00,status_changed,8499,Hong Kong Cyclothon,scheduled,completed,team_calendar_refresh,matched_via=token_overlap
